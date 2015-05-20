@@ -1,4 +1,4 @@
-from models import ImmutableFile,Mp3File
+from models import ImmutableFile,AudioFile
 from os.path import splitext,join
 from os import access,walk,R_OK
 
@@ -17,7 +17,7 @@ class FileCrawler():
         root, ext = splitext(filepath)
 
         if ext == '.mp3':
-            f = Mp3File.from_file(filepath)
+            f = AudioFile.from_file(filepath)
             f.save()
 
         # ... otherwise who cares.

@@ -72,7 +72,22 @@ class CratesImmutableFile(ImmutableFile):
 #class AudioFile(CratesImmutableFile):
     #album =i ...
 
-class Mp3File(ImmutableFile):
-    pass
+class AudioFile(ImmutableFile):
+    TYPE_CHOICES = (
+            ('MIX','Mix/Compilation'),
+            ('SAM','Sample'),
+            ('LP','Longplay'),
+            ('LOOP','Drum loop'),
+            ('ACCA','Acappella'),
+            ('TRAC','Track'),
+    )
+
+    type = models.CharField(
+            max_length=4,
+            choices=TYPE_CHOICES,
+            null=True,
+            help_text="Type of audio file",
+            default='TRAC'
+    )
 
 
