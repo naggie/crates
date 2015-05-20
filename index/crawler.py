@@ -1,5 +1,6 @@
-from models import ImmutableFile
-from os.path import walk,splitext,join,access
+from models import ImmutableFile,Mp3File
+from os.path import splitext,join
+from os import access,walk,R_OK
 
 # crawler could have a worker thread and queue, depending on benchmark results
 class FileCrawler():
@@ -34,4 +35,5 @@ class FileCrawler():
                     yield filepath
 
 
-
+# Could also have a PeerCrawler in here to crawl over HTTP...
+# TODO hooks for progress

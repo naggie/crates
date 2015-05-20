@@ -1,5 +1,7 @@
 from django.db import models
 
+from network.models import Peer
+
 from cas import basicCAS
 from os import stat
 
@@ -20,7 +22,12 @@ class ImmutableFile(models.Model):
     # could migrate to https://github.com/leplatrem/django-sizefield
     size = models.IntegerField(help_text="Size of file in bytes")
 
-    original_filepath = models.CharField(blank=True,null=True,help_text="Where the file came from, local path")
+    original_filepath = models.CharField(
+            max_length=255,
+            blank=True,
+            null=True,
+            help_text="Where the file came from, local path"
+    )
 
     def mapper(self):
         'Override this. Gives a relative filepath composed from attributes'
@@ -31,9 +38,9 @@ class ImmutableFile(models.Model):
 
     @classmethod
     def from_file(cls,filepath):
-        'Return an instance of this class derived from the given file.
+        '''Return an instance of this class derived from the given file.
         Override to add features such as ID3 data extraction, chromaprint gen,
-        etc. Best used in a threaded work queue based system.'
+        etc. Best used in a threaded work queue based system.'''
         return cls(
             ref = cas.insert(filepath),
             size = stat(filepath).st_size,
@@ -47,7 +54,7 @@ class ImmutableFile(models.Model):
         super(ImmutableFile,self).delete(*args,**kwargs)
 
 class CratesImmutableFile(ImmutableFile):
-    peer = models.ForeignKey('network.models.peer',help_text='From whom the file came from')
+    peer = models.ForeignKey(Peer,help_text='From whom the file came from')
 
 
 # ...
