@@ -5,6 +5,8 @@ from os import stat
 
 cas = basicCAS()
 
+# todo: some kind of discard mech.
+
 class ImmutableFile(models.Model):
     '''
     Record representing a cache of the metadata of a given file. Primary key is file ref.
@@ -29,7 +31,7 @@ class ImmutableFile(models.Model):
 
     @classmethod
     def from_file(cls,filepath):
-        'Return a saved instance of this class derived from the given file.
+        'Return an instance of this class derived from the given file.
         Override to add features such as ID3 data extraction, chromaprint gen,
         etc. Best used in a threaded work queue based system.'
         return cls(
@@ -39,7 +41,10 @@ class ImmutableFile(models.Model):
         )
 
 
-
+    def delete(self,*args,**kwargs):
+        'Overridden delete method to also remove CAS object'
+        cas.delete(self.ref)
+        super(ImmutableFile,self).delete(*args,**kwargs)
 
 class CratesImmutableFile(ImmutableFile):
     peer = models.ForeignKey('network.models.peer',help_text='From whom the file came from')
