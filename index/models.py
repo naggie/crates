@@ -61,6 +61,11 @@ class ImmutableFile(models.Model):
 class CratesImmutableFile(ImmutableFile):
     peer = models.ForeignKey(Peer,help_text='From whom the file came from')
 
+    deprecates = models.ForeignKey( 'self',
+            null=True,
+            help_text="If this file is an upgrade of another, link it here. The deprecated file object and/orrecord can be deleted later.")
+    )
+
 
 # ...
 
