@@ -27,7 +27,8 @@ class ImmutableFile(models.Model):
         # ... but here's an example using class attributes
         return '{artist}/{album}/{artist} - {album} - {song}.mp3'.format(**self.__dict__)
 
-    @classmethod(cls,filepath):
+    @classmethod
+    def from_file(cls,filepath):
         'Return a saved instance of this class derived from the given file.
         Override to add features such as ID3 data extraction, chromaprint gen,
         etc. Best used in a threaded work queue based system.'
@@ -46,7 +47,10 @@ class CratesImmutableFile(ImmutableFile):
 
 # ...
 
-class AudioFile(CratesImmutableFile):
+#class AudioFile(CratesImmutableFile):
     #album =i ...
+
+class Mp3File(ImmutableFile):
+    pass
 
 
