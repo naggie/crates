@@ -53,6 +53,11 @@ class ImmutableFile(models.Model):
         cas.delete(self.ref)
         super(ImmutableFile,self).delete(*args,**kwargs)
 
+
+    def __unicode__(self):
+        'Give a string representation of what the files is. Similar to mapper. Override!'
+        return self.ref + ' : ' + self.original_filepath
+
 class CratesImmutableFile(ImmutableFile):
     peer = models.ForeignKey(Peer,help_text='From whom the file came from')
 
