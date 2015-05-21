@@ -3,8 +3,16 @@
 
 
 # TODO deal with: (in base class, NotImplementedError)
-# TODO scrub cmethod could deal with one ref at a time to enable a web progress
+# TODO scrub method could deal with one ref at a time to enable a web progress
 # bar (exhaust generator and iteratr over list)
+
+
+# In the future, this could be a module in it's own directory with the
+# following implementations:
+# * Amazon S3 encrypted CAS (local cache)
+# * CAS with local replication to tolerate hardware failure
+# * ... etc
+
 
 import os
 import re

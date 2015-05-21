@@ -38,4 +38,6 @@ class FileCrawler():
 
 
 # Could also have a PeerCrawler in here to crawl over HTTP...
-# TODO hooks for progress
+# + SoundcloudCrawler? (using origin_url to download new only)
+# Even a soundcloud crawler? (using origin_url to download new only)
+# TODO hooks for progress, or a base class with a generator and unit processor.
