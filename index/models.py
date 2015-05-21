@@ -2,12 +2,17 @@ from django.db.models import CharField, ForeignKey, IntegerField, PositiveSmallI
 
 from network.models import Peer
 
-import mutagen
+from mutagen.mp3 import MP3,HeaderNotFoundError
+from mutagen.easyid3 import EasyID3
+from mutagen.id3 import ID3NoHeaderError
 
 from cas import basicCAS
 from os import stat
 
 import mimetypes
+
+
+# TODO WARNING: existing objects are currently overwritten. Not sure how I feel about that -- quick abort if already there?
 
 # another actor could be used, configured in settings in the future. For
 # example, a CAS with local replication or an encrypted Amazon S3 based CAS.
@@ -32,7 +37,8 @@ class ImmutableFile(Model):
     # could migrate to https://github.com/leplatrem/django-sizefield
     size = IntegerField(help_text="Size of file in bytes")
 
-    origin_url = URLField(
+    origin = CharField(
+            max_length=255,
             blank=True,
             null=True,
             help_text="Where the file came from, local path or HTTP url etc"
@@ -61,8 +67,8 @@ class ImmutableFile(Model):
         return cls(
             ref = cas.insert(filepath),
             size = stat(filepath).st_size,
-            original_filepath = filepath,
-            mimetype = mimetype.guess_type(filepath),
+            origin = filepath,
+            mimetype = mimetypes.guess_type(filepath),
         )
 
 
@@ -77,7 +83,7 @@ class ImmutableFile(Model):
 
     def __unicode__(self):
         'Give a string representation of what the files is. Similar to mapper. Override!'
-        return '{ref} : {original_filepath}'.format(**self.__dict__)
+        return '{ref} : {origin}'.format(**self.__dict__)
 
 class CratesImmutableFile(ImmutableFile):
     peer = ForeignKey(Peer,help_text='From whom the file came from (local is OK)')
@@ -110,23 +116,36 @@ class AudioFile(ImmutableFile):
     # or both with redundancy. Usage will tell -- django data migrations can be
     # used to change this on an existing database if this is done after the
     # first release.
-    title = CharField(max_length=64)
-    artist = CharField(max_length=64)
-    album = CharField(max_length=64)
-    genre = CharField(max_length=64)
+    title = CharField(max_length=64,null=True)
+    artist = CharField(max_length=64,null=True)
+    composer = CharField(max_length=64,null=True)
+    album = CharField(max_length=64,null=True)
+    genre = CharField(max_length=64,null=True)
     year = PositiveSmallIntegerField(null=True,blank=True,help_text="Year song was released")
+    track = PositiveSmallIntegerField(null=True,blank=True,help_text="Year song was released")
 
     bpm = PositiveSmallIntegerField(null=True,blank=True,help_text="Detected beats-per-minute of song")
-    cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art')
+    cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
 
     @classmethod
     def from_mp3(cls,filepath):
         # mp3 specific tag loading goes here
-        cls = super(AudioFile,cls).from_file(*args,**kwargs)
+        audioFile = super(AudioFile,cls).from_file(filepath)
+
+        audio = EasyID3(filepath)
+
+        audioFile.title = audio.get('title')
+        audioFile.artist = audio.get('artist')
+        audioFile.genre = audio.get('genre')
+        audioFile.composer = audio.get('composer')
+        audioFile.album = audio.get('album')
+        #audioFile.track = int(audio.get('tracknumber','0/0').partition('/')[0])
+
+        return audioFile
 
     @classmethod
     def from_aac(cls,filepath):
         # aac specific tag loading goes here
-        return super(AudioFile,cls).from_file(*args,**kwargs)
+        return super(AudioFile,cls).from_file(filepath)
 
 

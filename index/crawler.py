@@ -1,4 +1,4 @@
-from models import ImmutableFile,AudioFile
+from models import ImmutableFile,AudioFile,HeaderNotFoundError,ID3NoHeaderError
 from os.path import splitext,join
 from os import access,walk,R_OK
 
@@ -9,7 +9,10 @@ class FileCrawler():
 
     def crawl(self,directory):
         for filepath in self._enumerate(directory):
-            self._insert(filepath)
+            try:
+                self._insert(filepath)
+            except HeaderNotFoundError: continue
+            except ID3NoHeaderError: continue
 
 
     def _insert(self,filepath):
@@ -17,6 +20,7 @@ class FileCrawler():
         root, ext = splitext(filepath)
 
         if ext == '.mp3':
+            print filepath # don't do this, keep track of progress with generator etc
             AudioFile.from_mp3(filepath).save()
 
         elif ext == '.aac':
