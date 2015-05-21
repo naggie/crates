@@ -5,6 +5,8 @@ from network.models import Peer
 from cas import basicCAS
 from os import stat
 
+import mimetypes
+
 cas = basicCAS()
 
 # todo: some kind of discard mech.
@@ -17,7 +19,7 @@ class ImmutableFile(models.Model):
     '''
 
     ref = models.CharField(max_length=64,primary_key=True,help_text='CAS ref of file')
-    hits = models.IntegerField(default=0,help_text='Number of times the file has been played')
+    hits = models.IntegerField(default=0,help_text='Number of times the file has been played/read')
 
     # could migrate to https://github.com/leplatrem/django-sizefield
     size = models.IntegerField(help_text="Size of file in bytes")
@@ -28,6 +30,14 @@ class ImmutableFile(models.Model):
             null=True,
             help_text="Where the file came from, local path"
     )
+
+    mimetype = models.CharField(
+            max_length=64,
+            null=True,
+            default='application/octet-stream'
+    )
+
+    added = models.DateTimeField(auto_now=True)
 
     def mapper(self):
         'Override this. Gives a relative filepath composed from attributes'
@@ -45,6 +55,7 @@ class ImmutableFile(models.Model):
             ref = cas.insert(filepath),
             size = stat(filepath).st_size,
             original_filepath = filepath,
+            mimetype = mimetype.guess_type(filepath),
         )
 
 
@@ -63,7 +74,7 @@ class CratesImmutableFile(ImmutableFile):
 
     deprecates = models.ForeignKey( 'self',
             null=True,
-            help_text="If this file is an upgrade of another, link it here. The deprecated file object and/orrecord can be deleted later.")
+            help_text="If this file is an upgrade of another, link it here. The deprecated file object and/or record can be deleted later.")
     )
 
 
@@ -76,7 +87,7 @@ class AudioFile(ImmutableFile):
     TYPE_CHOICES = (
             ('MIX','Mix/Compilation'),
             ('SAM','Sample'),
-            ('LP','Longplay'),
+            ('EP','Extended play'),
             ('LOOP','Drum loop'),
             ('ACCA','Acappella'),
             ('TRAC','Track'),
@@ -89,5 +100,15 @@ class AudioFile(ImmutableFile):
             help_text="Type of audio file",
             default='TRAC'
     )
+
+    @classmethod
+    def from_mp3(cls,filepath):
+        # mp3 specific tag loading goes here
+        return super(AudioFile,cls).from_file(*args,**kwargs)
+
+    @classmethod
+    def from_aac(cls,filepath):
+        # aac specific tag loading goes here
+        return super(AudioFile,cls).from_file(*args,**kwargs)
 
 

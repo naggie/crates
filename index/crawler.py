@@ -17,8 +17,10 @@ class FileCrawler():
         root, ext = splitext(filepath)
 
         if ext == '.mp3':
-            f = AudioFile.from_file(filepath)
-            f.save()
+            AudioFile.from_mp3(filepath).save()
+
+        elif ext == '.aac':
+            AudioFile.from_aac(filepath).save()
 
         # ... otherwise who cares.
 
