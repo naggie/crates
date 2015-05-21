@@ -1,4 +1,4 @@
-from django.db.models import CharField, ForeignKey, IntegerField, PositiveSmallIntegerField, DateTimeField, URLField
+from django.db.models import CharField, ForeignKey, IntegerField, PositiveSmallIntegerField, DateTimeField, URLField, Model
 
 from network.models import Peer
 
@@ -13,7 +13,7 @@ import mimetypes
 # example, a CAS with local replication or an encrypted Amazon S3 based CAS.
 cas = basicCAS()
 
-class ImmutableFile(models.Model):
+class ImmutableFile(Model):
     '''
     Record representing a cache of the metadata of a given file. Primary key is file ref.
 
@@ -84,7 +84,7 @@ class CratesImmutableFile(ImmutableFile):
 
     deprecates = ForeignKey( 'self',
             null=True,
-            help_text="If this file is an upgrade of another, link it here. The deprecated file object and/or record can be deleted later.")
+            help_text="If this file is an upgrade of another, link it here. The deprecated file object and/or record can be deleted later.",
     )
 
 
@@ -122,7 +122,7 @@ class AudioFile(ImmutableFile):
     @classmethod
     def from_mp3(cls,filepath):
         # mp3 specific tag loading goes here
-        return super(AudioFile,cls).from_file(*args,**kwargs)
+        cls = super(AudioFile,cls).from_file(*args,**kwargs)
 
     @classmethod
     def from_aac(cls,filepath):
