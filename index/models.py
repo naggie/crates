@@ -30,7 +30,6 @@ class ImmutableFile(Model):
     classmethod.
 
     '''
-
     ref = CharField(max_length=64,primary_key=True,help_text='CAS ref of file')
     hits = IntegerField(default=0,help_text='Number of times the file has been played/read')
 
@@ -44,15 +43,14 @@ class ImmutableFile(Model):
             help_text="Where the file came from, local path or HTTP url etc"
     )
 
-    mimetype = CharField(
-            max_length=64,
-            null=True,
-            default='application/octet-stream'
-    )
+    def mimetype(self):
+        '''Returns guessed mimetype for serving this file.
+        This assumes origin is a filepath as given by the from_file classmethod.'''
+        return mimetypes.guess_type(self.origin) or 'application/octet-stream'
 
     added = DateTimeField(auto_now=True)
 
-    def mapper(self):
+    def map(self):
         'Override this. Gives a relative filepath composed from attributes'
         raise NotImplementedError()
 
