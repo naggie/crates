@@ -143,7 +143,7 @@ class AudioFile(ImmutableFile):
     # So if instead of {artist} we have {album artist} which will default to {artist}. Might work.
     def map(self):
         # ... but here's an example using class attributes
-        return '{artist}/{album}/{artist} - {album} - {song}.mp3'.format(**self.__dict__)
+        return '{album_artist}/{album}/{artist} - {album} - {song}.mp3'.format(**self.__dict__)
 
     @classmethod
     def from_mp3(cls,filepath):
@@ -154,8 +154,11 @@ class AudioFile(ImmutableFile):
         audio = MP3(filepath)
 
         if audio.has_key('TIT2'): audioFile.title = audio['TIT2'][0]
-        if audio.has_key('TPE1'): audioFile.artist = audio['TPE1'][0]
+
+        # also default for album_artist
+        if audio.has_key('TPE1'): audioFile.artist = audioFile.album_artist = audio['TPE1'][0]
         if audio.has_key('TPE2'): audioFile.album_artist = audio['TPE2'][0]
+
         if audio.has_key('TALB'): audioFile.album = audio['TALB'][0]
         if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0]
         if audio.has_key('TYER'): audioFile.year = audio['TYER'][0]
