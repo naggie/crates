@@ -11,7 +11,6 @@ from os import stat
 
 import mimetypes
 
-
 # TODO WARNING: existing objects are currently overwritten. Not sure how I feel about that -- quick abort if already there?
 
 # another actor could be used, configured in settings in the future. For
@@ -63,7 +62,7 @@ class ImmutableFile(Model):
         Override to add features such as ID3 data extraction, chromaprint gen,
         etc. Best used in a threaded work queue based system.'''
         return cls(
-            ref = cas.insert(filepath),
+            ref = cas.insert_file(filepath),
             size = stat(filepath).st_size,
             origin = filepath,
         )
@@ -147,6 +146,11 @@ class AudioFile(ImmutableFile):
 
         audioFile.bitrate_kbps = int(audio.info.bitrate/1024)
         audioFile.length = int(audio.info.length)
+
+        # cover art
+        if audio.has_key('APIC:Cover'):
+            data = audio['APIC:Cover']
+            audio.cover_art_ref = cas.insert_blob(data)
 
         return audioFile
 

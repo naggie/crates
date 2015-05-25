@@ -4,6 +4,7 @@
 
 # TODO deal with: (in base class, NotImplementedError)
 # TODO scrub method could deal with one ref at a time to enable a web progress
+# TODO atomic writes (not that important)
 # bar (exhaust generator and iteratr over list)
 
 
@@ -31,7 +32,7 @@ class basicCAS:
         if not exists(settings.CAS_DIRECTORY):
             makedirs(settings.CAS_DIRECTORY)
 
-    def insert(self,filepath):
+    def insert_file(self,filepath):
         'Add a file to the CAS returning a ref'
         ref = self._hash(filepath)
         binpath = self._binpath(ref)
@@ -42,6 +43,19 @@ class basicCAS:
             # opportunistic repair of data
             unlink(binpath)
             copyfile(filepath, binpath)
+
+        chmod(binpath,0444)
+
+        return ref
+
+    def insert_blob(self,blob):
+        sha = hashlib.sha256()
+        sha.update(blob)
+        ref =  sha.hexdigest()
+        binpath = self._binpath(ref)
+
+        with open(binpath,'rb') as f:
+            f.write(blob)
 
         chmod(binpath,0444)
 
@@ -63,12 +77,12 @@ class basicCAS:
         if exists(filepath):
             unlink(filepath)
 
-    def link_in(self,filepath):
-        'insert() a file then replace with a read-only symlink'
-        ref = self.insert(filepath)
-        unlink(filepath)
-        self._symlink(binpath,filepath)
-        return ref
+    #def link_in(self,filepath):
+    #    'insert() a file then replace with a read-only symlink'
+    #    ref = self.insert(filepath)
+    #    unlink(filepath)
+    #    self._symlink(binpath,filepath)
+    #    return ref
 
     def link_out(self,ref,destination):
         '''create an absolute symlink in a path pointing to a ref. If the
