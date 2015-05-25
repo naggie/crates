@@ -127,6 +127,8 @@ class AudioFile(ImmutableFile):
     bpm = PositiveSmallIntegerField(null=True,blank=True,help_text="Detected beats-per-minute of song")
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
 
+    def __unicode__(self):
+        return '{album_artist} - {album} [{artist}] {album} - {title} [{year}].mp3'.format(**self.__dict__)
 
     # @jimjibone, we need to decide how we handle compilations. I think we
     # should detect them and just use a different map for conventional album vs
@@ -143,7 +145,7 @@ class AudioFile(ImmutableFile):
     # So if instead of {artist} we have {album artist} which will default to {artist}. Might work.
     def map(self):
         # ... but here's an example using class attributes
-        return '{album_artist}/{album}/{artist} - {album} - {song}.mp3'.format(**self.__dict__)
+        return '{album_artist}/{album}/{artist} - {album} - {title}.mp3'.format(**self.__dict__)
 
     @classmethod
     def from_mp3(cls,filepath):
