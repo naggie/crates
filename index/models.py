@@ -114,6 +114,7 @@ class AudioFile(ImmutableFile):
     # first release.
     title = CharField(max_length=64,null=True)
     artist = CharField(max_length=64,null=True)
+    album_artist = CharField(max_length=64,null=True)
     album = CharField(max_length=64,null=True)
     composer = CharField(max_length=64,null=True)
     genre = CharField(max_length=64,null=True)
@@ -133,6 +134,13 @@ class AudioFile(ImmutableFile):
     #
     # Note, as we are using symlinks instead of copying files, we can have
     # multiple organisations in the same filesystem. EG: by genre, by label, etc
+    #
+    # TODO: review mapping system
+    # https://github.com/liamks/pyitunes - see attributes that iTunes uses. Specifically album_artist.
+    # http://stackoverflow.com/questions/5922622/whats-this-album-artist-tag-itunes-uses-any-way-to-set-it-using-java
+    # says it's TPE2: "Band/Orchestra/Accompaniment"
+    #
+    # So if instead of {artist} we have {album artist} which will default to {artist}. Might work.
     def map(self):
         # ... but here's an example using class attributes
         return '{artist}/{album}/{artist} - {album} - {song}.mp3'.format(**self.__dict__)
@@ -147,6 +155,7 @@ class AudioFile(ImmutableFile):
 
         if audio.has_key('TIT2'): audioFile.title = audio['TIT2'][0]
         if audio.has_key('TPE1'): audioFile.artist = audio['TPE1'][0]
+        if audio.has_key('TPE2'): audioFile.album_artist = audio['TPE2'][0]
         if audio.has_key('TALB'): audioFile.album = audio['TALB'][0]
         if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0]
         if audio.has_key('TYER'): audioFile.year = audio['TYER'][0]
