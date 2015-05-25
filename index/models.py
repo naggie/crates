@@ -109,14 +109,14 @@ class AudioFile(ImmutableFile):
     )
 
     EXTENSION_CHOICES = (
-            ('mp3','MP3: MPEG-2 Audio Layer III'),
-            ('flac','FLAC: Free Lossless Audio Codec'),
-            ('ogg','OGG: Ogg vorbis'),
-            ('m4a','AAC: Apple audio codec'),
+            ('.mp3','MP3: MPEG-2 Audio Layer III'),
+            ('.flac','FLAC: Free Lossless Audio Codec'),
+            ('.ogg','OGG: Ogg vorbis'),
+            ('.m4a','AAC: Apple audio codec'),
     )
 
     extension = CharField(
-            max_length=4,
+            max_length=5,
             choices=EXTENSION_CHOICES,
             null=True,
             help_text="Codec/filetype of audio file",
@@ -144,7 +144,7 @@ class AudioFile(ImmutableFile):
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
 
     def __unicode__(self):
-        return '{album_artist} - {album} [{artist}] {album} - {title} [{year}].{extension}'.format(**self.__dict__)
+        return '{album_artist} - {album} [{artist}] {album} - {title} [{year}]{extension}'.format(**self.__dict__)
 
     # @jimjibone, we need to decide how we handle compilations. I think we
     # should detect them and just use a different map for conventional album vs
