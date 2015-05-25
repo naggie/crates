@@ -66,7 +66,6 @@ class ImmutableFile(Model):
             ref = cas.insert(filepath),
             size = stat(filepath).st_size,
             origin = filepath,
-            mimetype = mimetypes.guess_type(filepath),
         )
 
 
@@ -116,11 +115,14 @@ class AudioFile(ImmutableFile):
     # first release.
     title = CharField(max_length=64,null=True)
     artist = CharField(max_length=64,null=True)
-    composer = CharField(max_length=64,null=True)
     album = CharField(max_length=64,null=True)
+    composer = CharField(max_length=64,null=True)
     genre = CharField(max_length=64,null=True)
     year = PositiveSmallIntegerField(null=True,blank=True,help_text="Year song was released")
-    track = PositiveSmallIntegerField(null=True,blank=True,help_text="Year song was released")
+    track = PositiveSmallIntegerField(null=True,blank=True,help_text="Track on CD release")
+
+    bitrate_kbps = PositiveSmallIntegerField(null=True,blank=True,help_text="MP3/FLAC/etc bitrate")
+    length = PositiveSmallIntegerField(null=True,blank=True,help_text="Approximate length in seconds")
 
     bpm = PositiveSmallIntegerField(null=True,blank=True,help_text="Detected beats-per-minute of song")
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
@@ -130,14 +132,21 @@ class AudioFile(ImmutableFile):
         # mp3 specific tag loading goes here
         audioFile = super(AudioFile,cls).from_file(filepath)
 
-        audio = EasyID3(filepath)
+        # MP3 class is a superset of ID3 including length and bitrate, etc.
+        audio = MP3(filepath)
 
-        audioFile.title = audio.get('title')
-        audioFile.artist = audio.get('artist')
-        audioFile.genre = audio.get('genre')
-        audioFile.composer = audio.get('composer')
-        audioFile.album = audio.get('album')
-        #audioFile.track = int(audio.get('tracknumber','0/0').partition('/')[0])
+        if audio.has_key('TIT2'): audioFile.title = audio['TIT2'][0]
+        if audio.has_key('TPE1'): audioFile.artist = audio['TPE1'][0]
+        if audio.has_key('TALB'): audioFile.album = audio['TALB'][0]
+        if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0]
+        if audio.has_key('TYER'): audioFile.year = audio['TYER'][0]
+
+        try:
+            if audio.has_key('TRCK'): audioFile.track = int(audio['TRCK'][0].partition('/')[0])
+        except ValueError: pass
+
+        audioFile.bitrate_kbps = int(audio.info.bitrate/1024)
+        audioFile.length = int(audio.info.length)
 
         return audioFile
 
