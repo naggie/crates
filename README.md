@@ -1,4 +1,4 @@
-Crates is a database for your media allowing F2F sharing.
+Crates is a database for your media allowing F2F curation and sharing of playlists.
 
 
 **BASE CLASSES WILL BE PROVIDED**. For iterative modules, a generator interface
