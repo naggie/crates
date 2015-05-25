@@ -23,7 +23,7 @@ from os import listdir,stat, chmod, makedirs, symlink, unlink
 from os.path import isdir, join, exists, abspath, dirname
 from django.conf import settings
 
-class basicCAS:
+class BasicCAS:
     def __init__(self):
         'Get ready to insert or select objects'
         if settings.CAS_DIRECTORY[0] != '/':
@@ -54,10 +54,11 @@ class basicCAS:
         ref =  sha.hexdigest()
         binpath = self._binpath(ref)
 
-        with open(binpath,'rb') as f:
-            f.write(blob)
+        if not exists(binpath):
+            with open(binpath,'wb') as f:
+                f.write(blob)
 
-        chmod(binpath,0444)
+            chmod(binpath,0444)
 
         return ref
 
@@ -89,10 +90,12 @@ class basicCAS:
         directory tree does not exist, it will be created'''
         binpath = self.select(ref)
 
-        if not isdir():
+        destination_dir = dirname(destination)
+
+        if not isdir(destination_dir):
             makedirs( dirname(destination) )
 
-        self.symlink(binpath,destination)
+        self._symlink(binpath,destination)
 
     def enumerate(self):
         'A generator that yields all refs'

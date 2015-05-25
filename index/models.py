@@ -6,7 +6,7 @@ from mutagen.mp3 import MP3,HeaderNotFoundError
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
 
-from cas import basicCAS
+from cas import BasicCAS
 from os import stat
 
 import mimetypes
@@ -15,7 +15,7 @@ import mimetypes
 
 # another actor could be used, configured in settings in the future. For
 # example, a CAS with local replication or an encrypted Amazon S3 based CAS.
-cas = basicCAS()
+cas = BasicCAS()
 
 class ImmutableFile(Model):
     '''
@@ -108,6 +108,22 @@ class AudioFile(ImmutableFile):
             default='TRAC'
     )
 
+    EXTENSION_CHOICES = (
+            ('mp3','MP3: MPEG-2 Audio Layer III'),
+            ('flac','FLAC: Free Lossless Audio Codec'),
+            ('ogg','OGG: Ogg vorbis'),
+            ('m4a','AAC: Apple audio codec'),
+    )
+
+    extension = CharField(
+            max_length=4,
+            choices=EXTENSION_CHOICES,
+            null=True,
+            help_text="Codec/filetype of audio file",
+            default='TRAC'
+    )
+
+
     # I'm undecided as to whether these are foreign key joins or text,
     # or both with redundancy. Usage will tell -- django data migrations can be
     # used to change this on an existing database if this is done after the
@@ -128,7 +144,7 @@ class AudioFile(ImmutableFile):
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
 
     def __unicode__(self):
-        return '{album_artist} - {album} [{artist}] {album} - {title} [{year}].mp3'.format(**self.__dict__)
+        return '{album_artist} - {album} [{artist}] {album} - {title} [{year}].{extension}'.format(**self.__dict__)
 
     # @jimjibone, we need to decide how we handle compilations. I think we
     # should detect them and just use a different map for conventional album vs
@@ -145,7 +161,7 @@ class AudioFile(ImmutableFile):
     # So if instead of {artist} we have {album artist} which will default to {artist}. Might work.
     def map(self):
         # ... but here's an example using class attributes
-        return '{album_artist}/{album}/{artist} - {album} - {title}'.format(**self.__dict__)
+        return '{album_artist}/{album}/{artist} - {album} - {title}.{extension}'.format(**self.__dict__)
 
     @classmethod
     def from_mp3(cls,filepath):
@@ -174,8 +190,10 @@ class AudioFile(ImmutableFile):
 
         # cover art
         if audio.has_key('APIC:Cover'):
-            data = audio['APIC:Cover']
+            data = audio['APIC:Cover'].data
             audio.cover_art_ref = cas.insert_blob(data)
+
+        audioFile.extension = 'mp3'
 
         return audioFile
 
