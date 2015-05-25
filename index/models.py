@@ -79,7 +79,7 @@ class ImmutableFile(Model):
 
     def __unicode__(self):
         'Give a string representation of what the files is. Similar to mapper. Override!'
-        return '{ref} : {origin}'.format(**self.__dict__)
+        return u'{ref} : {origin}'.format(**self.__dict__)
 
 class CratesImmutableFile(ImmutableFile):
     peer = ForeignKey(Peer,help_text='From whom the file came from (local is OK)')
@@ -144,7 +144,7 @@ class AudioFile(ImmutableFile):
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
 
     def __unicode__(self):
-        return '{album_artist} - {album} [{artist}] {album} - {title} [{year}]{extension}'.format(**self.__dict__)
+        return u'{album_artist} - {album} [{artist}] {album} - {title} [{year}]{extension}'.format(**self.__dict__)
 
     # @jimjibone, we need to decide how we handle compilations. I think we
     # should detect them and just use a different map for conventional album vs
@@ -161,7 +161,7 @@ class AudioFile(ImmutableFile):
     # So if instead of {artist} we have {album artist} which will default to {artist}. Might work.
     def map(self):
         # ... but here's an example using class attributes
-        return '{album_artist}/{album}/{artist} - {album} - {title}.{extension}'.format(**self.__dict__)
+        return u'{album_artist}/{album}/{artist} - {album} - {title}.{extension}'.format(**self.__dict__)
 
     @classmethod
     def from_mp3(cls,filepath):
