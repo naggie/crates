@@ -126,6 +126,17 @@ class AudioFile(ImmutableFile):
     bpm = PositiveSmallIntegerField(null=True,blank=True,help_text="Detected beats-per-minute of song")
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
 
+
+    # @jimjibone, we need to decide how we handle compilations. I think we
+    # should detect them and just use a different map for conventional album vs
+    # compilations.
+    #
+    # Note, as we are using symlinks instead of copying files, we can have
+    # multiple organisations in the same filesystem. EG: by genre, by label, etc
+    def map(self):
+        # ... but here's an example using class attributes
+        return '{artist}/{album}/{artist} - {album} - {song}.mp3'.format(**self.__dict__)
+
     @classmethod
     def from_mp3(cls,filepath):
         # mp3 specific tag loading goes here

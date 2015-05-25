@@ -105,3 +105,4 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CAS_DIRECTORY = abspath('cas/')
+
