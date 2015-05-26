@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = (
+    'suit',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -88,7 +89,7 @@ DATABASES = {
 # Internationalization
 # https://docs.djangoproject.com/en/1.8/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'en-gb'
 
 TIME_ZONE = 'UTC'
 
@@ -98,6 +99,14 @@ USE_L10N = True
 
 USE_TZ = True
 
+# suit
+from django.conf.global_settings import TEMPLATE_CONTEXT_PROCESSORS as TCP
+TEMPLATE_CONTEXT_PROCESSORS = TCP + ( 'django.core.context_processors.request',)
+SUIT_CONFIG = {
+        'ADMIN_NAME':'Crates server admin',
+        'MENU_OPEN_FIRST_CHILD': True,
+}
+
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
@@ -105,4 +114,5 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 CAS_DIRECTORY = abspath('cas/')
+
 

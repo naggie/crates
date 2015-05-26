@@ -16,6 +16,9 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
+from index.views import Cas
+
 urlpatterns = [
+    url(r'cas/(?P<ref>[0-9a-f]{64})',Cas.as_view(), name='cas'),
     url(r'^admin/', include(admin.site.urls)),
 ]

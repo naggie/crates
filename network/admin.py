@@ -1,3 +1,9 @@
 from django.contrib import admin
 
-# Register your models here.
+from django.contrib import admin
+from models import Peer
+
+@admin.register(Peer)
+class PeerAdmin(admin.ModelAdmin):
+    list_display = ('alias','host','objects_common','object_count')
+    search_fields = list_display
