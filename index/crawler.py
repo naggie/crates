@@ -1,6 +1,9 @@
 from models import ImmutableFile,AudioFile,HeaderNotFoundError,ID3NoHeaderError
 from os.path import splitext,join
 from os import access,walk,R_OK
+from requests import get
+
+from cas impoer BasicCAS
 
 # crawler could have a worker thread and queue, depending on benchmark results
 class FileCrawler():
@@ -45,3 +48,19 @@ class FileCrawler():
 # + SoundcloudCrawler? (using origin_url to download new only)
 # Even a soundcloud crawler? (using origin_url to download new only)
 # TODO hooks for progress, or a base class with a generator and unit processor.
+
+class PeerCrawler():
+    def __init__(self,peer_url):
+        self.cas = BasicCAS()
+
+    def crawl(self,url):
+        pass
+
+
+    def _insert(self,obj):
+        obj.ref
+        generator = get(url,stream=True).inter_content(chunk_size=8192)
+        self.cas.insert_generator(generator)
+        assert ref == obj.ref
+        # TODO fix potential leak of garbage here
+
