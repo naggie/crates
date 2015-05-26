@@ -185,13 +185,14 @@ class AudioFile(ImmutableFile):
             if audio.has_key('TRCK'): audioFile.track = int(audio['TRCK'][0].partition('/')[0])
         except ValueError: pass
 
-        audioFile.bitrate_kbps = int(audio.info.bitrate/1024)
+        audioFile.bitrate_kbps = int(audio.info.bitrate/1000)
         audioFile.length = int(audio.info.length)
 
         # cover art
         if audio.has_key('APIC:Cover'):
             data = audio['APIC:Cover'].data
-            audio.cover_art_ref = cas.insert_blob(data)
+            audioFile.cover_art_ref = cas.insert_blob(data)
+            # record mimtype of cover art...?
 
         audioFile.extension = 'mp3'
 
