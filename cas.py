@@ -18,10 +18,12 @@
 import os
 import re
 import hashlib
-from shutil import copyfile
-from os import listdir,stat, chmod, makedirs, symlink, unlink
+from shutil import copyfile,move
+from os import listdir,stat, chmod, makedirs, symlink, unlink,fdopen
 from os.path import isdir, join, exists, abspath, dirname
 from django.conf import settings
+
+from tempfile import mkstemp
 
 class BasicCAS:
     def __init__(self):
@@ -61,6 +63,28 @@ class BasicCAS:
             chmod(binpath,0444)
 
         return ref
+
+    def insert_generator(self,generator):
+        '''
+        Insert a file by streaming from a generator such as
+        requests.get(url,stream=True).inter_content(chunk_size=8192)
+        '''
+        fd,tmpfilepath = mkstemp(dir=settings.CAS_DIRECTORY,prefix='gen_')
+        sha = hashlib.sha256()
+        # convert os level file descriptor so it can be closed automatically
+        with fdopen(fd,'wb') as f:
+            for chunk in generator:
+                sha.update(chunk)
+                f.write(chunk)
+            f.flush() # internal buffers, not yet os buffers. os.fsync for that.
+
+        ref =  sha.hexdigest()
+        binpath = self._binpath(ref)
+
+        # atomic, won't leave truncated file in CAS store.
+        # TODO: implement atomic saving for other methods
+        # TODO: on exception unlink tmp file
+        move(tmpfilepath,binpath)
 
     def select(self,ref):
         'Given a ref, return an absolute filepath. If not found, except IOError'
