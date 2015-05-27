@@ -9,9 +9,9 @@ from cas import BasicCAS
 class BaseCrawler():
     '''WIP base class generator based crawler so progress can be seen'''
 
-    self.added = 0
-    self.failed = 0
-    self.skipped = 0
+    added = 0
+    failed = 0
+    skipped = 0
 
     def count(self):
         '''Return total number of objects to crawl'''
