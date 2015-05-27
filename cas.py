@@ -67,7 +67,7 @@ class BasicCAS:
     def insert_generator(self,generator):
         '''
         Insert a file by streaming from a generator such as
-        requests.get(url,stream=True).inter_content(chunk_size=8192)
+        requests.get(url,stream=True).iter_content(chunk_size=8192)
         '''
         fd,tmpfilepath = mkstemp(dir=settings.CAS_DIRECTORY,prefix='gen_')
         sha = hashlib.sha256()
@@ -85,6 +85,7 @@ class BasicCAS:
         # TODO: implement atomic saving for other methods
         # TODO: on exception unlink tmp file
         move(tmpfilepath,binpath)
+        return ref
 
     def select(self,ref):
         'Given a ref, return an absolute filepath. If not found, except IOError'
@@ -95,7 +96,7 @@ class BasicCAS:
 
         return binpath
 
-    def delete(ref):
+    def delete(self,ref):
         'Remove an object from the CAS by ref'
         filepath = self._binpath(ref)
 

@@ -29,6 +29,11 @@ class ImmutableFile(Model):
     classmethod.
 
     '''
+    class Meta:
+        # not a model in it's own right. Subclasses will have ImmutableFile
+        # fields rather than having 2 tables
+        abstract = True
+
     ref = CharField(max_length=64,primary_key=True,help_text='CAS ref of file')
     hits = IntegerField(default=0,help_text='Number of times the file has been played/read')
 
@@ -82,7 +87,11 @@ class ImmutableFile(Model):
         return u'{ref} : {origin}'.format(**self.__dict__)
 
 class CratesImmutableFile(ImmutableFile):
-    peer = ForeignKey(Peer,help_text='From whom the file came from (local is OK)')
+    class Meta:
+        # not a model in it's own right. Subclasses will have CratesImmutableFile
+        # fields rather than having 2 tables
+        abstract = True
+    peer = ForeignKey(Peer,help_text='From whom the file came from',null=True)
 
     deprecates = ForeignKey( 'self',
             null=True,
@@ -90,7 +99,7 @@ class CratesImmutableFile(ImmutableFile):
     )
 
 
-class AudioFile(ImmutableFile):
+class AudioFile(CratesImmutableFile):
     TYPE_CHOICES = (
             ('MIX','Mix/Compilation'),
             ('SAM','Sample'),
