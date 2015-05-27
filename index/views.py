@@ -9,6 +9,7 @@ from cas import BasicCAS
 from models import AudioFile
 
 # TODO: authentication for Peers via middleware and decorators
+# TODO: migrate cas views to separate cas django app
 
 
 cas = BasicCAS()
@@ -71,6 +72,8 @@ class EnumerateCas(View):
 
     def _json_generator(self):
         '''Manual JSON generator for streaming'''
+        # TODO: could be generalised to be a generator decorator for creating a
+        # JSON list out of arbitrary objects (json dump each object)
         generator = cas.enumerate()
 
         yield '["%s"' % next(generator)

@@ -10,11 +10,18 @@ class Peer(Model):
     key = UUIDField(primary_key=True, default=uuid4,help_text="secret key to allow API access to peer")
 
     # some stats...
-    bytes_inbound = IntegerField()
-    bytes_outbound = IntegerField()
-    object_count = IntegerField()
+    bytes_inbound = IntegerField(default=0,editable=False)
+    bytes_outbound = IntegerField(default=0,editable=False)
+    object_count = IntegerField(default=0,editable=False)
 
-    bytes_available = IntegerField()
-    bytes_total = IntegerField()
+    bytes_available = IntegerField(default=0,editable=False)
+    bytes_total = IntegerField(default=0,editable=False)
 
-    objects_common = IntegerField(help_text="Mutual CAS objects. Good for data backup")
+    objects_common = IntegerField(
+        default=0,
+        editable=False,
+        help_text="Mutual CAS objects. Good for data backup"
+    )
+
+    def __unicode__(self):
+        return self.alias

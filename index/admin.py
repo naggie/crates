@@ -9,7 +9,7 @@ def cover_art_html(audioFile):
     # TODO: replace this with CAS-powered image field + admin form
     if audioFile.cover_art_ref:
         return r"""
-            <img src="/cas/{cover_art_ref}" width="512" height="512"/>
+            <img src="/cas/{cover_art_ref}" height="512"/>
         """.format(**audioFile.__dict__)
 
 @admin.register(AudioFile)
