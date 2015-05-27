@@ -16,9 +16,10 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from index.views import Cas,DumpIndex
+from index.views import Cas,DumpIndex,EnumerateCas
 
 urlpatterns = [
+    url(r'cas',EnumerateCas.as_view(), name='cas_dump'),
     url(r'cas/(?P<ref>[0-9a-f]{64})',Cas.as_view(), name='cas'),
     url(r'dump/AudioFiles',DumpIndex.as_view(), name='audiofile_dump'),
     url(r'^admin/', include(admin.site.urls)),

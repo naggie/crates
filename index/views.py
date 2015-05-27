@@ -40,6 +40,7 @@ class Cas(View):
         response['Content-Length'] = stat(filepath).st_size
         return response
 
+
 class DumpIndex(View):
     '''Streaming JSON serialised dump of entire database.'''
     model = AudioFile
@@ -59,5 +60,22 @@ class DumpIndex(View):
         return response
 
 
+class EnumerateCas(View):
+    def get(self, request):
+        response = FileResponse(
+            self._json_generator(),
+            content_type="application/json"
+        )
 
+        return response
 
+    def _json_generator(self):
+        '''Manual JSON generator for streaming'''
+        generator = cas.enumerate()
+
+        yield '["%s"' % next(generator)
+
+        for ref in generator:
+            yield ',\n"%s"' % ref
+
+        yield ']'
