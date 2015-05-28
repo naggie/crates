@@ -9,20 +9,27 @@ def cover_art_html(audioFile):
     # TODO: replace this with CAS-powered image field + admin form
     if audioFile.cover_art_ref:
         return r"""
-            <img src="/cas/{cover_art_ref}" height="512"/>
+            <img src="/cas/{cover_art_ref}" width="512"/>
         """.format(**audioFile.__dict__)
+
+def audio_preview_html(audioFile):
+    # TODO: replace this with CAS-powered image field + admin form
+    return r"""
+        <audio src="/cas/{ref}" controls preload="auto"></audio>
+    """.format(**audioFile.__dict__)
 
 @admin.register(AudioFile)
 class AudioFileAdmin(admin.ModelAdmin):
     list_display = ('title','album','artist','bitrate_kbps','genre','year')
     search_fields = list_display
 
-    def cover_art(self,audioFile):
-        return cover_art_html(audioFile)
-
+    def cover_art(self,audioFile): return cover_art_html(audioFile)
     cover_art.allow_tags = True
 
-    readonly_fields = ('cover_art',)
+    def preview_audio(self,audioFile): return audio_preview_html(audioFile)
+    preview_audio.allow_tags = True
+
+    readonly_fields = ('cover_art','preview_audio')
 
     # add AudioFiles programatically only, via from_file() classmethod
     def has_add_permission(self, request): return False
