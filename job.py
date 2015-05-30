@@ -8,34 +8,35 @@ class TaskError(Exception): pass
 class Job():
     '''WIP base class generator based crawler so progress can be seen'''
     def count(self):
-        '''Return total number of objects to crawl if that's faster than enumerating everything.'''
+        '''Hint total number of tasks if that's faster than enumerating everything.'''
         raise NotImplementedError()
 
-    def enumerate(self):
+    def enumerate_tasks(self):
+        'Yield tasks of arbitrary format'
         raise NotImplementedError()
 
-    def add(self,item):
+    def process_task(self,task):
         raise NotImplementedError()
 
     def crawl(self):
         '''Can't be bothered to enumerate/crawl manually?'''
-        for item in self.enumerate():
+        for task in self.enumerate_tasks():
             try:
-                print item
-                self.add(item)
+                print task
+                self.process_task(task)
             except TaskError: pass
             except TaskSkipped: pass
 
     def crawl_with_progress(self):
         print 'Enumerating tasks...'
-        items = list(self.enumerate())
-        eta = TimeRemainingEstimator( len(items) )
+        tasks = list(self.enumerate_tasks())
+        eta = TimeRemainingEstimator( len(tasks) )
 
         print eta.summary()
 
-        for item in items:
+        for task in tasks:
             try:
-                self.add(item)
+                self.process_task(task)
                 eta.tick()
             except TaskSkipped:
                 eta.skip()

@@ -8,6 +8,7 @@ from cas import BasicCAS
 from job import Job,TaskError,TaskSkipped
 
 # crawler could have a worker thread and queue, depending on benchmark results
+# TODO make this a Job
 class FileCrawler():
     def __init__(self):
         pass
@@ -71,13 +72,13 @@ class PeerCrawler(Job):
         return urlunparse( self.urlobj._replace(**kwargs) )
 
 
-    def enumerate(self):
+    def enumerate_tasks(self):
         url = self._build_url(path="dump/AudioFiles")
         json = get(url).text
         return self.deserialize(json)
 
 
-    def add(self,item):
+    def process_task(self,item):
         # N.B. item is not a simple django model object, but behaves like one
 
         # this relationship is lost by the serialiser (currently)
