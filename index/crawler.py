@@ -131,6 +131,11 @@ class PeerCrawler(BaseCrawler):
         generator = get(url,stream=True).iter_content(chunk_size=8192)
         ref = self.cas.insert_generator(generator)
 
+        if item.cover_art_ref:
+            url = self._build_url(path="cas/%s" % item.object.cover_art_ref)
+            generator = get(url,stream=True).iter_content(chunk_size=8192)
+            self.cas.insert_generator(generator)
+
         if ref != item.object.ref:
             self.cas.delete(ref)
             self.failed +=1
