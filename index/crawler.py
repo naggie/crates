@@ -38,8 +38,17 @@ class FileCrawler():
         for filepath in self._enumerate(directory):
             try:
                 self._insert(filepath)
+            # In this case, should make one. In theory, the acoustid mutator
+            # should populate them later.
+            # TODO: add ID3 tags when there are none.
+            # I'm not especially sure this will happen often enough to care.
             except HeaderNotFoundError: continue
             except ID3NoHeaderError: continue
+            # empty but existing tags. Don't care atm.
+            except IndexError: continue
+            # invalid characters, and whatever else I can't be bothered to catch
+            # TODO: collect these exception for a report summary.
+            except Exception as e: print e
 
 
     def _insert(self,filepath):
