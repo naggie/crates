@@ -5,44 +5,7 @@ from requests import get
 from urlparse import urlparse,urlunparse
 from django.core.serializers import get_serializer,get_deserializer
 from cas import BasicCAS
-from timer import TimeRemainingEstimator
-# TODO peercrawler enumeration filter: do we have the file or not?
-
-class BaseCrawler():
-    '''WIP base class generator based crawler so progress can be seen'''
-
-    added = 0
-    failed = 0
-    skipped = 0
-
-    def count(self):
-        '''Return total number of objects to crawl'''
-        raise NotImplementedError()
-
-    def enumerate(self):
-        raise NotImplementedError()
-
-    def add(self,item):
-        raise NotImplementedError()
-
-    def crawl(self):
-        '''Can't be bothered to enumerate/crawl manually?'''
-        for item in self.enumerate():
-            print item
-            self.add(item)
-
-    def crawl_with_progress(self):
-        items = list(self.enumerate())
-        eta = TimeRemainingEstimator( len(items) )
-
-        print eta.summary()
-
-        for item in items:
-            self.add(item)
-            eta.tick()
-            eta.rewrite_eta_frame()
-
-
+from job import Job,TaskError,TaskSkipped
 
 # crawler could have a worker thread and queue, depending on benchmark results
 class FileCrawler():
@@ -97,7 +60,7 @@ class FileCrawler():
 # Even a soundcloud crawler? (using origin_url to download new only)
 # TODO hooks for progress, or a base class with a generator and unit processor.
 
-class PeerCrawler(BaseCrawler):
+class PeerCrawler(Job):
     def __init__(self,peer):
         self.cas = BasicCAS()
         self.peer = peer
@@ -125,8 +88,7 @@ class PeerCrawler(BaseCrawler):
 
         # TODO: can I just do item.exists() or something?
         if AudioFile.objects.filter(ref=item.object.ref).exists():
-            self.skipped +=1
-            return
+            raise TaskSkipped()
 
         # dl audio file into CAS via ref
         url = self._build_url(path="cas/%s" % item.object.ref)
@@ -140,10 +102,9 @@ class PeerCrawler(BaseCrawler):
 
         if ref != item.object.ref:
             self.cas.delete(ref)
-            self.failed +=1
-        else:
-            item.object.save(ref)
-            self.added +=1
+            raise TaskError(ref)
+
+        item.object.save(ref)
 
         assert ref == item.object.ref # network/disk/h4x0r problem? Just exit now. Later throw/catch/delete and warn or something.
 
