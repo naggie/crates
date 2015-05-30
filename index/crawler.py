@@ -5,6 +5,8 @@ from requests import get
 from urlparse import urlparse,urlunparse
 from django.core.serializers import get_serializer,get_deserializer
 from cas import BasicCAS
+from timer import TimeRemainingEstimator
+# TODO peercrawler enumeration filter: do we have the file or not?
 
 class BaseCrawler():
     '''WIP base class generator based crawler so progress can be seen'''
@@ -26,7 +28,20 @@ class BaseCrawler():
     def crawl(self):
         '''Can't be bothered to enumerate/crawl manually?'''
         for item in self.enumerate():
+            print item
             self.add(item)
+
+    def crawl_with_progress(self):
+        items = list(self.enumerate())
+        eta = TimeRemainingEstimator( len(items) )
+
+        print eta.summary()
+
+        for item in items:
+            self.add(item)
+            eta.tick()
+            eta.rewrite_eta_frame()
+
 
 
 # crawler could have a worker thread and queue, depending on benchmark results
