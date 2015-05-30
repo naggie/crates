@@ -123,10 +123,12 @@ class PeerCrawler(BaseCrawler):
         # remember peer for stats/filtering
         item.object.peer = self.peer
 
-        # dl audio file into CAS via ref. If we get this far, the file is
-        # assumed to be good because a query was (hopefully) used requiring a
-        # certain quality. If this peer is bad, we can delete by peer thanks to
-        # the above relationship
+        # TODO: can I just do item.exists() or something?
+        if AudioFile.objects.filter(ref=item.object.ref).exists():
+            self.skipped +=1
+            return
+
+        # dl audio file into CAS via ref
         url = self._build_url(path="cas/%s" % item.object.ref)
         generator = get(url,stream=True).iter_content(chunk_size=8192)
         ref = self.cas.insert_generator(generator)
@@ -139,12 +141,9 @@ class PeerCrawler(BaseCrawler):
         if ref != item.object.ref:
             self.cas.delete(ref)
             self.failed +=1
-        elif not AudioFile.objects.filter(ref=item.object.ref).exists():
+        else:
             item.object.save(ref)
             self.added +=1
-        else:
-            self.skipped +=1
 
         assert ref == item.object.ref # network/disk/h4x0r problem? Just exit now. Later throw/catch/delete and warn or something.
-        # TODO fix potential leak of garbage here
 

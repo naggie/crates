@@ -122,6 +122,13 @@ class BasicCAS:
 
         self._symlink(binpath,destination)
 
+
+    def has(self,ref):
+        'Convenience method, does this file exist locally by ref?'
+        binpath = self._binpath(ref)
+        return exists(binpath)
+
+
     def enumerate(self):
         'A generator that yields all refs'
 
