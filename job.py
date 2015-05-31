@@ -18,7 +18,7 @@ class Job():
     def process_task(self,task):
         raise NotImplementedError()
 
-    def crawl(self):
+    def run(self):
         '''Can't be bothered to enumerate/crawl manually?'''
         for task in self.enumerate_tasks():
             try:
@@ -27,7 +27,7 @@ class Job():
             except TaskError: pass
             except TaskSkipped: pass
 
-    def crawl_with_progress(self):
+    def run_with_progress(self):
         print 'Enumerating tasks...'
         tasks = list(self.enumerate_tasks())
         eta = TimeRemainingEstimator( len(tasks) )

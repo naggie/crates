@@ -8,52 +8,42 @@ from cas import BasicCAS
 from job import Job,TaskError,TaskSkipped
 
 # crawler could have a worker thread and queue, depending on benchmark results
-# TODO make this a Job
-class FileCrawler():
-    def __init__(self):
-        pass
+class FileCrawler(Job):
+    def __init__(self,directory):
+        self.directory = directory
 
-    def crawl(self,directory):
-        for filepath in self._enumerate(directory):
-            try:
-                self._insert(filepath)
-            # In this case, should make one. In theory, the acoustid mutator
-            # should populate them later.
-            # TODO: add ID3 tags when there are none.
-            # I'm not especially sure this will happen often enough to care.
-            except HeaderNotFoundError: continue
-            except ID3NoHeaderError: continue
-            # empty but existing tags. Don't care atm.
-            except IndexError: continue
-            # invalid characters, and whatever else I can't be bothered to catch
-            # TODO: collect these exception for a report summary.
-            except Exception as e: print e
-
-
-    def _insert(self,filepath):
-        # what sort of file is it? Guess the model to use from extension.
-        root, ext = splitext(filepath)
-
-        if ext == '.mp3':
-            print filepath # don't do this, keep track of progress with generator etc
-            AudioFile.from_mp3(filepath).save()
-
-        elif ext == '.aac':
-            AudioFile.from_aac(filepath).save()
-
-        # ... otherwise who cares.
-
-
-    @staticmethod
-    def _enumerate(directory):
-        'Generator to list all accessable absolute files in given directory, recursively'
-
-        for dirpath,dirnames,filenames in walk(directory,followlinks=True):
+    def enumerate_tasks(self):
+        for dirpath,dirnames,filenames in walk(self.directory,followlinks=True):
             for filename in filenames:
                 filepath = join(dirpath,filename)
 
                 if access(filepath,R_OK):
                     yield filepath
+
+    def process_task(self,filepath):
+            try:
+                # what sort of file is it? Guess the model to use from extension.
+                root, ext = splitext(filepath)
+
+                if ext == '.mp3':
+                    AudioFile.from_mp3(filepath).save()
+
+                elif ext == '.aac':
+                    AudioFile.from_aac(filepath).save()
+                else:
+                    raise TaskSkipped()
+            # In this case, should make one. In theory, the acoustid mutator
+            # should populate them later.
+            # TODO: add ID3 tags when there are none.
+            # I'm not especially sure this will happen often enough to care.
+            except HeaderNotFoundError: raise TaskSkipped()
+            except ID3NoHeaderError: raise TaskSkipped()
+            # empty but existing tags. Don't care atm.
+            except IndexError: raise TaskSkipped()
+            except TaskSkipped: raise
+            # invalid characters, and whatever else I can't be bothered to catch
+            # TODO: collect these exception for a report summary.
+            except Exception as e: print e
 
 
 # Could also have a PeerCrawler in here to crawl over HTTP...

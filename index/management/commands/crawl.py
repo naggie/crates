@@ -17,12 +17,12 @@ class Command(BaseCommand):
         parser.add_argument('directories', nargs='+', type=str)
 
     def handle(self, *args, **options):
-        crawler = FileCrawler()
 
         # TODO external iterator for crawler via generator.
         # TODO ...progress indication here
         for directory in options['directories']:
-            crawler.crawl(directory)
+            crawler = FileCrawler(directory)
+            crawler.run_with_progress()
 
 
 
