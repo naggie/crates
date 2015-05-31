@@ -38,22 +38,25 @@ class Job():
             except TaskError: pass
             except TaskSkipped: pass
 
-    def run_with_progress(self):
+    def _prepare_tasks(self):
+        'set self.tasks (generator or list) and self.task_count'
         if self.memory_tradeoff:
             # Do not need to remember tasks for count
-            print 'Counting tasks...'
-            task_count = self.hint_length()
+            self.task_count = self.hint_length()
             # ...instead, enumerate twice
-            tasks = self.enumerate_tasks()
+            self.tasks = self.enumerate_tasks()
         else:
-            print 'Enumerating tasks...'
-            tasks = list(self.enumerate_tasks())
-            task_count = len(tasks)
+            self.tasks = list(self.enumerate_tasks())
+            self.task_count = len(tasks)
 
-        eta = TimeRemainingEstimator(task_count)
+    def run_with_progress(self):
+        print 'Preparing tasks...'
+        self._prepare_tasks()
+        eta = TimeRemainingEstimator(self.task_count)
+        print 'Processing tasks...'
         print eta.summary()
 
-        for task in tasks:
+        for task in self.tasks:
             try:
                 self.process_task(task)
                 eta.tick()
