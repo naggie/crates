@@ -197,7 +197,7 @@ class AudioFile(CratesImmutableFile):
 
         if audio.has_key('TALB'): audioFile.album = audio['TALB'][0]
         if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0]
-        if audio.has_key('TYER'): audioFile.year = audio['TYER'][0]
+        if audio.has_key('TDRC'): audioFile.year = audio['TDRC'][0]
 
         try:
             if audio.has_key('TRCK'): audioFile.track = int(audio['TRCK'][0].partition('/')[0])

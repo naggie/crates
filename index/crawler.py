@@ -1,11 +1,13 @@
 from models import ImmutableFile,AudioFile,HeaderNotFoundError,ID3NoHeaderError
 from os.path import splitext,join
-from os import access,R_OK
+from os import access,R_OK,fdopen
 from requests import get
 from urlparse import urlparse,urlunparse
 from django.core.serializers import get_serializer,get_deserializer
 from cas import BasicCAS
 from job import Job,TaskError,TaskSkipped
+from tempfile import mkstemp
+from django.conf import settings
 
 
 try:
@@ -124,52 +126,68 @@ class PeerCrawler(Job):
         assert ref == item.object.ref # network/disk/h4x0r problem? Just exit now. Later throw/catch/delete and warn or something.
 
 class SoundcloudCrawler(Job):
+    '''Produces best quality possible. Useful as artists sometimes pull songs.'''
+    # TODO: cursor system to grab all favorites (api v2, see likes page on web and net activity)
     def __init__(self,username):
-
         self.likes_url = "http://api.soundcloud.com/users/%s/favorites.json" % username
         # TODO Grab API key from database
         from os import getenv
-        key = getenv('SOUNDCLOUD_API_KEY')
-
-        # send off with every request
-        self.params = {
-            'client_id': key,
-            'limit': 9999,
-        }
+        self.key = getenv('SOUNDCLOUD_API_KEY')
 
 
     def enumerate_tasks(self):
-        for item in get(self.likes_url,params=self.params).json():
+        for item in get(self.likes_url,params={'client_id':self.key,'limit':9999}).json():
+            # Might be None. Can be hacked: s/large/original/g
+            cover_art_url = item.get('artwork_url') or item['user'].get('avatar_url')
+            # 'download' file is normally 320Kbps vs 128Kbps for stream_url
+            if item.get('downloadable'):
+                # deprecated
+                #mp3_url = item.get('download_url')
+                # this will be a 302 redirect to CDN
+                mp3_url = 'http://api.soundcloud.com/tracks/%s/download' % item['id']
+            else:
+                # :( buy it later, then use the upgrade mutator
+                #mp3_url = item['stream_url']
+                mp3_url = 'http://api.soundcloud.com/tracks/%s/stream' % item['id']
 
-            yield (
-                {
-                    'title': item['title'],
-                    'artist': item['user']['username'],
-                    'album': item['artist'],
-                    'album_artist': 'soundcloud.com',
-                    'genre': item['genre'],
-                    'comment': item['description'],
-                    'year': int(item['year'][:4]),
-                },
-                mp3_url,
-                cover_art_url,
-            )
-        # N.B keys of tasks: [u'attachments_uri', u'video_url', u'track_type',
-        # u'release_month', u'original_format', u'label_name', u'duration', u'id',
-        # u'streamable', u'user_id', u'title', u'favoritings_count',
-        # u'commentable', u'label_id', u'state', u'downloadable', u'policy',
-        # u'waveform_url', u'sharing', u'description', u'release_day',
-        # u'purchase_url', u'permalink', u'comment_count', u'purchase_title',
-        # u'stream_url', u'last_modified', u'user', u'genre', u'isrc',
-        # u'download_count', u'permalink_url', u'playback_count', u'kind',
-        # u'release_year', u'license', u'artwork_url', u'created_at', u'bpm',
-        # u'uri', u'original_content_size', u'key_signature', u'release',
-        # u'tag_list', u'embeddable_by']
+            # they use an incompatible SSL setup. HTTP is fine.
+            mp3_url = mp3_url.replace('https','http')
+            cover_art_url = cover_art_url.replace('https','http')
 
+            yield {
+                'title': item['title'],
+                'artist': item['user']['username'],
+                'album': item['user']['username'] + 'on soundcloud',
+                'album_artist': 'soundcloud.com',
+                'genre': item['genre'],
+                'comment': item['description'],
+                'year': int(item['created_at'][:4]),
+                'mp3_url': mp3_url,
+                'cover_art_url': cover_art_url,
+            }
 
-    def process_task(self,item):
-        from sys import exit
-        print item.keys()
-        exit()
+    def process_task(self,track):
+        # does it exist already? Using enough fields to disambiguate without
+        # having an extra non-standard ID. Should also match tracks produced by the old system, otherwise all of the dictionary would do.
+        if AudioFile.objects.filter(
+            artist=track['artist'],
+            title=track['title'],
+            genre=track['genre'],
+        ).exists():
+            except TaskSkipped()
 
+        # download MP3 file (tags could be non-existent to great)
+        fd,filepath = mkstemp(dir=settings.CAS_DIRECTORY,prefix="soundcloud_mp3_")
+        # os-level, not python File. Cannot be GC'd. Plug leak.
+        with fdopen(fd,'wb') as f:
+            for chunk in get(track['mp3_url'],stream=True).iter_content(chunk_size=8192)
+                f.write(chunk)
+
+        # inspect headers (some can be better than 'meta' can provide)
+        # add headers
+        # download cover art
+        # add cover art
+
+        # insert into index
+        # finally, rm temporary file
 
