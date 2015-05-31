@@ -66,8 +66,16 @@ class ImmutableFile(Model):
         '''Return an instance of this class derived from the given file.
         Override to add features such as ID3 data extraction, chromaprint gen,
         etc. Best used in a threaded work queue based system.'''
+        # existing? This is only useful for sub-classes. If a lot of processing
+        # is involved, this should save time. However, if extra data is
+        # required for new features, this could cause a problem requiring a new
+        # index
+        ref = cas.insert_file(filepath)
+        try: return cls.objects.get(ref=ref)
+        except cls.DoesNotExist: pass
+
         return cls(
-            ref = cas.insert_file(filepath),
+            ref = ref,
             size = stat(filepath).st_size,
             origin = filepath,
         )
@@ -176,6 +184,7 @@ class AudioFile(CratesImmutableFile):
     def from_mp3(cls,filepath):
         # mp3 specific tag loading goes here
         audioFile = super(AudioFile,cls).from_file(filepath)
+
 
         # MP3 class is a superset of ID3 including length and bitrate, etc.
         audio = MP3(filepath)

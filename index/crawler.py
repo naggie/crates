@@ -30,7 +30,10 @@ class FileCrawler(Job):
         for dirpath,dirnames,filenames in walk(self.directory,followlinks=False):
             for filename in filenames:
                 filepath = join(dirpath,filename)
-                yield filepath
+                root, ext = splitext(filepath)
+                # better on the remaining time estimator + memory
+                if ext in ('.mp3','.aac'):
+                    yield filepath
 
     def process_task(self,filepath):
             try:
@@ -59,7 +62,7 @@ class FileCrawler(Job):
             except TaskError: raise
             # invalid characters, and whatever else I can't be bothered to catch
             # TODO: collect these exception for a report summary.
-            except Exception as e: print e
+            #except Exception as e: print e
 
 
 # Could also have a PeerCrawler in here to crawl over HTTP...
