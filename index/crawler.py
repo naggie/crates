@@ -201,7 +201,7 @@ class SoundcloudCrawler(Job):
 
             # download cover art
             cover_res = get(track['cover_art_url'])
-            if cover_res.status_code =! 200:
+            if cover_res.status_code != 200:
                 # undo hack
                 cover_res = get(track['cover_art_url'].replace('large','original'))
 
@@ -218,8 +218,6 @@ class SoundcloudCrawler(Job):
                         data=cover_res.content
                     )
                 )
-            else:
-                raise TaskError('Cover art failed')
 
             audio.tags.add(TIT2(encoding=3, text=track['title']))
             audio.tags.add(TALB(encoding=3, text=track['album']))
