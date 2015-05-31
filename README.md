@@ -55,3 +55,11 @@ One of the main features of crates is to be able to make/share playlists for
 DJing. Each playlist has an ID and is shared with Peers.
 
 Serato/Mixxx/Traktor import/export is planned.
+
+# Installation
+`sudo apt-get install libpython-dev`
+`sudo pip install --upgrade -r requirements.txt`
+## Production
+`./manage.py runserver`
+## Development
+Guide pending, but uses nginx+uwsgi

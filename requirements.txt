@@ -2,3 +2,5 @@ django==1.8.2
 mutagen==1.29
 django-suit==0.2.13
 requests==2.7.0
+# scandir requires libpython-dev
+scandir==1.1

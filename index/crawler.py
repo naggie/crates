@@ -1,29 +1,44 @@
 from models import ImmutableFile,AudioFile,HeaderNotFoundError,ID3NoHeaderError
 from os.path import splitext,join
-from os import access,walk,R_OK
+from os import access,R_OK
 from requests import get
 from urlparse import urlparse,urlunparse
 from django.core.serializers import get_serializer,get_deserializer
 from cas import BasicCAS
 from job import Job,TaskError,TaskSkipped
 
+
+try:
+    from os.scandir import scandir,walk # python 3.5, fast
+except ImportError:
+    try:
+        from scandir import walk # python 2.x, scandir from pip
+    except ImportError:
+        from os import walk # python 2.x, native and slow
+
+# TODO split into separate module, file per crawler, import in __init__.py
+
 # crawler could have a worker thread and queue, depending on benchmark results
 class FileCrawler(Job):
+    memory_tradeoff = True
+
     def __init__(self,directory):
         self.directory = directory
 
     def enumerate_tasks(self):
-        for dirpath,dirnames,filenames in walk(self.directory,followlinks=True):
+        # beware of infinite loop when followlinks is true.
+        for dirpath,dirnames,filenames in walk(self.directory,followlinks=False):
             for filename in filenames:
                 filepath = join(dirpath,filename)
-
-                if access(filepath,R_OK):
-                    yield filepath
+                yield filepath
 
     def process_task(self,filepath):
             try:
                 # what sort of file is it? Guess the model to use from extension.
                 root, ext = splitext(filepath)
+
+                if not access(filepath,R_OK):
+                    raise TaskError('Could not access %s' % filepath)
 
                 if ext == '.mp3':
                     AudioFile.from_mp3(filepath).save()
@@ -41,6 +56,7 @@ class FileCrawler(Job):
             # empty but existing tags. Don't care atm.
             except IndexError: raise TaskSkipped()
             except TaskSkipped: raise
+            except TaskError: raise
             # invalid characters, and whatever else I can't be bothered to catch
             # TODO: collect these exception for a report summary.
             except Exception as e: print e
@@ -98,4 +114,17 @@ class PeerCrawler(Job):
         item.object.save(ref)
 
         assert ref == item.object.ref # network/disk/h4x0r problem? Just exit now. Later throw/catch/delete and warn or something.
+
+def SoundcloudCrawler(Job):
+    def __init__(self,usernames):
+        self.usernames = liar(usernames)
+
+
+        # TODO Grab API key from database
+
+    def enumerate_tasks(self):
+        pass
+
+    def process_task(self,item):
+        pass
 
