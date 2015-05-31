@@ -12,6 +12,13 @@ class TaskError(Exception): pass
 # mprof run <python script>
 # mprof plot
 
+# Note that a memory_tradeoff feature was implemented after large memory usage
+# (14GB ish) triggered me to implement a system to pre-enumerate all tasks just
+# to count them first. After the memory usage turned out to be the result of an
+# infinite loop instead, only saving 20MB out of 80MB, the feature was deemed
+# excessive and removed. Should it be required later, see
+# b7e9924b01cf3d70b74de43fb9c731f91c33fa0e
+
 class Job():
     memory_tradeoff = False # Set to True to run generator twice for task count
 
@@ -26,12 +33,6 @@ class Job():
     def process_task(self,task):
         raise NotImplementedError()
 
-    def hint_length(self):
-        '''Used as a memory tradeoff for runtime determination. Override with
-        something more efficient if possible. This naive implementation just
-        exhausts a generator instance, which is obviously inefficient'''
-        return sum(1 for task in self.enumerate_tasks() )
-
     def run(self):
         '''Can't be bothered to enumerate/crawl manually?'''
         for task in self.enumerate_tasks():
@@ -40,28 +41,15 @@ class Job():
             except TaskError: pass
             except TaskSkipped: pass
 
-    # TODO is the memory_tradeoff worth it? I implemented it to save a 13GB memory
-    # usage situation that turned out to be an infinite loop. Could pune later
-    # eg, 150,000 item crawl saves 20MB on 80MB.... not much...
-    def _prepare_tasks(self):
-        'set self.tasks (generator or list) and self.task_count'
-        if self.memory_tradeoff:
-            # Do not need to remember tasks for count
-            self.task_count = self.hint_length()
-            # ...instead, enumerate twice
-            self.tasks = self.enumerate_tasks()
-        else:
-            self.tasks = list(self.enumerate_tasks())
-            self.task_count = len(self.tasks)
-
     def run_with_progress(self):
         print 'Preparing tasks...'
-        self._prepare_tasks()
-        eta = TimeRemainingEstimator(self.task_count)
+        tasks = list(self.enumerate_tasks())
+        task_count = len(tasks)
+        eta = TimeRemainingEstimator(task_count)
         print 'Processing tasks...'
         print eta.summary()
 
-        for task in self.tasks:
+        for task in tasks:
             try:
                 self.process_task(task)
                 eta.tick()
