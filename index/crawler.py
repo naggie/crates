@@ -142,6 +142,7 @@ class SoundcloudCrawler(Job):
         for item in get(self.likes_url,params={'client_id':self.key,'limit':9999}).json():
             # Might be None. Can be hacked: s/large/original/g
             cover_art_url = item.get('artwork_url') or item['user'].get('avatar_url')
+            cover_art_url = cover_art_url.replace('large','original')
             # 'download' file is normally 320Kbps vs 128Kbps for stream_url
             if item.get('downloadable'):
                 # deprecated
@@ -200,6 +201,10 @@ class SoundcloudCrawler(Job):
 
             # download cover art
             cover_res = get(track['cover_art_url'])
+            if cover_res.status_code =! 200:
+                # undo hack
+                cover_res = get(track['cover_art_url'].replace('large','original'))
+
             if cover_res.status_code == 200:
                 # else, hopefully there is one embedded
                 cover_art = cover_res.content
@@ -213,6 +218,8 @@ class SoundcloudCrawler(Job):
                         data=cover_res.content
                     )
                 )
+            else:
+                raise TaskError('Cover art failed')
 
             audio.tags.add(TIT2(encoding=3, text=track['title']))
             audio.tags.add(TALB(encoding=3, text=track['album']))
