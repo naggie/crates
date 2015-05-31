@@ -84,6 +84,9 @@ class TimeRemainingEstimator():
 
 
     def rewrite_eta_frame(self):
+        if self.total == 0:
+            return "Nothing to process!"
+
         percent = int(100*self.processed/self.total)
         reprint('[ {0: >30} ][ {1: 3}% complete ] [{2: <30}][{3: >5}/{4}]'.format(
             self.summary(),
