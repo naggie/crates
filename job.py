@@ -53,9 +53,10 @@ class Job():
             try:
                 self.process_task(task)
                 eta.tick()
-            except TaskSkipped: eta.skip()
+            except TaskSkipped:
+                eta.skip()
             except TaskError as e:
-                print e
+                print 'TaskError:',e
                 eta.skip()
 
             eta.rewrite_eta_frame()

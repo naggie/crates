@@ -132,6 +132,7 @@ class SoundcloudCrawler(Job):
     # TODO: cursor system to grab all favorites (api v2, see likes page on web and net activity)
     def __init__(self,username):
         self.likes_url = "http://api.soundcloud.com/users/%s/favorites.json" % username
+        self.username = username
         # TODO Grab API key from database
         from os import getenv
         self.key = getenv('SOUNDCLOUD_API_KEY')
@@ -160,7 +161,7 @@ class SoundcloudCrawler(Job):
                 'title': item['title'],
                 'artist': item['user']['username'],
                 'album': item['user']['username'] + 'on soundcloud',
-                'album_artist': 'soundcloud.com',
+                'album_artist': self.username,
                 'genre': item['genre'],
                 'comment': item['description'],
                 'year': int(item['created_at'][:4]),
@@ -176,15 +177,21 @@ class SoundcloudCrawler(Job):
             title=track['title'],
             genre=track['genre'],
         ).exists():
-            except TaskSkipped()
+            raise TaskSkipped()
 
         # download MP3 file (tags could be non-existent to great)
         fd,filepath = mkstemp(dir=settings.CAS_DIRECTORY,prefix="soundcloud_mp3_")
         # os-level, not python File. Cannot be GC'd. Plug leak.
         try:
             with fdopen(fd,'wb') as f:
-                for chunk in get(track['mp3_url'],stream=True).iter_content(chunk_size=8192)
+                mp3_res = get(track['mp3_url'],stream=True)
+
+                if mp3_res.status_code != 200:
+                    raise TaskError('Could not download {0}, got HTTP {1}'.format(track['mp3_url'],mp3_res.status_code))
+
+                for chunk in mp3_res.iter_content(chunk_size=8192):
                     f.write(chunk)
+
             # inspect headers (some can be better than 'meta' can provide)
             audio = MP3(filepath)
             # add ID3 headers if not there (probably isn't) will except if they are
@@ -192,10 +199,10 @@ class SoundcloudCrawler(Job):
             except: pass
 
             # download cover art
-            cover_art_response = get(track['cover_art_url'])
-            if cover_art_response.status_code == 200:
+            cover_res = get(track['cover_art_url'])
+            if cover_res.status_code == 200:
                 # else, hopefully there is one embedded
-                cover_art = cover_art_response.content
+                cover_art = cover_res.content
 
                 audio.tags.add(
                     APIC(
@@ -220,7 +227,7 @@ class SoundcloudCrawler(Job):
             # insert into index
             AudioFile.from_mp3(filepath).save()
 
-        except (HeaderNotFoundError):
+        except HeaderNotFoundError:
             # MP3 header, not ID3 header that is.
             raise TaskError('Invalid MP3: %s' % track['title'])
         finally:
