@@ -70,6 +70,8 @@ class FileCrawler(Job):
 # Even a soundcloud crawler? (using origin_url to download new only)
 # TODO hooks for progress, or a base class with a generator and unit processor.
 
+# TODO: ask the cas if it has the ref first
+
 class PeerCrawler(Job):
     def __init__(self,peer):
         self.cas = BasicCAS()
@@ -100,12 +102,15 @@ class PeerCrawler(Job):
         if AudioFile.objects.filter(ref=item.object.ref).exists():
             raise TaskSkipped()
 
-        # dl audio file into CAS via ref
-        url = self._build_url(path="cas/%s" % item.object.ref)
-        generator = get(url,stream=True).iter_content(chunk_size=8192)
-        ref = self.cas.insert_generator(generator)
+        # dl audio file into CAS via ref (may already have, even if not index if index is destroyed)
+        if not self.cas.has(item.object.ref):
+            url = self._build_url(path="cas/%s" % item.object.ref)
+            generator = get(url,stream=True).iter_content(chunk_size=8192)
+            ref = self.cas.insert_generator(generator)
+        else:
+            ref = item.object.ref
 
-        if item.object.cover_art_ref:
+        if item.object.cover_art_ref and not self.cas.has(item.object.cover_art_ref):
             url = self._build_url(path="cas/%s" % item.object.cover_art_ref)
             generator = get(url,stream=True).iter_content(chunk_size=8192)
             self.cas.insert_generator(generator)
@@ -118,16 +123,53 @@ class PeerCrawler(Job):
 
         assert ref == item.object.ref # network/disk/h4x0r problem? Just exit now. Later throw/catch/delete and warn or something.
 
-def SoundcloudCrawler(Job):
-    def __init__(self,usernames):
-        self.usernames = liar(usernames)
+class SoundcloudCrawler(Job):
+    def __init__(self,username):
 
-
+        self.likes_url = "http://api.soundcloud.com/users/%s/favorites.json" % username
         # TODO Grab API key from database
+        from os import getenv
+        key = getenv('SOUNDCLOUD_API_KEY')
+
+        # send off with every request
+        self.params = {
+            'client_id': key,
+            'limit': 9999,
+        }
+
 
     def enumerate_tasks(self):
-        pass
+        for item in get(self.likes_url,params=self.params).json():
+
+            yield (
+                {
+                    'title': item['title'],
+                    'artist': item['user']['username'],
+                    'album': item['artist'],
+                    'album_artist': 'soundcloud.com',
+                    'genre': item['genre'],
+                    'comment': item['description'],
+                    'year': int(item['year'][:4]),
+                },
+                mp3_url,
+                cover_art_url,
+            )
+        # N.B keys of tasks: [u'attachments_uri', u'video_url', u'track_type',
+        # u'release_month', u'original_format', u'label_name', u'duration', u'id',
+        # u'streamable', u'user_id', u'title', u'favoritings_count',
+        # u'commentable', u'label_id', u'state', u'downloadable', u'policy',
+        # u'waveform_url', u'sharing', u'description', u'release_day',
+        # u'purchase_url', u'permalink', u'comment_count', u'purchase_title',
+        # u'stream_url', u'last_modified', u'user', u'genre', u'isrc',
+        # u'download_count', u'permalink_url', u'playback_count', u'kind',
+        # u'release_year', u'license', u'artwork_url', u'created_at', u'bpm',
+        # u'uri', u'original_content_size', u'key_signature', u'release',
+        # u'tag_list', u'embeddable_by']
+
 
     def process_task(self,item):
-        pass
+        from sys import exit
+        print item.keys()
+        exit()
+
 
