@@ -6,9 +6,12 @@ from sys import stdout
 class TaskSkipped(Exception): pass
 class TaskError(Exception): pass
 # TODO MultiThreadedJob
-# TODO conversion of generator to iterator to make this deterministic,
-# implementation dependent on memory_tradeoff or length hint
-# other methods may specify a length hint manually...
+
+# Python memory profiler
+# sudo pip install --upgrade memory_profiler psutil matplotlib
+# mprof run <python script>
+# mprof plot
+
 class Job():
     memory_tradeoff = False # Set to True to run generator twice for task count
 
@@ -33,11 +36,13 @@ class Job():
         '''Can't be bothered to enumerate/crawl manually?'''
         for task in self.enumerate_tasks():
             try:
-                print task
                 self.process_task(task)
             except TaskError: pass
             except TaskSkipped: pass
 
+    # TODO is the memory_tradeoff worth it? I implemented it to save a 13GB memory
+    # usage situation that turned out to be an infinite loop. Could pune later
+    # eg, 150,000 item crawl saves 20MB on 80MB.... not much...
     def _prepare_tasks(self):
         'set self.tasks (generator or list) and self.task_count'
         if self.memory_tradeoff:
@@ -47,7 +52,7 @@ class Job():
             self.tasks = self.enumerate_tasks()
         else:
             self.tasks = list(self.enumerate_tasks())
-            self.task_count = len(tasks)
+            self.task_count = len(self.tasks)
 
     def run_with_progress(self):
         print 'Preparing tasks...'

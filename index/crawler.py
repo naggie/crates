@@ -20,7 +20,7 @@ except ImportError:
 
 # crawler could have a worker thread and queue, depending on benchmark results
 class FileCrawler(Job):
-    memory_tradeoff = True
+    memory_tradeoff = False
 
     def __init__(self,directory):
         self.directory = directory
