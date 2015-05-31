@@ -1,6 +1,6 @@
 from models import ImmutableFile,AudioFile,HeaderNotFoundError,ID3NoHeaderError
 from os.path import splitext,join
-from os import access,R_OK,fdopen
+from os import access,R_OK,fdopen,unlink
 from requests import get
 from urlparse import urlparse,urlunparse
 from django.core.serializers import get_serializer,get_deserializer
@@ -9,6 +9,8 @@ from job import Job,TaskError,TaskSkipped
 from tempfile import mkstemp
 from django.conf import settings
 
+from mutagen.mp3 import MP3,HeaderNotFoundError
+from mutagen.id3 import ID3,APIC,TIT2,TPE1,TPE2,TCON,TDRC,TALB
 
 try:
     from os.scandir import scandir,walk # python 3.5, fast
@@ -179,15 +181,50 @@ class SoundcloudCrawler(Job):
         # download MP3 file (tags could be non-existent to great)
         fd,filepath = mkstemp(dir=settings.CAS_DIRECTORY,prefix="soundcloud_mp3_")
         # os-level, not python File. Cannot be GC'd. Plug leak.
-        with fdopen(fd,'wb') as f:
-            for chunk in get(track['mp3_url'],stream=True).iter_content(chunk_size=8192)
-                f.write(chunk)
+        try:
+            with fdopen(fd,'wb') as f:
+                for chunk in get(track['mp3_url'],stream=True).iter_content(chunk_size=8192)
+                    f.write(chunk)
+            # inspect headers (some can be better than 'meta' can provide)
+            audio = MP3(filepath)
+            # add ID3 headers if not there (probably isn't) will except if they are
+            try: audio.add_tags()
+            except: pass
 
-        # inspect headers (some can be better than 'meta' can provide)
-        # add headers
-        # download cover art
-        # add cover art
+            # download cover art
+            cover_art_response = get(track['cover_art_url'])
+            if cover_art_response.status_code == 200:
+                # else, hopefully there is one embedded
+                cover_art = cover_art_response.content
 
-        # insert into index
-        # finally, rm temporary file
+                audio.tags.add(
+                    APIC(
+                        encoding=3, # 3 is for utf-8
+                        mime='image/jpeg',
+                        type=3, # 3 is for the cover image
+                        desc=u'Cover',
+                        data=cover_art_response.content
+                    )
+                )
+
+            audio.tags.add(TIT2(encoding=3, text=track['title']))
+            audio.tags.add(TALB(encoding=3, text=track['album']))
+            audio.tags.add(TPE1(encoding=3, text=track['artist']))
+            audio.tags.add(TPE2(encoding=3, text=track['album_artist']))
+            audio.tags.add(TCON(encoding=3, text=track['genre']))
+            audio.tags.add(TDRC(encoding=3, text=track['year']))
+
+            # save header to tmp mp3 file
+            audio.save()
+
+            # insert into index
+            AudioFile.from_mp3(filepath).save()
+
+        except (HeaderNotFoundError):
+            # MP3 header, not ID3 header that is.
+            raise TaskError('Invalid MP3: %s' % track['title'])
+        finally:
+            # GC
+            unlink(filepath)
+
 
