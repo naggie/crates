@@ -59,7 +59,7 @@ class ImmutableFile(Model):
         raise NotImplementedError()
 
         # ... but here's an example using class attributes
-        return '{artist}/{album}/{artist} - {album} - {song}.mp3'.format(**self.__dict__)
+        return u'{artist}/{album}/{artist} - {album} - {song}.mp3'.format(**self.__dict__)
 
     @classmethod
     def from_file(cls,filepath):
@@ -197,7 +197,9 @@ class AudioFile(CratesImmutableFile):
 
         if audio.has_key('TALB'): audioFile.album = audio['TALB'][0]
         if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0]
-        if audio.has_key('TDRC'): audioFile.year = audio['TDRC'][0]
+
+        # TODO: fix this; TDRC is an ID3TimeStamp which should be converted to a datetime (field)
+        #if audio.has_key('TDRC'): audioFile.year = audio['TDRC'][0]
 
         try:
             if audio.has_key('TRCK'): audioFile.track = int(audio['TRCK'][0].partition('/')[0])

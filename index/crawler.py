@@ -164,7 +164,7 @@ class SoundcloudCrawler(Job):
                 'album_artist': self.username,
                 'genre': item['genre'],
                 'comment': item['description'],
-                'year': int(item['created_at'][:4]),
+                'year': item['created_at'][:4], # must be u''
                 'mp3_url': mp3_url,
                 'cover_art_url': cover_art_url,
             }
@@ -184,7 +184,7 @@ class SoundcloudCrawler(Job):
         # os-level, not python File. Cannot be GC'd. Plug leak.
         try:
             with fdopen(fd,'wb') as f:
-                mp3_res = get(track['mp3_url'],stream=True)
+                mp3_res = get(track['mp3_url'],params={'client_id':self.key},stream=True)
 
                 if mp3_res.status_code != 200:
                     raise TaskError('Could not download {0}, got HTTP {1}'.format(track['mp3_url'],mp3_res.status_code))
@@ -210,7 +210,7 @@ class SoundcloudCrawler(Job):
                         mime='image/jpeg',
                         type=3, # 3 is for the cover image
                         desc=u'Cover',
-                        data=cover_art_response.content
+                        data=cover_res.content
                     )
                 )
 

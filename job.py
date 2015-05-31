@@ -56,7 +56,7 @@ class Job():
             except TaskSkipped:
                 eta.skip()
             except TaskError as e:
-                print 'TaskError:',e
+                print 'TaskError:',e,'\n'
                 eta.skip()
 
             eta.rewrite_eta_frame()
@@ -107,7 +107,7 @@ class TimeRemainingEstimator():
             return
 
         percent = int(100*self.processed/self.total)
-        reprint('[ {0: >30} ][ {1: 3}% complete ] [{2: <30}][{3: >5.0f}/{4:.0f}]'.format(
+        reprint(u'[ {0: >30} ][ {1: 3}% complete ] [{2: <30}][{3: >5.0f}/{4:.0f}]'.format(
             self.summary(),
             percent,
             u'=' * int(percent*30/100),
