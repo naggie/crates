@@ -168,6 +168,8 @@ class SoundcloudCrawler(Job):
                 'year': item['created_at'][:4], # must be u''
                 'mp3_url': mp3_url,
                 'cover_art_url': cover_art_url,
+                "origin":item['permalink_url'],
+                #"origin":item['purchase_url'], # which is better?
             }
 
     def process_task(self,track):
@@ -230,7 +232,9 @@ class SoundcloudCrawler(Job):
             audio.save()
 
             # insert into index
-            AudioFile.from_mp3(filepath).save()
+            audioFile = AudioFile.from_mp3(filepath)
+            AudioFile.origin = track['origin']
+            AudioFile.save()
 
         except HeaderNotFoundError:
             # MP3 header, not ID3 header that is.
