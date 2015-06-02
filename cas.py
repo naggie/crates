@@ -29,8 +29,10 @@ class BasicCAS:
         if settings.CAS_DIRECTORY[0] != '/':
             raise ValueError('CAS_DIRECTORY must be an absolute path')
 
-        if not exists(settings.CAS_DIRECTORY):
-            makedirs(settings.CAS_DIRECTORY)
+        self.root = settings.CAS_DIRECTORY
+
+        if not exists(self.root):
+            makedirs(self.root)
 
         # make the bins in advance, so that pyionotify can work
         # non-automatically
@@ -73,7 +75,7 @@ class BasicCAS:
         Insert a file by streaming from a generator such as
         requests.get(url,stream=True).iter_content(chunk_size=8192)
         '''
-        fd,tmpfilepath = mkstemp(dir=settings.CAS_DIRECTORY,prefix='gen_')
+        fd,tmpfilepath = mkstemp(dir=self.root,prefix='gen_')
         sha = hashlib.sha256()
         # convert os level file descriptor so it can be closed automatically
         with fdopen(fd,'wb') as f:
@@ -166,7 +168,7 @@ class BasicCAS:
     def stats(self):
         'Return stats of this CAS surrounding disk usage'
         from os import stat,statvfs # not on mac
-        s = statvfs(settings.CAS_DIRECTORY)
+        s = statvfs(self.root)
 
         total = 0
         count = 0
@@ -203,7 +205,7 @@ class BasicCAS:
         if not re.match(r'^[a-f0-9]{64}$', ref):
             raise ValueError('CAS reference invalid. Must be lowercase sha256 hex digest.')
 
-        directory = join(settings.CAS_DIRECTORY, ref[:2])
+        directory = join(self.root, ref[:2])
 
         return join(directory, ref[2:] + '.bin')
 
@@ -213,8 +215,9 @@ class BasicCAS:
         dest = abspath(dest)
         symlink(src, dest)
 
+
     def _bins(self):
         for x in xrange(256):
             # first 2 characters of all possible refs
             bin_name = '{0:02x}'.format(x)
-            yield join(settings.CAS_DIRECTORY,bin_name)
+            yield join(self.root,bin_name)

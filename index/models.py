@@ -37,6 +37,9 @@ class ImmutableFile(Model):
     ref = CharField(max_length=64,primary_key=True,help_text='CAS ref of file')
     hits = IntegerField(default=0,help_text='Number of times the file has been played/read')
 
+    def hit(self):
+        self.hits +=1
+
     # could migrate to https://github.com/leplatrem/django-sizefield
     size = IntegerField(help_text="Size of file in bytes")
 
@@ -214,7 +217,7 @@ class AudioFile(CratesImmutableFile):
             audioFile.cover_art_ref = cas.insert_blob(data)
             # record mimtype of cover art...?
 
-        audioFile.extension = 'mp3'
+        audioFile.extension = '.mp3'
 
         return audioFile
 

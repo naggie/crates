@@ -12,6 +12,8 @@ from os import unlink
 
 from cas import BasicCAS
 
+# TODO clean file path of unicode stuff
+
 class Command(BaseCommand):
 
     missing_args_message = "Specify <directory> to map"
