@@ -10,13 +10,13 @@ def cover_art_html(audioFile):
     if audioFile.cover_art_ref:
         return r"""
             <img src="/cas/{cover_art_ref}" width="512"/>
-        """.format(**audioFile.__dict__)
+        """.format(**audioFile.__dict__).replace('\n','')
 
 def audio_preview_html(audioFile):
     # TODO: replace this with CAS-powered image field + admin form
     return r"""
         <audio src="/cas/{ref}" controls preload="auto"></audio>
-    """.format(**audioFile.__dict__)
+    """.format(**audioFile.__dict__).replace('\n','')
 
 @admin.register(AudioFile)
 class AudioFileAdmin(admin.ModelAdmin):

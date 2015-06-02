@@ -19,7 +19,7 @@ import os
 import re
 import hashlib
 from shutil import copyfile,move
-from os import listdir,stat,chmod,makedirs,symlink,unlink,fdopen,mkdir
+from os import listdir,chmod,makedirs,symlink,unlink,fdopen,mkdir
 from os.path import isdir, join, exists, abspath, dirname
 from django.conf import settings
 
@@ -170,6 +170,27 @@ class BasicCAS:
                 dirty.append(ref)
 
         return dirty
+
+    def stats(self):
+        'Return stats of this CAS surrounding disk usage'
+        from os import stat,statvfs # not on mac
+        s = statvfs(settings.CAS_DIRECTORY)
+
+        total = 0
+        count = 0
+
+        for ref in self.enumerate():
+            binpath = self._binpath(ref)
+            total += stat(binpath).st_size
+
+        return dict(
+            # disk
+            free_bytes = s.f_bsize*s.f_bavail,
+            used_bytes = s.f_bsize*s.f_blocks,
+            # CAS
+            total_bytes = total,
+            object_count = count,
+        )
 
     def _hash(self, filepath):
         'Run a hashing function on a given file to generate a ref. In this case SHA256'
