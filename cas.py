@@ -19,7 +19,7 @@ import os
 import re
 import hashlib
 from shutil import copyfile,move
-from os import listdir,stat, chmod, makedirs, symlink, unlink,fdopen
+from os import listdir,stat,chmod,makedirs,symlink,unlink,fdopen,mkdir
 from os.path import isdir, join, exists, abspath, dirname
 from django.conf import settings
 
@@ -33,6 +33,15 @@ class BasicCAS:
 
         if not exists(settings.CAS_DIRECTORY):
             makedirs(settings.CAS_DIRECTORY)
+
+        # make the bins in advance, so that pyionotify can work
+        # non-automatically
+        for x in xrange(256):
+            # first 2 characters of all possible refs
+            bin_name = '{0:02x}'.format(x)
+            directory = join(settings.CAS_DIRECTORY,bin_name)
+            if not exists(directory):
+                mkdir(directory)
 
     def insert_file(self,filepath):
         'Add a file to the CAS returning a ref'
@@ -175,15 +184,12 @@ class BasicCAS:
 
 
     def _binpath(self, ref):
-        'Given a ref, return a filepath, making sure the parent directory exists'
+        'Given a ref, return a filepath'
 
         if not re.match(r'^[a-f0-9]{64}$', ref):
             raise ValueError('CAS reference invalid. Must be lowercase sha256 hex digest.')
 
         directory = join(settings.CAS_DIRECTORY, ref[:2])
-
-        if not exists(directory):
-            makedirs(directory)
 
         return join(directory, ref[2:] + '.bin')
 
