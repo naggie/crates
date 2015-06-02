@@ -182,6 +182,7 @@ class BasicCAS:
         for ref in self.enumerate():
             binpath = self._binpath(ref)
             total += stat(binpath).st_size
+            count +=1
 
         return dict(
             # disk
