@@ -3,17 +3,15 @@
 
 
 # TODO deal with: (in base class, NotImplementedError)
-# TODO scrub method could deal with one ref at a time to enable a web progress
+# TODO scrub method could deal with one ref at a time to enable a web progress bar (be a Job)
 # TODO atomic writes (not that important)
-# bar (exhaust generator and iteratr over list)
 
 
-# In the future, this could be a module in it's own directory with the
+# In the future, this could be a module in its own directory with the
 # following implementations:
 # * Amazon S3 encrypted CAS (local cache)
 # * CAS with local replication to tolerate hardware failure
 # * ... etc
-
 
 import os
 import re
@@ -36,10 +34,7 @@ class BasicCAS:
 
         # make the bins in advance, so that pyionotify can work
         # non-automatically
-        for x in xrange(256):
-            # first 2 characters of all possible refs
-            bin_name = '{0:02x}'.format(x)
-            directory = join(settings.CAS_DIRECTORY,bin_name)
+        for directory in self._bins():
             if not exists(directory):
                 mkdir(directory)
 
@@ -139,12 +134,9 @@ class BasicCAS:
 
 
     def enumerate(self):
-        'A generator that yields all refs'
+        'A generator that yields all refs stored'
 
-        bins = [d for d in map(lambda d: join(settings.CAS_DIRECTORY,d),listdir(settings.CAS_DIRECTORY))]
-
-        for d in bins:
-            if not re.search(r'/[a-f0-9]{2}$',d): continue
+        for d in self.bins():
             for f in listdir(d):
                 filepath = join(d,f)
                 ref = str(d[-2:])+str(f[:-4])
@@ -221,3 +213,8 @@ class BasicCAS:
         dest = abspath(dest)
         symlink(src, dest)
 
+    def _bins(self):
+        for x in xrange(256):
+            # first 2 characters of all possible refs
+            bin_name = '{0:02x}'.format(x)
+            yield join(settings.CAS_DIRECTORY,bin_name)
