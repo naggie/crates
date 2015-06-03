@@ -39,6 +39,7 @@ class ImmutableFile(Model):
 
     def hit(self):
         self.hits +=1
+        self.save()
 
     # could migrate to https://github.com/leplatrem/django-sizefield
     size = IntegerField(help_text="Size of file in bytes")
