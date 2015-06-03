@@ -55,8 +55,11 @@ def worker():
         if len(refs) == 1:
             ref = refs.pop()
             if ref != last:
-                audioFile = AudioFile.objects.get(ref=ref)
-                audioFile.hit()
+                try:
+                    audioFile = AudioFile.objects.get(ref=ref)
+                    audioFile.hit()
+                except AudioFile.DoesNotExist:
+                    pass
                 if last == None: print # dots
                 print audioFile
 
