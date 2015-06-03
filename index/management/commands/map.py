@@ -32,5 +32,6 @@ class Command(BaseCommand):
             # probably upgrade or is the same
             if islink(destination): unlink(destination)
 
+            print destination
             cas.link_out(audioFile.ref,destination)
 

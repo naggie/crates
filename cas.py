@@ -17,8 +17,8 @@ import os
 import re
 import hashlib
 from shutil import copyfile,move
-from os import listdir,chmod,makedirs,symlink,unlink,fdopen,mkdir
-from os.path import isdir, join, exists, abspath, dirname
+from os import listdir,chmod,makedirs,symlink,unlink,fdopen,mkdir,readlink
+from os.path import isdir,join,exists,abspath,dirname,islink
 from django.conf import settings
 
 from tempfile import mkstemp
@@ -125,6 +125,10 @@ class BasicCAS:
 
         if not isdir(destination_dir):
             makedirs( dirname(destination) )
+
+        if islink(destination) and readlink(destination) == binpath:
+            # Don't cause a client read-error if this is an update map
+            return
 
         self._symlink(binpath,destination)
 
