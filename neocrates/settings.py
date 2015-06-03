@@ -115,4 +115,7 @@ STATIC_URL = '/static/'
 
 CAS_DIRECTORY = abspath('cas/')
 
+# flood prevention: number of seconds to wait before considering a CAS access
+# to mean a media file has been played and increase the hit counter.
+WATCH_COLLECT_TIME = 5
 

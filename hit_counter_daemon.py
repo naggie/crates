@@ -2,6 +2,11 @@ from cas import BasicCAS
 from index.models import AudioFile
 from time import sleep
 from threading import Thread
+from sys import stdout
+
+from django.conf import settings
+WATCH_COLLECT_TIME = settings.WATCH_COLLECT_TIME
+
 
 # This changes for no reason
 try: from queue import Queue,Full,Empty
@@ -23,6 +28,8 @@ class EventHandler(pyinotify.ProcessEvent):
         d = event.pathname
         try:
             ref = d[-69:-67]+d[-66:-4] # TODO move to CAS
+            stdout.write('.')
+            stdout.flush()
             q.put(ref,block=False)
 
         except Full:
@@ -38,7 +45,7 @@ def worker():
     last = None
     while True:
         refs = set()
-        sleep(1)
+        sleep(WATCH_COLLECT_TIME)
         try:
             while True:
                 refs.add( q.get(block=False) )
@@ -50,9 +57,12 @@ def worker():
             if ref != last:
                 audioFile = AudioFile.objects.get(ref=ref)
                 audioFile.hit()
+                if last == None: print # dots
                 print audioFile
 
             last = ref
+        else:
+            last = None
 
 
 t = Thread(target=worker)
