@@ -1,14 +1,12 @@
 from django.db.models import CharField, ForeignKey, IntegerField, PositiveSmallIntegerField, DateTimeField, URLField, Model
-
 from network.models import Peer
-
 from mutagen.mp3 import MP3,HeaderNotFoundError
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
-
 from cas import BasicCAS
 from os import stat
-
+import unicodedata
+import re
 import mimetypes
 
 # TODO WARNING: existing objects are currently overwritten. Not sure how I feel about that -- quick abort if already there?
@@ -110,6 +108,20 @@ class CratesImmutableFile(ImmutableFile):
             help_text="If this file is an upgrade of another, link it here. The deprecated file object and/or record can be deleted later.",
     )
 
+    def slugify(self):
+        '''Return a cleaned dict() of this instance suitable for filepaths'''
+        cleaned = dict()
+        for key,val in self.__dict__.iteritems():
+            try:
+                # str/int only
+                val = unicode(val)
+                val = unicodedata.normalize('NFKD', val).encode('ascii', 'ignore')
+                val = re.sub('[^\w\s-]', '', val).strip()
+                cleaned[key] = val
+            except:
+                continue
+
+        return cleaned
 
 class AudioFile(CratesImmutableFile):
     TYPE_CHOICES = (
@@ -165,7 +177,7 @@ class AudioFile(CratesImmutableFile):
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
 
     def __unicode__(self):
-        return u'{album_artist} - {album} [{artist}] {album} - {title} [{year}]{extension}'.format(**self.__dict__)
+        return u'{album_artist} - {album} [{artist}] {album} - {title} [{year}]{extension}'.format(**self.slugify())
 
     # @jimjibone, we need to decide how we handle compilations. I think we
     # should detect them and just use a different map for conventional album vs
@@ -182,7 +194,7 @@ class AudioFile(CratesImmutableFile):
     # So if instead of {artist} we have {album artist} which will default to {artist}. Might work.
     def map(self):
         # ... but here's an example using class attributes
-        return u'{album_artist}/{album}/{artist} - {album} - {title}.{extension}'.format(**self.__dict__)
+        return u'{album_artist}/{album}/{artist} - {album} - {title}.{extension}'.format(**self.slugify())
 
     @classmethod
     def from_mp3(cls,filepath):
