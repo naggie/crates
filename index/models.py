@@ -194,7 +194,7 @@ class AudioFile(CratesImmutableFile):
     # So if instead of {artist} we have {album artist} which will default to {artist}. Might work.
     def map(self):
         # ... but here's an example using class attributes
-        return u'{album_artist}/{album}/{artist} - {album} - {title}.{extension}'.format(**self.slugify())
+        return u'{album_artist}/{album}/{title} - {album} - {artist}{extension}'.format(**self.slugify())
 
     @classmethod
     def from_mp3(cls,filepath):
