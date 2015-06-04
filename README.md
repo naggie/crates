@@ -63,3 +63,6 @@ Serato/Mixxx/Traktor import/export is planned.
 `./manage.py runserver`
 ## Development
 Guide pending, but uses nginx+uwsgi
+
+# Consumption
+/path/to/media/ *(ro,no_subtree_check,insecure)

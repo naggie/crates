@@ -99,13 +99,16 @@ class ImmutableFile(Model):
 class CratesImmutableFile(ImmutableFile):
     class Meta:
         # not a model in it's own right. Subclasses will have CratesImmutableFile
-        # fields rather than having 2 tables
+        # fields rather than having 3 tables
         abstract = True
     peer = ForeignKey(Peer,help_text='From whom the file came from',null=True)
 
-    deprecates = ForeignKey( 'self',
+    deprecated_by = ForeignKey( 'self',
             null=True,
-            help_text="If this file is an upgrade of another, link it here. The deprecated file object and/or record can be deleted later.",
+            help_text="If a mutator finds or creates a better file, it can be
+            linked here. Garbage collection can remove all files that have been
+            deprecated from the CAS, saving disk. Future crawls will not add
+            the file to the CAS any more.",
     )
 
     def slugify(self):
