@@ -116,7 +116,7 @@ class CratesImmutableFile(ImmutableFile):
                 # str/int only
                 val = unicode(val)
                 val = unicodedata.normalize('NFKD', val).encode('ascii', 'ignore')
-                val = re.sub('[^\w\s-]', '', val).strip()
+                val = re.sub('[^\w\s\-\.]', '', val).strip()
                 cleaned[key] = val
             except:
                 continue
@@ -151,9 +151,7 @@ class AudioFile(CratesImmutableFile):
     extension = CharField(
             max_length=5,
             choices=EXTENSION_CHOICES,
-            null=True,
             help_text="Codec/filetype of audio file",
-            default='TRAC'
     )
 
 
