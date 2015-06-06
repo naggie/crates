@@ -7,6 +7,10 @@ from sys import stdout
 from django.conf import settings
 WATCH_COLLECT_TIME = settings.WATCH_COLLECT_TIME
 
+# Shortcomings:
+# * When vault player/admin plays, album art is downloaded too, making the request filtered.
+# * If burst%5 = 1, there will be a mis-hit
+
 
 # This changes for no reason
 try: from queue import Queue,Full,Empty
