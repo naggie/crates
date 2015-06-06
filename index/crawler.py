@@ -1,5 +1,5 @@
 from models import ImmutableFile,AudioFile,HeaderNotFoundError,ID3NoHeaderError
-from os.path import splitext,join
+from os.path import splitext,join,islink
 from os import access,R_OK,fdopen,unlink
 from requests import get
 from urlparse import urlparse,urlunparse
@@ -43,6 +43,9 @@ class FileCrawler(Job):
             try:
                 # what sort of file is it? Guess the model to use from extension.
                 root, ext = splitext(filepath)
+
+                if islink(filepath):
+                    raise TaskSkipped('Linked file is probably mapped to CAS')
 
                 if not access(filepath,R_OK):
                     raise TaskError('Could not access %s' % filepath)
