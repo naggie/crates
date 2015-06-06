@@ -15,7 +15,7 @@ def cover_art_html(audioFile):
 def audio_preview_html(audioFile):
     # TODO: replace this with CAS-powered image field + admin form
     return r"""
-        <audio src="/cas/{ref}" controls preload="auto"></audio>
+        <audio src="/cas/{ref}" controls preload="none"></audio>
     """.format(**audioFile.__dict__).replace('\n','')
 
 @admin.register(AudioFile)
