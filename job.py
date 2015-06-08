@@ -2,6 +2,7 @@ from time import time
 from datetime import datetime,timedelta
 from humanize import naturaltime
 from sys import stdout
+from multiprocessing import Queue,Process
 
 class TaskSkipped(Exception): pass
 class TaskError(Exception): pass
@@ -20,8 +21,6 @@ class TaskError(Exception): pass
 # b7e9924b01cf3d70b74de43fb9c731f91c33fa0e
 
 class Job():
-    memory_tradeoff = False # Set to True to run generator twice for task count
-
     def count(self):
         '''Hint total number of tasks if that's faster than enumerating everything.'''
         raise NotImplementedError()
@@ -60,6 +59,50 @@ class Job():
                 eta.skip()
 
             eta.rewrite_eta_frame()
+
+
+def MultiProcessJob(Job):
+    # set to limit. 0 = unlimited
+    queue_size = 0
+
+    def run(self):
+        self.tasks = Queue(max_size=self.queuesize)
+        self.results = Queue(max_size=self.queuesize)
+        count = 0
+
+        # TODO pool instead?
+        for x in xrange(self.queue_size):
+            process = Process(target=self.worker)
+            process.daemon = True
+            process.start()
+
+        for task in self.enumerate_tasks():
+            self.tasks.put(task)
+            count +=1
+
+        # if results are not required, join can be done here
+        self.tasks.join()
+
+        for x in xrange(count):
+            result = self.results.get()
+            if isinstance(result,Exception):
+                raise result
+
+
+    def worker(self):
+        while True:
+            task = self.tasks.get()
+            try:
+                result = self.process_task(task)
+                self.tasks.task_done()
+            except Exception as result:
+                pass
+
+            self.results.push(result)
+
+
+
+
 
 def reprint(*args):
     args = map(str,args)
