@@ -5,7 +5,7 @@ from requests import get
 from urlparse import urlparse,urlunparse
 from django.core.serializers import get_serializer,get_deserializer
 from cas import BasicCAS
-from job import Job,TaskError,TaskSkipped
+from job import Job,TaskError,TaskSkipped,MultiProcessJob
 from tempfile import mkstemp
 from django.conf import settings
 
@@ -24,8 +24,6 @@ except ImportError:
 
 # crawler could have a worker thread and queue, depending on benchmark results
 class FileCrawler(Job):
-    memory_tradeoff = False
-
     def __init__(self,directory):
         self.directory = directory
 

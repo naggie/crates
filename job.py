@@ -62,6 +62,7 @@ class Job():
 
 
 def MultiProcessJob(Job):
+    '''Unfinished concept'''
     # set to limit. 0 = unlimited
     queue_size = 0
 
@@ -73,7 +74,7 @@ def MultiProcessJob(Job):
         # TODO pool instead?
         pool = list()
         for x in xrange(self.queue_size):
-            process = Process(target=self.worker)
+            process = Process(target=self._worker)
             process.daemon = True
             process.start()
             pool.append(process)
