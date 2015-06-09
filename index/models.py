@@ -105,10 +105,10 @@ class CratesImmutableFile(ImmutableFile):
 
     deprecated_by = ForeignKey( 'self',
             null=True,
-            help_text="If a mutator finds or creates a better file, it can be
+            help_text="""If a mutator finds or creates a better file, it can be
             linked here. Garbage collection can remove all files that have been
             deprecated from the CAS, saving disk. Future crawls will not add
-            the file to the CAS any more.",
+            the file to the CAS any more.""",
     )
 
     def slugify(self):
