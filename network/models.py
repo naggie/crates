@@ -2,14 +2,15 @@ from django.db.models import URLField, GenericIPAddressField, CharField, UUIDFie
 from uuid import uuid4
 
 class Peer(Model):
-    'A peer to connect to. Peer 0 is you.'
-    host = GenericIPAddressField(help_text="IP address of the host")
-    url = URLField(help_text="API url of field")
+    #ip = GenericIPAddressField(help_text="IP address of the host")
+    url = URLField(help_text="API url of peer")
     alias = CharField(max_length=64,help_text='name of person or node')
 
-    key = UUIDField(primary_key=True, default=uuid4,help_text="secret key to allow API access to peer")
+    their_key = UUIDField(unique=True,default=uuid4,help_text="Key to authenticate Peer on this server. Give to peer. May be replaced with cjdns IP based pubkey auth later.")
 
-    # some stats...
+    your_key = UUIDField(help_text="Key to access peer's API")
+
+    # some stats... (need revising and improvement)
     bytes_inbound = IntegerField(default=0,editable=False)
     bytes_outbound = IntegerField(default=0,editable=False)
     object_count = IntegerField(default=0,editable=False)
