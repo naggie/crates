@@ -57,12 +57,28 @@ DJing. Each playlist has an ID and is shared with Peers.
 Serato/Mixxx/Traktor import/export is planned.
 
 # Installation
-`sudo apt-get install libpython-dev`
+`sudo apt-get install libpython-dev python-pip`
 `sudo pip install --upgrade -r requirements.txt`
-## Production
-`./manage.py runserver`
+
+Edit crates/settings.py
+
 ## Development
-Guide pending, but uses nginx+uwsgi
+
+    # create database and superuser account
+    ./manage.py syncdb
+    # run local server in development mode
+    ./manage.py runserver 0.0.0.0:8080
+    # crawl
+    ./manage.py crawl ~/Music
+
+
+## Production
+Guide pending, uses nginx+uwsgi+ansible
 
 # Consumption
-/path/to/media/ *(ro,no_subtree_check,insecure)
+Map to a location:
+
+	./manage.py map /exports/music
+
+Then run a samba server with example conf. To get play counts and notifications
+run hit counter daemon.
