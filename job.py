@@ -71,25 +71,30 @@ def MultiProcessJob(Job):
         count = 0
 
         # TODO pool instead?
+        pool = list()
         for x in xrange(self.queue_size):
             process = Process(target=self.worker)
             process.daemon = True
             process.start()
+            pool.append(process)
 
         for task in self.enumerate_tasks():
             self.tasks.put(task)
             count +=1
 
-        # if results are not required, join can be done here
-        self.tasks.join()
+        # if results are (or progress is) not required, join can be done here
+        #self.tasks.join()
 
         for x in xrange(count):
             result = self.results.get()
             if isinstance(result,Exception):
                 raise result
 
+        for process in pool:
+            process.terminate()
 
-    def worker(self):
+
+    def _worker(self):
         while True:
             task = self.tasks.get()
             try:
@@ -99,8 +104,6 @@ def MultiProcessJob(Job):
                 pass
 
             self.results.push(result)
-
-
 
 
 
