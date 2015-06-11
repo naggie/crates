@@ -1,6 +1,9 @@
 Crates is a database for your media allowing F2F curation and sharing of playlists.
 
 
+!['static/cat.svg'](Mraow)
+
+
 **BASE CLASSES WILL BE PROVIDED**. For iterative modules, a generator interface
 may be defined soon to support progress bars and time remaining indicators.
 
