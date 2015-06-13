@@ -59,7 +59,7 @@ ROOT_URLCONF = 'neocrates.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -112,6 +112,15 @@ SUIT_CONFIG = {
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (
+    os.path.join(BASE_DIR, "static"),
+)
+
+# where will nginx look for static files for production?
+# collect all static files by running ./manage.py collectstatic
+STATIC_ROOT = '/srv/static/'
+
 
 CAS_DIRECTORY = abspath('cas/')
 
