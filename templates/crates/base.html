@@ -1,17 +1,25 @@
+{#
+Common assets are loaded here, only.
+#}
 <!DOCTYPE html>
+{% load staticfiles %}
 <html>
     <head>
         <meta charset="utf-8">
 
-        <title>Crates</title>
-        <meta name="author" content="SitePoint">
-        <meta name="description" content="The HTML5 Herald">
+        <title>{title|default:"Welcome"} - Crates</title>
+        <meta name="description" content="Curate your media">
 
-        <!-- TODO: replace pure.css with locally hosted copy --!>
-        <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+        <!-- <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css"> -->
+        <link rel="stylesheet" href="{% static "crates/pure-min.css" %}">
     </head>
 
     <body>
         <script src="js/scripts.js"></script>
+
+    {% block content %}
+    Default content. Turns out crates isn't finished yet...
+    {% endblock content %}
+
     </body>
 </html>
