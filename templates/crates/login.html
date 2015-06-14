@@ -1,0 +1,29 @@
+{% extends "crates/base.html" %}
+{# TODO recovery/registration by loading offical form #}
+{% load staticfiles %}
+
+{% block content %}
+
+    {% if form.errors %}
+        <div class="denied">ACCESS DENIED</div>
+    {% endif %}
+
+    <div class="login">
+        <form action="{% url 'django.contrib.auth.views.login' %}" method="post" id="login-form" autocomplete="off">{% csrf_token %}
+            <div class="form-row">
+                <label for="id_username" class="required">{{ form.username.label|upper }}</label> {{ form.username }}
+            </div>
+            <div class="form-row">
+                <label for="id_password" class="required">PASSWORD</label> {{ form.password }}
+                <input type="hidden" name="next" value="{{ next }}" />
+            </div>
+            <div class="submit-row">
+                <input type="submit" value=" Sign in" />
+            </div>
+        </form>
+
+        <script type="text/javascript">
+            document.getElementById('id_username').focus()
+        </script>
+    </div>
+{% endblock %}
