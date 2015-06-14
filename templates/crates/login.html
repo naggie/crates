@@ -9,50 +9,50 @@
 <style>
 .logo-container {
     text-align:right;
-    margin:40px;
 }
 .logo {
     width:200px;
     display:inline-block;
+    margin:40px;
+}
+
+.test * {
+    outline:1px dotted red;
 }
 
 body {
-margin-top:10%;
+    margin-top:10%;
 }
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="pure-g">
-    <div class="logo-container pure-u-1-3">
+    <div class="logo-container pure-u-1-2">
         <img class="logo" src="{% static "crates/logo.gif" %}" />
     </div>
-    <div class="pure-u-1-3">
-        <h1 class="banner">CRATES</h1>
+    <div class="pure-u-1-2">
+        <form action="{% url 'django.contrib.auth.views.login' %}" method="post" class="pure-form pure-form-stacked">{% csrf_token %}
+            {% if form.errors %}
+                <div class="denied">ACCESS DENIED</div>
+            {% endif %}
+            <h1 class="banner">CRATES</h1>
+            <fieldset>
+                <label for="username">Email</label>
+                <input id="id_username" type="text" name="username" placeholder="Username">
 
-        {% if form.errors %}
-            <div class="denied">ACCESS DENIED</div>
-        {% endif %}
+                <label for="password">Password</label>
+                <input id="id_password" type="password" name="password" placeholder="Password">
 
-        <div class="pure-form pure-form-stacked login">
-            <form action="{% url 'django.contrib.auth.views.login' %}" method="post" id="login-form" autocomplete="off">{% csrf_token %}
-                <div class="form-row">
-                    <label for="id_username" class="required">{{ form.username.label }}</label> {{ form.username }}
-                </div>
-                <div class="form-row">
-                    <label for="id_password" class="required">Password</label> {{ form.password }}
-                    <input type="hidden" name="next" value="{{ next }}" />
-                </div>
-                <div class="submit-row">
-                    <input type="submit" class="pure-button pure-button-primary" value="Sign in" />
-                </div>
-            </form>
+                <input type="hidden" name="next" value="{{ next }}" />
 
-            <script type="text/javascript">
-                document.getElementById('id_username').focus()
-            </script>
-        </div>
+
+                <button type="submit" class="pure-button pure-button-primary">Sign in</button>
+            </fieldset>
+        </form>
     </div>
-    <div class="pure-u-1-3"></div>
+    <script type="text/javascript">
+        document.getElementById('id_username').focus()
+    </script>
 </div>
 {% endblock %}
