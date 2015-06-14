@@ -1,29 +1,58 @@
 {% extends "crates/base.html" %}
 {# TODO recovery/registration by loading offical form #}
+
 {% load staticfiles %}
 
+
+
+{% block head %}
+<style>
+.logo-container {
+    text-align:right;
+    margin:40px;
+}
+.logo {
+    width:200px;
+    display:inline-block;
+}
+
+body {
+margin-top:10%;
+}
+</style>
+{% endblock %}
+
 {% block content %}
-
-    {% if form.errors %}
-        <div class="denied">ACCESS DENIED</div>
-    {% endif %}
-
-    <div class="login">
-        <form action="{% url 'django.contrib.auth.views.login' %}" method="post" id="login-form" autocomplete="off">{% csrf_token %}
-            <div class="form-row">
-                <label for="id_username" class="required">{{ form.username.label|upper }}</label> {{ form.username }}
-            </div>
-            <div class="form-row">
-                <label for="id_password" class="required">PASSWORD</label> {{ form.password }}
-                <input type="hidden" name="next" value="{{ next }}" />
-            </div>
-            <div class="submit-row">
-                <input type="submit" value=" Sign in" />
-            </div>
-        </form>
-
-        <script type="text/javascript">
-            document.getElementById('id_username').focus()
-        </script>
+<div class="pure-g">
+    <div class="logo-container pure-u-1-3">
+        <img class="logo" src="{% static "crates/logo.gif" %}" />
     </div>
+    <div class="pure-u-1-3">
+        <h1 class="banner">CRATES</h1>
+
+        {% if form.errors %}
+            <div class="denied">ACCESS DENIED</div>
+        {% endif %}
+
+        <div class="pure-form pure-form-stacked login">
+            <form action="{% url 'django.contrib.auth.views.login' %}" method="post" id="login-form" autocomplete="off">{% csrf_token %}
+                <div class="form-row">
+                    <label for="id_username" class="required">{{ form.username.label }}</label> {{ form.username }}
+                </div>
+                <div class="form-row">
+                    <label for="id_password" class="required">Password</label> {{ form.password }}
+                    <input type="hidden" name="next" value="{{ next }}" />
+                </div>
+                <div class="submit-row">
+                    <input type="submit" class="pure-button pure-button-primary" value="Sign in" />
+                </div>
+            </form>
+
+            <script type="text/javascript">
+                document.getElementById('id_username').focus()
+            </script>
+        </div>
+    </div>
+    <div class="pure-u-1-3"></div>
+</div>
 {% endblock %}
