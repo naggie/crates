@@ -23,19 +23,52 @@
 body {
     margin-top:10%;
 }
+
+.bubble{
+    display:inline-block;
+    background-color: white;
+    border:1px solid black;
+    border-radius: 5px;
+    padding: 10px 18px;
+    position: relative;
+    margin: 65px -90px 5px 45px;
+    vertical-align:top;
+    box-shadow:0 0 5px white;
+}
+
+.bubble::before {
+    background-color: white;
+    border-top:1px solid black;
+    border-right:1px solid black;
+    content: "\00a0";
+    display: block;
+    height: 16px;
+    position: absolute;
+    top: 11px;
+    transform:             rotate( 29deg ) skew( -35deg );
+        -moz-transform:    rotate( 29deg ) skew( -35deg );
+        -ms-transform:     rotate( 29deg ) skew( -35deg );
+        -o-transform:      rotate( 29deg ) skew( -35deg );
+        -webkit-transform: rotate( 29deg ) skew( -35deg );
+    width:  20px;
+    right: -12px;
+    box-shadow:0 0 10px white;
+}
+
+
+
+}
 </style>
 {% endblock %}
 
 {% block content %}
 <div class="pure-g">
     <div class="logo-container pure-u-1-2">
+        {% if form.errors %} <div class="bubble">ACCESS DENIED</div> {% endif %}
         <img class="logo" src="{% static "crates/logo.gif" %}" />
     </div>
     <div class="pure-u-1-2">
         <form action="{% url 'django.contrib.auth.views.login' %}" method="post" class="pure-form pure-form-stacked">{% csrf_token %}
-            {% if form.errors %}
-                <div class="denied">ACCESS DENIED</div>
-            {% endif %}
             <h1 class="banner">CRATES</h1>
             <fieldset>
                 <label for="username">Email</label>
