@@ -22,6 +22,8 @@
 
 body {
     margin-top:10%;
+    font-family:Helvetica Neue, Sans-serif;
+
 }
 
 .bubble{
@@ -68,11 +70,10 @@ body {
     <div class="pure-u-1-2">
         <form action="{% url 'django.contrib.auth.views.login' %}" method="post" class="pure-form pure-form-stacked">{% csrf_token %}
             <h1 class="banner">CRATES</h1>
+            <p>Curate your media</p>
             <fieldset>
-                <label for="username">Email</label>
                 <input id="id_username" type="text" name="username" placeholder="Username">
 
-                <label for="password">Password</label>
                 <input id="id_password" type="password" name="password" placeholder="Password">
 
                 <input type="hidden" name="next" value="{{ next }}" />
