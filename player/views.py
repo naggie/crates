@@ -8,7 +8,7 @@ def index(request):
     context = dict(
         title = "Hello!",
     )
-    return render(request, 'crates/base.html', context)
+    return render(request, 'crates/index.html', context)
 
 
 
