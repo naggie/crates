@@ -6,6 +6,16 @@
 {% endblock head %}
 
 {% block content %}
+
+<div class="exit">
+    <span>Welcome, {{user.username}}</span>
+    <a href="/accounts/logout/"><i class="fa fa-sign-out"></i> Log out</a>
+
+    {% if request.user.is_superuser %}
+        <a href="/admin/"><i class="fa fa-users"></i> Admin</a>
+    {% endif %}
+</div>
+
 <div id="layout">
     <a href="#menu" id="menuLink" class="menu-link">
         <span></span>
@@ -30,9 +40,6 @@
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">Dashboard</a></li>
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">Crawlers</a></li>
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">Mutators</a></li>
-            </ul>
-            <ul class="pure-menu-list">
-                <li class="pure-menu-item"><a href="/admin/" class="pure-menu-link">Admin</a></li>
             </ul>
         </div>
     </div>

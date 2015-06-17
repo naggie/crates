@@ -1,0 +1,8 @@
+.exit {
+    text-align:right;
+    padding:10px;
+}
+
+.exit > * {
+    padding-left:10px;
+}
