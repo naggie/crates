@@ -61,6 +61,10 @@ body {
     background:white;
 }
 
+.card h1 {
+    margin:40px;
+}
+
 </style>
 {% endblock %}
 
@@ -72,8 +76,7 @@ body {
     </div>
     <div class="pure-u-1-2">
         <form action="{% url 'django.contrib.auth.views.login' %}" method="post" class="pure-form pure-form-stacked">{% csrf_token %}
-            <h1 class="banner">CRATES</h1>
-            <p>Curate your media</p>
+            <h1 class="banner header">CRATES</h1>
             <fieldset>
                 <input id="id_username" type="text" name="username" placeholder="Username">
 
