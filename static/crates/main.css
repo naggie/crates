@@ -6,3 +6,21 @@
 .exit > * {
     padding-left:10px;
 }
+
+.album * {
+    margin:0 0 0 5%;
+    width:80%;
+}
+
+.album img {
+    width: 80%;
+}
+
+.album .title {
+    font-weight:bold;
+}
+
+.album .artist {
+    font-weight:bold;
+    margin: 0 0 10% 5%;
+}
