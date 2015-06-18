@@ -8,12 +8,13 @@
 }
 
 .album * {
-    margin:0 0 0 5%;
-    width:80%;
+    margin-left:7%;
+    margin-right:3%;
+    width:90%;
 }
 
 .album img {
-    width: 80%;
+    margin-top:5%;
 }
 
 .album .title {
@@ -21,5 +22,5 @@
 }
 
 .album .artist {
-    margin: 0 0 10% 5%;
+    margin-bottom:5%;
 }
