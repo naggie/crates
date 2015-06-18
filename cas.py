@@ -142,7 +142,7 @@ class BasicCAS:
     def enumerate(self):
         'A generator that yields all refs stored'
 
-        for d in self.bins():
+        for d in self._bins():
             for f in listdir(d):
                 filepath = join(d,f)
                 ref = str(d[-2:])+str(f[:-4])
