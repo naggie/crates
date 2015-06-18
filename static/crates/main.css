@@ -24,3 +24,15 @@
 .album .artist {
     margin-bottom:5%;
 }
+
+
+table.songs {
+    width:100%;
+}
+
+table.songs td.art {
+    width:128px;
+    height:40px;
+    background-size:cover;
+    background-position:50%;
+}
