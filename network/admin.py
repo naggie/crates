@@ -20,7 +20,11 @@ class CratesUserAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {
             'classes': ('suit-tab', 'suit-tab-general',),
-            'fields': ['username','api_key','has_api_access','can_upload','user_server_url','user_server_api_key'],
+            'fields': [
+                'username','first_name','last_name','api_key','is_active','is_staff',
+                'is_superuser','has_api_access','can_upload','user_server_url',
+                'user_server_api_key'
+            ],
         }),
         ('Statistics', {
             'classes': ('suit-tab', 'suit-tab-statistics',),
