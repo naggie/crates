@@ -1,4 +1,13 @@
 - hosts: media
+  vars:
+    # not used yet
+    cas_dir    : /srv/cas/
+    code_dir   : /srv/crates/
+    mapper_dir : /srv/crates_mapper/
+
+  environment:
+    # required for DB operations
+    DJANGO_SETTINGS_MODULE=neocrates.production_settings
 
   tasks:
     - apt: name={{ item }} state=present update_cache=yes
@@ -10,7 +19,8 @@
         - python-dev
         - python-pip
 
-    - pip:  requirements=../requirements.txt
+    - name: Install python dependencies (no virtualenv used yet TODO)
+      pip:  requirements=../requirements.txt
 
     - name: write the nginx config file
       copy: src=nginx.conf dest=/etc/nginx.conf
@@ -24,8 +34,14 @@
 
 
     - name: Copy crates code
+
     - name: Collect static
+      command: python manage.py collectstatic --noinput
+      chdir: "{{code_dir}}"
+
     - name: Migrate database
+      command: python manage.py migrate --noinput
+      chdir: "{{code_dir}}"
 
     - name: uwsgi should start at boot
       service: name=uwsgi state=started enabled=yes
