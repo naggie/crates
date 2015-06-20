@@ -3,7 +3,9 @@
     # not used yet
     cas_dir    : /srv/cas/
     code_dir   : /srv/crates/
+    static_dir : /srv/static/
     mapper_dir : /srv/crates_mapper/
+    fqdn       : crates.local
 
   environment:
     # required for DB operations
