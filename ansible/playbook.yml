@@ -1,0 +1,39 @@
+- hosts: media
+
+  tasks:
+    - apt: name={{ item }} state=present update_cache=yes
+      sudo : yes
+      with_items:
+        - nginx
+        - uwsgi
+        - python
+        - python-dev
+        - python-pip
+
+    - pip:  requirements=../requirements.txt
+
+    - name: write the nginx config file
+      copy: src=nginx.conf dest=/etc/nginx.conf
+      notify:
+        - restart nginx
+
+    - name: write uwsgi conf
+      template: src=uwsgi.conf dest=/srv/uwsgi.conf
+      notify:
+        - restart uwsgi
+
+    - name: uwsgi should start at boot
+      service: name=uwsgi state=started enabled=yes
+
+    - name: nginx should start at boot
+      service: name=nginx state=started enabled=yes
+
+
+  handlers:
+    - name: restart nginx
+      service: name=nginx state=restarted
+    - name: restart uwsgi
+      service: name=uwsgi state=restarted
+
+
+
