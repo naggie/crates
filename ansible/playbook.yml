@@ -22,6 +22,11 @@
       notify:
         - restart uwsgi
 
+
+    - name: Copy crates code
+    - name: Collect static
+    - name: Migrate database
+
     - name: uwsgi should start at boot
       service: name=uwsgi state=started enabled=yes
 

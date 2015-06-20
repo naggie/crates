@@ -11,47 +11,35 @@ Logical Modules
 
 1. **CAS**: Content addressable store for immutable data (MP3 files etc).
 2. **index**: Database of file metadata
-3. **Mutators**: Systems which query the database and create new files with better
    metadata. Old files are deprecated. Deprecated files can be garbage collected if desired.
-4. **Crawlers**: Systems that programatically add files
-5. **Mapper**: Part of (1) and (2) which organises files as symlinks on the
+3. **Crawlers**: Systems that programatically curate files
+4. **Mapper**: Part of (1) and (2) which organises files as symlinks on the
    filesystem. Other apps can then use the database.
-6. **API**: Remote queries to support authenticated peers. Files can be shared
-   between peers. Thanks to immutability, peers are verified backups.
-7. **Sets** : Stor
 
 
-
-Sets of files can be created to make playlists known as "Crates".
-
-# Mutators
-Examples:
-  * Add generated metadata (in one go): chromaprint/acoustid, BPM, Camelot key, MBID
-  * Identify songs that have no metadata via acoustid API call (or correct existing)
-  * Get some better album art
-
-
-Mutator operation:
-  1. Query database for files that can be upgraded. Eg, search for files with no chromaprint or low bitrate.
-  2. Grab the file from the CAS and modify it
-  3. Reinsert the file in the normal way. **All metadata should (ideally) be contained within the file.**
 
 # Crawlers
+Crawlers are an automatic way of improving and extending your collection.
 
-Examples:
-  * Filesystem (this includes itunes)
-  * Soundcloud (sync ability)
-  * Peer -- another crates server via query or feed
+Implemented:
+  * Filesystem (this includes itunes): Look for media on local computer
+  * Soundcloud: Download best-effort quality starred items from any username.
+    Songs could be deprecated in favor of purchased (better bitrate) songs at a
+    later date.
+  * PeerCrawler -- Download from another crates server via query or feed
+
+Pending:
+  * Add chromaprint/acoustid, BPM, Camelot key, MBID
+  * Identify songs that have no metadata via acoustid API call (or correct existing)
+  * Get some better album art via MBID and online database (MusicBrainz, IMDB)
   * iTunes vi pyitunes: better metadata might be available.
 
 
 Crawlers may create a fully-packed MP3 file in a temporary location if
 necessary. For example, raw soundcloud MP3s had little metadata. It is not
-necessary for mutators to be used in conjunction with crawlers.
+necessary for mutators to be used in conjunction with crawlers. Crawlers may
+also crawl the crates database itself to generate new, improved files.
 
-
-# Peers
-Authenticated crates servers may talk to one another to download records from indexes and CAS.
 
 # Playlists ("crates")
 One of the main features of crates is to be able to make/share playlists for
@@ -76,7 +64,7 @@ Edit crates/settings.py
 
 
 ## Production
-Guide pending, uses nginx+uwsgi+ansible
+Guide pending, uses nginx+uwsgi+ansible. See `ansible/` for an incomplete example.
 
 # Consumption
 Map to a location:
