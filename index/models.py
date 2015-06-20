@@ -1,5 +1,5 @@
 from django.db.models import CharField, ForeignKey, IntegerField, PositiveSmallIntegerField, DateTimeField, URLField, Model
-from network.models import CratesUser
+from django.contrib.auth.models import User
 from mutagen.mp3 import MP3,HeaderNotFoundError
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
@@ -101,7 +101,7 @@ class CratesImmutableFile(ImmutableFile):
         # not a model in it's own right. Subclasses will have CratesImmutableFile
         # fields rather than having 3 tables
         abstract = True
-    user = ForeignKey(CratesUser,help_text='From whom the file came from',null=True)
+    user = ForeignKey(User,help_text='From whom the file came from',null=True)
 
     deprecated_by = ForeignKey( 'self',
             null=True,

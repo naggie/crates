@@ -1,12 +1,17 @@
-from django.db.models import URLField, GenericIPAddressField, CharField, UUIDField, IntegerField, Model, BooleanField
+from django.db.models import URLField, GenericIPAddressField, CharField, UUIDField, IntegerField, Model, BooleanField,OneToOneField
+from django.contrib.auth.models import User
 from uuid import uuid4
-from django.contrib.auth.models import BaseUserManager, AbstractUser
 
-class CratesUser(AbstractUser):
+class Profile(Model):
     '''
     A Crates user has access to the media on this server. The user may also be
     allowed to connect his/her own crates server to this one.
+
+    This is a one-to-one relationship used to extend the existing user model without much effort.
     '''
+
+    user = OneToOneField(User)
+
     has_api_access = BooleanField(default=False, help_text="Can this user crawl this server from their crates server?")
     api_key = UUIDField(
         unique=True,
