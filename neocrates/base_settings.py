@@ -17,6 +17,7 @@ from os.path import abspath
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
+AUTH_USER_MODEL = 'network.CratesUser'
 
 
 # Application definition

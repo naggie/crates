@@ -1,14 +1,36 @@
-from django.db.models import URLField, GenericIPAddressField, CharField, UUIDField, IntegerField, Model
+from django.db.models import URLField, GenericIPAddressField, CharField, UUIDField, IntegerField, Model, BooleanField
 from uuid import uuid4
+from django.contrib.auth.models import BaseUserManager, AbstractUser
 
-class Peer(Model):
+class CratesUser(AbstractUser):
+    '''
+    A Crates user has access to the media on this server. The user may also be
+    allowed to connect his/her own crates server to this one.
+    '''
+    has_api_access = BooleanField(default=False, help_text="Can this user crawl this server from their crates server?")
+    api_key = UUIDField(
+        unique=True,
+        default=uuid4,
+        help_text="Key used to identify user's crates server",
+    )
+
     #ip = GenericIPAddressField(help_text="IP address of the host")
-    url = URLField(help_text="API url of peer")
-    alias = CharField(max_length=64,help_text='name of person or node')
+    user_server_url = URLField(
+        null=True,
+        blank=True,
+        help_text="API url of user's own crates server, if any",
+    )
 
-    their_key = UUIDField(unique=True,default=uuid4,help_text="Key to authenticate Peer on this server. Give to peer. May be replaced with cjdns IP based pubkey auth later.")
+    user_server_api_key = UUIDField(
+        null=True,
+        blank=True,
+        help_text="API key of user's own crates server, if user has given you API access",
+    )
 
-    your_key = UUIDField(help_text="Key to access peer's API")
+    can_upload = BooleanField(
+        default=False,
+        help_text="Is the user allowed to push files to this crates server? Not implemented yet."
+    )
 
     # some stats... (need revising and improvement)
     bytes_inbound = IntegerField(default=0,editable=False)
@@ -23,6 +45,3 @@ class Peer(Model):
         editable=False,
         help_text="Mutual CAS objects. Good for data backup"
     )
-
-    def __unicode__(self):
-        return self.alias

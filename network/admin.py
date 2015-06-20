@@ -1,11 +1,17 @@
 from django.contrib import admin
-
 from django.contrib import admin
-from models import Peer
+from models import CratesUser
+from django.contrib.auth.models import Group
 
-@admin.register(Peer)
-class PeerAdmin(admin.ModelAdmin):
-    list_display = ('alias','objects_common','object_count')
+# Groups are not used, in favor of per-user flags.
+# Crates use case involves just a handful of users.
+admin.site.unregister(Group)
+
+
+
+@admin.register(CratesUser)
+class CratesUserAdmin(admin.ModelAdmin):
+    list_display = ('__unicode__','objects_common','object_count','has_api_access','can_upload')
     readonly_fields = ('bytes_inbound','bytes_outbound','object_count','bytes_available','bytes_total','objects_common')
     search_fields = list_display
 
@@ -14,7 +20,7 @@ class PeerAdmin(admin.ModelAdmin):
     fieldsets = [
         (None, {
             'classes': ('suit-tab', 'suit-tab-general',),
-            'fields': ['alias','url','host','key',],
+            'fields': ['username','api_key','has_api_access','can_upload','user_server_url','user_server_api_key'],
         }),
         ('Statistics', {
             'classes': ('suit-tab', 'suit-tab-statistics',),
@@ -23,3 +29,5 @@ class PeerAdmin(admin.ModelAdmin):
     ]
 
     suit_form_tabs = (('general', 'General'), ('statistics', 'Statistics'))
+
+
