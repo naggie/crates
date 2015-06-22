@@ -21,6 +21,11 @@
         - python-dev
         - python-pip
 
+    # the pip shipped with 14.04 is broken, fix it in the most ironic way
+    # possible lololol
+    - name: Fix pip
+      command: easy_install -U pip
+
         #- name: Crates code
         #copy: src=.. dest={{code_dir}} owner=www-data group=www-data
     - git: repo=https://github.com/naggie/crates.git
@@ -36,8 +41,8 @@
       notify:
         - restart nginx
 
-    - name: write uwsgi conf
-      template: src=uwsgi.conf dest=/srv/uwsgi.ini
+    - name: write uwsgi ini
+      template: src=uwsgi.ini dest=/srv/uwsgi.ini
       notify:
         - restart uwsgi
 
