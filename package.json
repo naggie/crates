@@ -1,0 +1,24 @@
+{
+  "name": "crates",
+  "version": "0.0.0",
+  "description": "Curate your media",
+  "main": "js/index.js",
+  "dependencies": {
+    "browserify": "^10.2.4",
+    "reactify": "^1.1.1",
+    "uglifyify": "^3.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/naggie/crates.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/naggie/crates/issues"
+  }
+}
