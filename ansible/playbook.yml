@@ -10,7 +10,8 @@
 
   environment:
     # required for DB operations
-    DJANGO_SETTINGS_MODULE: neocrates.production_settings
+    DJANGO_SETTINGS_MODULE : neocrates.production_settings
+    NODE_ENV               : production
 
   tasks:
     - apt: name={{ item }} state=present update_cache=yes
@@ -20,11 +21,17 @@
         - python
         - python-dev
         - python-pip
+        - nodejs
 
-    # the pip shipped with 14.04 is broken, fix it in the most ironic way
-    # possible lololol
+    # the nodejs shipped with 14.04 is broken*
+    - name: Fix nodejs
+      file: src=/usr/bin/nodejs dest=/usr/bin/node state=link
+
+    # the pip shipped with 14.04 is broken*
     - name: Fix pip
       command: easy_install -U pip
+
+    # *what happened, ubuntu?
 
         #- name: Crates code
         #copy: src=.. dest={{code_dir}} owner=www-data group=www-data
@@ -36,6 +43,19 @@
     - name: Install python dependencies (no virtualenv used yet TODO)
       pip:  requirements={{code_dir}}/requirements.txt
 
+    - name: NPM for JS bundler dependencies
+      npm: path="{{code_dir}}"
+
+    - name: Build JS bundle
+      command: node ./build_client_js_bundle.js
+      args:
+        chdir: "{{code_dir}}"
+
+    - name: Collect static
+      command: python manage.py collectstatic --noinput
+      args:
+        chdir: "{{code_dir}}"
+
     - name: write the nginx config file
       copy: src=nginx.conf dest=/etc/nginx.conf
       notify:
@@ -45,13 +65,6 @@
       template: src=uwsgi.ini dest=/srv/uwsgi.ini
       notify:
         - restart uwsgi
-
-
-
-    - name: Collect static
-      command: python manage.py collectstatic --noinput
-      args:
-        chdir: "{{code_dir}}"
 
     - name: Migrate database
       command: python manage.py migrate --noinput
