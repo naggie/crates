@@ -29,5 +29,9 @@
             ["reactify", {"es6": true}],
             ["uglifyify", {"debug": true}]
         ]
-    }
+    },
+    "scripts": {
+        "watch": "node ./build_client_js_bundle.js --watch",
+        "build": "node ./build_client_js_bundle.js"
+    },
 }

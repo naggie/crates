@@ -22,6 +22,7 @@
         - python-dev
         - python-pip
         - nodejs
+        - npm
 
     # the nodejs shipped with 14.04 is broken*
     - name: Fix nodejs
@@ -47,7 +48,7 @@
       npm: path="{{code_dir}}"
 
     - name: Build JS bundle
-      command: node ./build_client_js_bundle.js
+      command: npm build
       args:
         chdir: "{{code_dir}}"
 
