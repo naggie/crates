@@ -48,7 +48,7 @@
       npm: path="{{code_dir}}"
 
     - name: Build JS bundle
-      command: npm build
+      command: npm run build
       args:
         chdir: "{{code_dir}}"
 

@@ -31,7 +31,7 @@
         ]
     },
     "scripts": {
-        "watch": "node ./build_client_js_bundle.js --watch",
-        "build": "node ./build_client_js_bundle.js"
-    },
+        "watch": "node ./js/build.js --watch",
+        "build": "node ./js/build.js"
+    }
 }
