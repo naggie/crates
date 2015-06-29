@@ -25,8 +25,12 @@
         - npm
 
     # the nodejs shipped with 14.04 is broken*
+    - stat: path=/usr/bin/node
+      register: st
+
     - name: Fix nodejs
       file: src=/usr/bin/nodejs dest=/usr/bin/node state=link
+      when: not st.stat.exists
 
     # the pip shipped with 14.04 is broken*
     - name: Fix pip
@@ -58,12 +62,12 @@
         chdir: "{{code_dir}}"
 
     - name: write the nginx config file
-      copy: src=nginx.conf dest=/etc/nginx.conf
+      copy: src=nginx.conf dest=/etc/nginx/nginx.conf
       notify:
         - restart nginx
 
     - name: write uwsgi ini
-      template: src=uwsgi.ini dest=/srv/uwsgi.ini
+      template: src=uwsgi.ini dest=/etc/uwsgi/uwsgi.ini
       notify:
         - restart uwsgi
 
