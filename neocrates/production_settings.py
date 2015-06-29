@@ -26,3 +26,7 @@ DATABASES = {
     }
 }
 
+# http://wiki.nginx.org/XSendfile
+# Faster serving of CAS files. Backed by nginx using Django to authenticate the
+# request.
+X_SENDFILE = True

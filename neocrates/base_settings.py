@@ -93,3 +93,7 @@ STATICFILES_DIRS = (
 # to mean a media file has been played and increase the hit counter.
 WATCH_COLLECT_TIME = 5
 
+# http://wiki.nginx.org/XSendfile
+# Faster serving of CAS files. Backed by nginx using Django to authenticate the
+# request.
+X_SENDFILE = False

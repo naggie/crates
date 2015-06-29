@@ -4,6 +4,7 @@ from django.http import HttpResponse
 from django.views.generic import View
 from django.http import FileResponse,HttpResponse
 from django.core.serializers import get_serializer
+from django.conf import settings
 from cas import BasicCAS
 
 from models import AudioFile
@@ -28,9 +29,15 @@ class Cas(View):
         module.
 
 
-        For (scalable) production usage, an X-Sendfile mechanism is required
-        and will be implemented soon.
+        For (scalable) production usage, an X-Sendfile mechanism is required.
+        Beware, assumes ref is a valid cas ref from the URL pattern.
         '''
+        if settings.X_SENDFILE:
+            response = HttpResponse()
+            response['X-Accel-Redirect'] =  '/accel_cas/'+ref[:2]+'/'+ref[2:]+'.bin'
+            return response
+
+
         filepath = cas.select(ref)
 
         response = FileResponse(
