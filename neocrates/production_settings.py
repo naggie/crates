@@ -15,7 +15,7 @@ STATIC_URL = '/static/'
 STATIC_ROOT = '/srv/static/'
 
 
-CAS_DIRECTORY = abspath('/srv/crates_cas/')
+CAS_DIRECTORY = abspath('/srv/cas/')
 
 # Database
 # https://docs.djangoproject.com/en/1.8/ref/settings/#databases
