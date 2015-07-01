@@ -24,7 +24,7 @@ import cas
 
 
 urlpatterns = [
-    url(r'dump/AudioFiles',DumpIndex.as_view(), name='audiofile_dump'),
+    url(r'dump/AudioFiles',DumpIndex.as_view(), name='dump'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^cas', include(cas_urls)),
 
