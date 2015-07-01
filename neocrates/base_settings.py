@@ -26,7 +26,9 @@ INSTALLED_APPS = (
     'django.contrib.sessions',
     'django.contrib.messages',
     'index',
+    'cas',
     'network',
+    'player',
     'django.contrib.staticfiles',
 )
 

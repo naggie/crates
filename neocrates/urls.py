@@ -16,15 +16,17 @@ Including another URLconf
 from django.conf.urls import include, url
 from django.contrib import admin
 
-from index.views import Cas,DumpIndex,EnumerateCas
+from index.views import DumpIndex
+
 from player.urls import urlpatterns as player_urls
+from cas.urls import urlpatterns as cas_urls
+import cas
 
 
 urlpatterns = [
-    url(r'cas$',EnumerateCas.as_view(), name='cas_dump'),
-    url(r'cas/(?P<ref>[0-9a-f]{64})',Cas.as_view(), name='cas'),
     url(r'dump/AudioFiles',DumpIndex.as_view(), name='audiofile_dump'),
     url(r'^admin/', include(admin.site.urls)),
+    url(r'^cas', include(cas_urls)),
 
     url(r'^accounts/login','django.contrib.auth.views.login',{'template_name':'crates/login.html'}),
     url(r'^accounts/logout','django.contrib.auth.views.logout', {'next_page': '/'}),
