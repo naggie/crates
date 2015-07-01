@@ -36,3 +36,17 @@ table.songs td.art {
     background-size:cover;
     background-position:50%;
 }
+
+
+* {outline: 1px dashed red;}
+
+.job .progress {
+    background:#eee;
+}
+
+.job .progress .bar {
+    background:#1f8dd6;
+    width:45%;
+    height:24px
+}
+
