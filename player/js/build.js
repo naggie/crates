@@ -14,6 +14,9 @@
 // Perhaps we should use that -- I've added the equivalent.
 var browserify = require('browserify')
 var fs = require('fs')
+var path = require('path')
+
+var base_dir = path.join(__dirname,'/../../')
 
 var b = browserify()
 b.add(__dirname+'/index.js')
@@ -26,6 +29,6 @@ if (process.env.NODE_ENV == 'production') {
 
 b.transform({es6:true},'reactify')
 
-var dest = fs.createWriteStream(__dirname+'/../static/bundle.js')
+var dest = fs.createWriteStream(base_dir+'/static/crates/bundle.js')
 
 b.bundle().pipe(dest)
