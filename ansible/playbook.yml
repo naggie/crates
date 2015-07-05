@@ -27,6 +27,7 @@
         - nginx
         - uwsgi
         - uwsgi-plugin-python
+        - samba
         - python
         - python-dev
         - python-pip
@@ -112,6 +113,15 @@
       args:
         chdir: "{{code_dir}}"
 
+    - name: write the samba config
+      sudo: yes
+      template: src=smb.conf dest=/etc/samba/smb.conf
+      notify:
+        - restart samba
+
+    - name: Schedule crates mapper
+      cron: name="Crates mapper" minute="22" hour="*" job="{{code_dir}}/manage.py map {{crates_map}}" user=www-data
+
     - name: uwsgi should start at boot
       service: name=uwsgi state=started enabled=yes
 
@@ -124,6 +134,9 @@
       service: name=nginx state=restarted
     - name: restart uwsgi
       service: name=uwsgi state=restarted
+    - name: restart samba
+      service: name=smbd state=restarted
+
 
 
 
