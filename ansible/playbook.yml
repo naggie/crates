@@ -119,7 +119,6 @@
       notify:
         - restart samba
 
-
     - name: uwsgi should start at boot
       service: name=uwsgi state=started enabled=yes
 
