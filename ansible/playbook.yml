@@ -18,6 +18,7 @@
       with_items:
         - nginx
         - uwsgi
+        - uwsgi-plugin-python
         - python
         - python-dev
         - python-pip

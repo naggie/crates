@@ -7,7 +7,8 @@ SECRET_KEY = 'zhj_+x#q-&vqh7&)7a3it@tcsf50@fh9$3&&j0*4pmt1x=ye+1'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['.']
+# change to real domain to prevent host name spoofing
+ALLOWED_HOSTS = ['*']
 
 # where will nginx look for static files for production?
 # collect all static files by running ./manage.py collectstatic
