@@ -1,4 +1,10 @@
+# This is an example playbook. Change 'vars' to suit your setup, or any other
+# file in this directory.
+
+
 # TODO: use sites-enabled for uwsgi and nginx for multi tenant
+# TODO: Postgres?
+# TODO: SSL
 - hosts: media
   become: yes
   vars:
