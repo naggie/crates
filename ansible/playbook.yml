@@ -119,8 +119,6 @@
       notify:
         - restart samba
 
-    - name: Schedule crates mapper
-      cron: name="Crates mapper" minute="22" hour="*" job="{{code_dir}}/manage.py map {{crates_map}}" user=www-data
 
     - name: uwsgi should start at boot
       service: name=uwsgi state=started enabled=yes
