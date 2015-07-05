@@ -11,7 +11,7 @@
 
   environment:
     # required for DB operations
-    DJANGO_SETTINGS_MODULE : neocrates.production_settings
+    DJANGO_SETTINGS_MODULE : neocrates.crates_settings
     NODE_ENV               : production
 
   tasks:
@@ -60,6 +60,10 @@
             dest={{code_dir}}
             version=HEAD
             depth=1
+
+    - name: Crates config
+      become_user: www-data
+      template: src=crates_settings.py  dest={{code_dir}}/neocrates/
 
     - name: Install python dependencies (no virtualenv used yet TODO)
       sudo: yes
