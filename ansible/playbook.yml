@@ -1,5 +1,6 @@
+# TODO: use sites-enabled for uwsgi and nginx for multi tenant
 - hosts: media
-  sudo: yes
+  become: yes
   vars:
     # not used yet
     cas_dir    : /srv/cas/
@@ -15,6 +16,7 @@
 
   tasks:
     - apt: name={{ item }} state=present update_cache=yes
+      sudo: yes
       with_items:
         - nginx
         - uwsgi
@@ -28,52 +30,75 @@
     # the nodejs shipped with 14.04 is broken*
     - stat: path=/usr/bin/node
       register: st
-
     - name: Fix nodejs
+      sudo: yes
       file: src=/usr/bin/nodejs dest=/usr/bin/node state=link
       when: not st.stat.exists
 
     # the pip shipped with 14.04 is broken*
     - name: Fix pip
+      sudo: yes
       command: easy_install -U pip
 
     # *what happened, ubuntu?
 
         #- name: Crates code
         #copy: src=.. dest={{code_dir}} owner=www-data group=www-data
-    - git: repo=https://github.com/naggie/crates.git
+
+    - name: Make crates directories
+      sudo: yes
+      file: path={{item}} state=directory mode=0755 owner=www-data group=www-data
+      with_items:
+        - "{{code_dir}}"
+        - "{{cas_dir}}"
+        - "{{static_dir}}"
+        - "{{mapper_dir}}"
+
+    - name: get crates code
+      become_user: www-data
+      git: repo=https://github.com/naggie/crates.git
             dest={{code_dir}}
             version=HEAD
             depth=1
 
     - name: Install python dependencies (no virtualenv used yet TODO)
+      sudo: yes
       pip:  requirements={{code_dir}}/requirements.txt
 
     - name: NPM for JS bundler dependencies
+      become_user: www-data
       npm: path="{{code_dir}}"
+      environment:
+        # where to put cache files, as /var/www (~) does not exist
+        HOME: /tmp/npm-www-data/
 
     - name: Build JS bundle
       command: npm run build
+      become_user: www-data
       args:
         chdir: "{{code_dir}}"
 
     - name: Collect static
       command: python manage.py collectstatic --noinput
+      become_user: www-data
       args:
         chdir: "{{code_dir}}"
 
     - name: write the nginx config file
+      sudo: yes
       template: src=nginx.conf dest=/etc/nginx/nginx.conf
       notify:
         - restart nginx
 
     - name: write uwsgi ini
+      sudo: yes
       template: src=uwsgi.ini dest=/etc/uwsgi/uwsgi.ini
       notify:
         - restart uwsgi
 
     - name: Migrate database
       command: python manage.py migrate --noinput
+      become_user: www-data
       args:
         chdir: "{{code_dir}}"
 
