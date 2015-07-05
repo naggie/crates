@@ -8,12 +8,12 @@ SECRET_KEY = 'zhj_+x#q-&vqh7&)7a3it@tcsf50@fh9$3&&j0*4pmt1x=ye+1'
 DEBUG = False
 
 # change to real domain to prevent host name spoofing
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['*','{{fqdn}}']
 
 # where will nginx look for static files for production?
 # collect all static files by running ./manage.py collectstatic
 STATIC_URL = '/static/'
-STATIC_ROOT = '{{crates_dir}}'
+STATIC_ROOT = '{{static_dir}}'
 
 
 CAS_DIRECTORY = abspath('{{cas_dir}}')

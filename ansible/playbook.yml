@@ -92,7 +92,7 @@
 
     - name: write uwsgi ini
       sudo: yes
-      template: src=uwsgi.ini dest=/etc/uwsgi/uwsgi.ini
+      template: src=uwsgi.ini dest=/etc/uwsgi/apps-enabled/crates.ini
       notify:
         - restart uwsgi
 
