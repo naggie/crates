@@ -132,7 +132,7 @@
     - name: restart uwsgi
       service: name=uwsgi state=restarted
     - name: restart samba
-      service: name=smbd state=restarted
+      service: name=smb state=restarted
 
 
 
