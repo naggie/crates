@@ -1,37 +1,45 @@
 {
-    "name": "crates",
-    "version": "0.0.0",
-    "description": "Curate your media",
-    "main": "js/index.js",
-    "browser": "js/index.js",
-    "dependencies": {
-        "browserify": "^10.2.4",
-        "flux": "^2.0.3",
-        "react": "^0.13.3",
-        "reactify": "^1.1.1",
-        "uglifyify": "^3.0.1"
-    },
-    "devDependencies": {},
-    "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
-    },
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/naggie/crates.git"
-    },
-    "author": "",
-    "license": "MIT",
-    "bugs": {
-        "url": "https://github.com/naggie/crates/issues"
-    },
-    "browserify": {
-        "transform": [
-            ["reactify", {"es6": true}],
-            ["uglifyify", {"debug": true}]
-        ]
-    },
-    "scripts": {
-        "watch": "node ./player/js/build.js --watch",
-        "build": "node ./player/js/build.js"
-    }
+  "name": "crates",
+  "version": "0.0.0",
+  "description": "Curate your media",
+  "main": "js/index.js",
+  "browser": "js/index.js",
+  "dependencies": {
+    "browserify": "^10.2.4",
+    "flux": "^2.0.3",
+    "node-sass": "^3.2.0",
+    "react": "^0.13.3",
+    "reactify": "^1.1.1",
+    "uglifyify": "^3.0.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "watch": "node ./player/js/build.js --watch",
+    "build": "node ./player/js/build.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/naggie/crates.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/naggie/crates/issues"
+  },
+  "browserify": {
+    "transform": [
+      [
+        "reactify",
+        {
+          "es6": true
+        }
+      ],
+      [
+        "uglifyify",
+        {
+          "debug": true
+        }
+      ]
+    ]
+  }
 }
