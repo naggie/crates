@@ -7,8 +7,10 @@ from django.core.serializers import get_serializer
 from django.conf import settings
 from cas.cas import BasicCAS
 
-from models import AudioFile
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
+
+from models import AudioFile
 
 # TODO: authentication for Peers via middleware and decorators
 
@@ -16,7 +18,11 @@ class DumpIndex(View):
     '''Streaming JSON serialised dump of entire database.'''
     model = AudioFile
 
-    @login_required
+    # require login hack, allowing the login_required decorator able to be used for class based views
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(DumpIndex, self).dispatch(*args, **kwargs)
+
     def get(self,request):
         # yet another example of the many layers of abstraction that django
         # enforces for no real benefit. Hey, Java called. They want their

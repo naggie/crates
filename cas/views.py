@@ -6,17 +6,24 @@ from django.http import FileResponse,HttpResponse
 from django.conf import settings
 from cas import BasicCAS
 from django.contrib.auth.decorators import login_required
+from django.utils.decorators import method_decorator
 
 # TODO: authentication for Peers via middleware for API
 
-
+# TODO: http://stackoverflow.com/questions/6069070/how-to-use-permission-required-decorators-on-django-class-based-views
+# change to mixin
 
 
 cas = BasicCAS()
 
 class Cas(View):
     # TODO Subclass this to include actual filepath and better name. Based on audioFile.map
-    @login_required
+
+    # require login hack, allowing the login_required decorator able to be used for class based views
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(Cas, self).dispatch(*args, **kwargs)
+
     def get(self, request, ref):
         '''
         Serve a file from the CAS. Not scalable, as it ties up an entire
@@ -49,7 +56,12 @@ class Cas(View):
         return response
 
 class EnumerateCas(View):
-    @login_required
+
+    # require login hack, allowing the login_required decorator able to be used for class based views
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(EnumerateCas, self).dispatch(*args, **kwargs)
+
     def get(self, request):
         response = FileResponse(
             self._json_generator(),
