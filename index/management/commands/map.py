@@ -10,7 +10,7 @@ from index.models import AudioFile
 
 from os import unlink
 
-from cas import BasicCAS
+from cas.cas import BasicCAS
 
 # TODO clean file path of unicode stuff
 
