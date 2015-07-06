@@ -1,27 +1,24 @@
 #!/usr/bin/env node
-// I'm going to trial bundling programatically, as then a global install of
-// browserify is not necessary in addition to local dependencies such as react
-// itself.
-//
-// We might want a watch mode. Maybe the answer is watchify or something gulp
-// powered such as @jimjibone's https://gitlab.com/snippets/5920 . I suspect
-// the latter will be useful if we end up using scss as well.
-//
-// We should switch on NODE_ENV=production|debug which already tells react to
-// remove debug messages or not.
-//
-// Alternatively, browserify supports full configuration in package.json.
-// Perhaps we should use that -- I've added the equivalent.
+
+// handles JSX, ES6, commonjs, bundling, uglifyjs2, SCSS
+
+// TODO Use gulp for this, mainly for watching and possibly speed
+
+
+// JS
+
 var browserify = require('browserify')
 var fs = require('fs')
 var path = require('path')
 
 var base_dir = path.join(__dirname,'/../../')
 
+production = process.env.NODE_ENV == 'production'
+
 var b = browserify()
 b.add(__dirname+'/index.js')
 
-if (process.env.NODE_ENV == 'production') {
+if (production) {
     b.transform({
         global: true,
     },'uglifyify')
@@ -32,3 +29,13 @@ b.transform({es6:true},'reactify')
 var dest = fs.createWriteStream(base_dir+'/static/crates/bundle.js')
 
 b.bundle().pipe(dest)
+
+// SCSS
+
+//var sass = require('node-sass');
+//var result = sass.renderSync({
+//    file : base_dir+'/static/crates/main.css',
+//    outFile : base_dir+'/static/crates/bundle.css',
+//    outputStyle : production ? 'compressed' : 'nested',
+//[, options..]
+//});
