@@ -37,7 +37,7 @@ b.bundle().pipe(js_dest)
 
 var css_file = base_dir+'/static/crates/bundle.css'
 var result = sass.renderSync({
-    file : base_dir+'/static/crates/main.css', // does not write -- required for sourcemap
+    file : base_dir+'/static/crates/index.scss', // does not write -- required for sourcemap
     outFile : css_file,
     outputStyle : production ? 'compressed' : 'nested',
     sourceMap : !production,
