@@ -8,6 +8,7 @@ from django.conf import settings
 from cas.cas import BasicCAS
 
 from models import AudioFile
+from django.contrib.auth.decorators import login_required
 
 # TODO: authentication for Peers via middleware and decorators
 
@@ -15,6 +16,7 @@ class DumpIndex(View):
     '''Streaming JSON serialised dump of entire database.'''
     model = AudioFile
 
+    @login_required
     def get(self,request):
         # yet another example of the many layers of abstraction that django
         # enforces for no real benefit. Hey, Java called. They want their

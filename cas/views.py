@@ -5,14 +5,18 @@ from django.views.generic import View
 from django.http import FileResponse,HttpResponse
 from django.conf import settings
 from cas import BasicCAS
+from django.contrib.auth.decorators import login_required
 
-# TODO: authentication for Peers via middleware and decorators
+# TODO: authentication for Peers via middleware for API
+
+
 
 
 cas = BasicCAS()
 
 class Cas(View):
     # TODO Subclass this to include actual filepath and better name. Based on audioFile.map
+    @login_required
     def get(self, request, ref):
         '''
         Serve a file from the CAS. Not scalable, as it ties up an entire
@@ -45,6 +49,7 @@ class Cas(View):
         return response
 
 class EnumerateCas(View):
+    @login_required
     def get(self, request):
         response = FileResponse(
             self._json_generator(),
