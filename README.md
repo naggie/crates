@@ -10,8 +10,8 @@ may be defined soon to support progress bars and time remaining indicators.
 Logical Modules
 
 1. **CAS**: Content addressable store for immutable data (MP3 files etc).
-2. **index**: Database of file metadata
-   metadata. Old files are deprecated. Deprecated files can be garbage collected if desired.
+2. **index**: Database of file metadata metadata. Old files are deprecated.
+   Deprecated files can be garbage collected if desired.
 3. **Crawlers**: Systems that programatically curate files
 4. **Mapper**: Part of (1) and (2) which organises files as symlinks on the
    filesystem. Other apps can then use the database.
@@ -30,7 +30,8 @@ Implemented:
 
 Pending:
   * Add chromaprint/acoustid, BPM, Camelot key, MBID
-  * Identify songs that have no metadata via acoustid API call (or correct existing)
+  * Identify songs that have no metadata via acoustid API call (or correct
+    existing)
   * Get some better album art via MBID and online database (MusicBrainz, IMDB)
   * iTunes vi pyitunes: better metadata might be available.
 
