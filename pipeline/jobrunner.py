@@ -31,7 +31,11 @@ class Job():
 
     # The maximum number of concurrent tasks before performance degrades
     # (not applicable for some JobRunners)
-    max_workers = 2
+    max_workers = 1
+
+    # Should running a job print (using str(task)) to the console?
+    # May not be implemented by JobRunner in use.
+    print_task = False
 
     # load parameters in __init__() which is not defined
     def enumerate_tasks(self):
@@ -46,53 +50,88 @@ class Job():
     def reduce_results(self,results,exceptions):
         pass
 
-
     def __str__(self):
         return '%s: %s' % (self.__class__.__name__,self.description)
 
 class JobRunner():
+
     def __init__(self, job_instance):
         self.job = job_instance
 
     def run(): pass
 
-
-
     # For logging or updating GUI
     def on_start_enumerate(self): pass
     def on_finish_enumerate(self,count,elapsed_ms): pass
     def on_start_task(self,task): pass
-    def on_task_exception(self,task): pass
-    def on_finish_task(self,task): pass
-    def on_start_job(self,job): pass
-    def on_finish_job(self,job): pass
+    def on_task_exception(self,task,exception): pass
+    def on_finish_task(self,task,elapsed_ms): pass
+    def on_start_job(self): pass
+    def on_finish_job(self,verdict): pass
 
 
 # mixin
 class CliJobRunner():
-    def run_with_progress(self):
+    # TODO rewrite using above hooks only
+    def run(self):
         print 'Preparing tasks...'
-        tasks = list(self.enumerate_tasks())
+        tasks = list(self.job.enumerate_tasks())
         task_count = len(tasks)
         eta = TimeRemainingEstimator(task_count)
-        print 'Processing tasks...'
+        eta.println('Processing tasks...')
         print eta.summary()
 
+        results = list()
         for task in tasks:
             try:
-                self.process_task(task)
+                result = self.job.process_task(task)
                 eta.tick()
+                results.append(result)
             except TaskSkipped:
                 eta.skip()
-            except TaskError as e:
-                print 'TaskError:',e,'\n'
+            except Exception as e:
+                if not self.job.best_effort:
+                    raise
                 eta.skip()
 
             eta.rewrite_eta_frame()
 
-class SequentialJobRunner(JobRunner,CliJobRunner):
+        return self.job.reduce_results(results)
+
+class SequentialJobRunner():
+
     def run(self):
-        '''Can't be bothered to enumerate/crawl manually?'''
+        self.on_start_job()
+        self.on_start_enumerate()
+        tasks = list(self.job.enumerate_tasks())
+        task_count = len(tasks)
+        self.on_finish_enumerate(task_count)
+
+        results = list()
+        for task in tasks:
+            try:
+                self.on_start_task(task)
+                result = self.job.process_task(task)
+                eta.tick()
+                results.append(result)
+                self.on_finish_task(task,result)
+            except TaskSkipped:
+                eta.skip()
+            except Exception as e:
+                self.on_task_exception(task,e)
+                if not self.job.best_effort:
+                    raise
+                eta.skip()
+
+            eta.rewrite_eta_frame()
+
+        verdict = self.job.reduce_results(results)
+        self.on_finish_job(verdict)
+        return verdict
+
+class StreamingJobRunner(JobRunner):
+    # TODO this is old, but rewrite as results generator passed to reducer
+    def run(self):
         for task in self.enumerate_tasks():
             try:
                 self.process_task(task)
