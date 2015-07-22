@@ -5,7 +5,6 @@ from sys import stdout
 from multiprocessing import Queue,Process
 
 class TaskSkipped(Exception): pass
-class TaskError(Exception): pass
 # TODO MultiThreadedJob
 
 # Python memory profiler
@@ -23,7 +22,8 @@ class TaskError(Exception): pass
 class Job():
     description = "Generic Job"
 
-    # Ignore task exceptions?
+    # Ignore task exceptions? Note that whether this enabled or not, Tasks can
+    # be skipped by raising SkipTask
     best_effort = True
 
     # set dynamically in enumerate_tasks if you like
@@ -42,14 +42,16 @@ class Job():
         raise NotImplementedError()
 
     # if a verdict is required, assess all results and return one
+    # OPTIONAL
     def reduce_results(self,results,exceptions):
         pass
 
 class JobRunner():
-    def __init__(self, job):
-        pass
+    def __init__(self, job_instance):
+        self.job = job_instance
 
     def run(): pass
+
 
 
     # For logging or updating GUI
@@ -63,7 +65,7 @@ class JobRunner():
 
 
 # mixin
-class CliJobRunner
+class CliJobRunner():
     def run_with_progress(self):
         print 'Preparing tasks...'
         tasks = list(self.enumerate_tasks())
@@ -132,13 +134,19 @@ def MultiProcessJob(Job):
             task = self.tasks.get()
             try:
                 result = self.process_task(task)
-                self.tasks.task_done()
             except Exception as result:
-                pass
+                result.task = task
+            finally:
+                self.tasks.task_done()
 
             self.results.push(result)
 
 
+class SequentialCliJobRunner(SequentialJobRunner,CliJobRunner):
+    pass
+
+class MultiProcessCliJobRunner(SequentialJobRunner,CliJobRunner):
+    pass
 
 def reprint(*args):
     args = map(str,args)
@@ -151,6 +159,8 @@ def reprint(*args):
 
 class TimeRemainingEstimator():
     ''' https://xkcd.com/612/ '''
+
+    line = ''
 
     def __init__(self, total):
         self.total = total
@@ -186,11 +196,27 @@ class TimeRemainingEstimator():
             return
 
         percent = int(100*self.processed/self.total)
-        reprint(u'[ {0: >30} ][ {1: 3}% complete ] [{2: <30}][{3: >5.0f}/{4:.0f}]'.format(
+        self.line = u'[ {0: >30} ][ {1: 3}% complete ] [{2: <30}][{3: >5.0f}/{4:.0f}]'.format(
             self.summary(),
             percent,
             u'=' * int(percent*30/100),
             self.processed,self.total
-        ))
+        )
+        reprint(self.line)
 
+
+    def println(self,string):
+        'Print above the progress bar'
+        reprint(string)
+        stdout.write('\n')
+        reprint(self.line)
+
+from time import sleep
+
+j = TimeRemainingEstimator(100)
+for i in range(100):
+    j.tick()
+    j.rewrite_eta_frame()
+    j.println(i)
+    sleep(0.5)
 
