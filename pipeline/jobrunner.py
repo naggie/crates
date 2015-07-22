@@ -46,6 +46,10 @@ class Job():
     def reduce_results(self,results,exceptions):
         pass
 
+
+    def __str__(self):
+        return '%s: %s' % (self.__class__.__name__,self.description)
+
 class JobRunner():
     def __init__(self, job_instance):
         self.job = job_instance
@@ -210,13 +214,3 @@ class TimeRemainingEstimator():
         reprint(string)
         stdout.write('\n')
         reprint(self.line)
-
-from time import sleep
-
-j = TimeRemainingEstimator(100)
-for i in range(100):
-    j.tick()
-    j.rewrite_eta_frame()
-    j.println(i)
-    sleep(0.5)
-
