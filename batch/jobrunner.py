@@ -71,7 +71,7 @@ class JobRunner():
 
 
 # mixin
-class CliJobRunner():
+class CliJobRunner(JobRunner):
     # TODO rewrite using above hooks only
     def run(self):
         print 'Preparing tasks...'
@@ -84,6 +84,8 @@ class CliJobRunner():
         results = list()
         for task in tasks:
             try:
+                if self.job.print_task:
+                    eta.println(task)
                 result = self.job.process_task(task)
                 eta.tick()
                 results.append(result)
@@ -245,6 +247,9 @@ class TimeRemainingEstimator():
             u'=' * int(percent*30/100),
             self.processed,self.total
         )
+
+        self.line = '\033[36m%s\033[0m' % self.line
+
         reprint(self.line)
 
 

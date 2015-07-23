@@ -5,12 +5,16 @@ from requests import get
 from urlparse import urlparse,urlunparse
 from django.core.serializers import get_serializer,get_deserializer
 from cas.cas import BasicCAS
-from job import Job,TaskError,TaskSkipped,MultiProcessJob
 from tempfile import mkstemp
 from django.conf import settings
 
 from mutagen.mp3 import MP3,HeaderNotFoundError
 from mutagen.id3 import ID3,APIC,TIT2,TPE1,TPE2,TCON,TDRC,TALB
+
+
+# TODO deprecate TaskError
+from job import Job,TaskError,TaskSkipped,MultiProcessJob
+from batch.jobrunner import Job,TaskSkipped
 
 try:
     from os.scandir import scandir,walk # python 3.5, fast
@@ -46,51 +50,32 @@ class FileCrawler(Job):
                     yield filepath
 
     def process_task(self,filepath):
-            try:
-                # what sort of file is it? Guess the model to use from extension.
-                root, ext = splitext(filepath)
+        # what sort of file is it? Guess the model to use from extension.
+        root, ext = splitext(filepath)
 
-                if islink(filepath):
-                    raise TaskSkipped('Linked file is probably mapped to CAS')
+        if islink(filepath):
+            raise TaskSkipped('Linked file is probably mapped to CAS')
 
-                if not access(filepath,R_OK):
-                    raise TaskError('Could not access %s' % filepath)
+        #if not access(filepath,R_OK):
+        #    raise TaskError('Could not access %s' % filepath)
 
-                if ext == '.mp3':
-                    AudioFile.from_mp3(filepath).save()
+        if ext == '.mp3':
+            AudioFile.from_mp3(filepath).save()
 
-                elif ext == '.aac':
-                    AudioFile.from_aac(filepath).save()
-                else:
-                    raise TaskSkipped()
-            # In this case, should make one. In theory, the acoustid mutator
-            # should populate them later.
-            # TODO: add ID3 tags when there are none.
-            # I'm not especially sure this will happen often enough to care.
-            except HeaderNotFoundError: raise TaskSkipped()
-            except ID3NoHeaderError: raise TaskSkipped()
-            # empty but existing tags. Don't care atm.
-            except IndexError: raise TaskSkipped()
-            except TaskSkipped: raise
-            except TaskError: raise
-            # invalid characters, and whatever else I can't be bothered to catch
-            # TODO: collect these exception for a report summary.
-            #except Exception as e: print e
+        elif ext == '.aac':
+            AudioFile.from_aac(filepath).save()
+        else:
+            raise TaskSkipped('Not a supported file %s' % filepath)
 
-
-# Could also have a PeerCrawler in here to crawl over HTTP...
-# + SoundcloudCrawler? (using origin_url to download new only)
-# Even a soundcloud crawler? (using origin_url to download new only)
-# TODO hooks for progress, or a base class with a generator and unit processor.
 
 # TODO: ask the cas if it has the ref first
-
 class PeerCrawler(Job):
-    description =
-    """
+    description = """
         Crawl another crates server, downloading and adding files
         that are not on this crates server
     """
+
+    max_workers = 2
 
     def __init__(self,peer):
         self.cas = BasicCAS()
@@ -143,11 +128,14 @@ class PeerCrawler(Job):
         assert ref == item.object.ref # network/disk/h4x0r problem? Just exit now. Later throw/catch/delete and warn or something.
 
 class SoundcloudCrawler(Job):
-    description =
-    """
+    description = """
         Crawl a soundcloud user's favorites, downloading new songs.
         Produces best quality obtainable. Useful as artists sometimes pull songs.
     """
+
+    # stay relatively stealthy
+    max_workers = 1
+
     # TODO: cursor system to grab all favorites (api v2, see likes page on web and net activity)
     def __init__(self,username):
         self.likes_url = "http://api.soundcloud.com/users/%s/favorites.json" % username
@@ -187,7 +175,7 @@ class SoundcloudCrawler(Job):
                 'year': item['created_at'][:4], # must be u''
                 'mp3_url': mp3_url,
                 'cover_art_url': cover_art_url,
-                "origin":item['permalink_url'],
+                "origin": item['permalink_url'],
                 #"origin":item['purchase_url'], # which is better?
             }
 
