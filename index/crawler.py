@@ -24,6 +24,14 @@ except ImportError:
 
 # crawler could have a worker thread and queue, depending on benchmark results
 class FileCrawler(Job):
+
+    description = """
+        Crawl the filesystem for media files, inserting them into
+        the database if they don't already exist
+    """
+
+    print_task = True
+
     def __init__(self,directory):
         self.directory = directory
 
@@ -78,6 +86,12 @@ class FileCrawler(Job):
 # TODO: ask the cas if it has the ref first
 
 class PeerCrawler(Job):
+    description =
+    """
+        Crawl another crates server, downloading and adding files
+        that are not on this crates server
+    """
+
     def __init__(self,peer):
         self.cas = BasicCAS()
         self.peer = peer
@@ -129,7 +143,11 @@ class PeerCrawler(Job):
         assert ref == item.object.ref # network/disk/h4x0r problem? Just exit now. Later throw/catch/delete and warn or something.
 
 class SoundcloudCrawler(Job):
-    '''Produces best quality possible. Useful as artists sometimes pull songs.'''
+    description =
+    """
+        Crawl a soundcloud user's favorites, downloading new songs.
+        Produces best quality obtainable. Useful as artists sometimes pull songs.
+    """
     # TODO: cursor system to grab all favorites (api v2, see likes page on web and net activity)
     def __init__(self,username):
         self.likes_url = "http://api.soundcloud.com/users/%s/favorites.json" % username
