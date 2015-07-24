@@ -47,7 +47,7 @@ class Job():
 
     # if a verdict is required, assess all results and return one
     # OPTIONAL
-    def reduce_results(self,results,exceptions):
+    def reduce_results(self,results):
         pass
 
     def __str__(self):
@@ -58,78 +58,67 @@ class JobRunner():
     def __init__(self, job_instance):
         self.job = job_instance
 
-    def run(): pass
+    def run():
+        raise NotImplementedError()
 
-    # For logging or updating GUI
+    # For logging or updating GUI, NOT USING RESULTS
+    def on_start_job(self): pass
     def on_start_enumerate(self): pass
     def on_finish_enumerate(self,count,elapsed_ms): pass
     def on_start_task(self,task): pass
+    def on_skip_task(self,task): pass
     def on_task_exception(self,task,exception): pass
-    def on_finish_task(self,task,elapsed_ms): pass
-    def on_start_job(self): pass
+    def on_finish_task(self,task,result,elapsed_ms): pass
     def on_finish_job(self,verdict): pass
 
-
-# mixin
-class CliJobRunner(JobRunner):
-    # TODO rewrite using above hooks only
-    def run(self):
-        print 'Preparing tasks...'
-        tasks = list(self.job.enumerate_tasks())
-        task_count = len(tasks)
-        eta = TimeRemainingEstimator(task_count)
-        eta.println('Processing tasks...')
-        print eta.summary()
-
-        results = list()
-        for task in tasks:
-            try:
-                if self.job.print_task:
-                    eta.println(task)
-                result = self.job.process_task(task)
-                eta.tick()
-                results.append(result)
-            except TaskSkipped:
-                eta.skip()
-            except Exception as e:
-                if not self.job.best_effort:
-                    raise
-                eta.skip()
-
-            eta.rewrite_eta_frame()
-
-        return self.job.reduce_results(results)
-
-class SequentialJobRunner():
-
+class SequentialJobRunner(JobRunner):
     def run(self):
         self.on_start_job()
         self.on_start_enumerate()
         tasks = list(self.job.enumerate_tasks())
-        task_count = len(tasks)
-        self.on_finish_enumerate(task_count)
+        count = len(tasks)
+        # TODO count time for things
+        self.on_finish_enumerate(count,-1)
 
         results = list()
         for task in tasks:
             try:
                 self.on_start_task(task)
                 result = self.job.process_task(task)
-                eta.tick()
                 results.append(result)
-                self.on_finish_task(task,result)
+                self.on_finish_task(task,result,-1)
             except TaskSkipped:
-                eta.skip()
+                self.on_skip_task(task)
             except Exception as e:
                 self.on_task_exception(task,e)
                 if not self.job.best_effort:
                     raise
-                eta.skip()
-
-            eta.rewrite_eta_frame()
 
         verdict = self.job.reduce_results(results)
         self.on_finish_job(verdict)
         return verdict
+
+# mixin
+class CliJobRunnerMixin():
+    def on_start_enumerate(self):
+        print 'Preparing tasks...'
+
+    def on_finish_enumerate(self,count,elapsed_ms):
+        self.eta = TimeRemainingEstimator(count)
+        self.eta.println('Processing tasks...')
+        print self.eta.summary()
+
+    def on_start_task(self,task):
+        if self.job.print_task:
+            self.eta.println(task)
+
+    def on_finish_task(self,task,result,elapsed_ms):
+        self.eta.tick()
+        self.eta.rewrite_eta_frame()
+
+    def on_task_exception(self,task,exception):
+        self.eta.println('\033[31mFAILURE: %s\033[0m' % exception)
+
 
 class StreamingJobRunner(JobRunner):
     # TODO this is old, but rewrite as results generator passed to reducer
@@ -140,8 +129,7 @@ class StreamingJobRunner(JobRunner):
             except TaskError: pass
             except TaskSkipped: pass
 
-def MultiProcessJob(Job):
-    '''Unfinished concept'''
+def MultiProcessJobRunner(Job):
     # set to limit. 0 = unlimited
     queue_size = 0
 
@@ -187,11 +175,11 @@ def MultiProcessJob(Job):
             self.results.push(result)
 
 
-class SequentialCliJobRunner(SequentialJobRunner,CliJobRunner):
+class SequentialCliJobRunner(CliJobRunnerMixin,SequentialJobRunner):
     pass
 
-class MultiProcessCliJobRunner(SequentialJobRunner,CliJobRunner):
-    pass
+#class MultiProcessCliJobRunner(CliJobRunnerMixin,MultiProcessJobRunner):
+#    pass
 
 def reprint(*args):
     args = map(str,args)
