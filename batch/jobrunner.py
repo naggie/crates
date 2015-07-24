@@ -90,6 +90,7 @@ class SequentialJobRunner(JobRunner):
             except TaskSkipped:
                 self.on_skip_task(task)
             except Exception as e:
+                e.task = task
                 self.on_task_exception(task,e)
                 if not self.job.best_effort:
                     raise
@@ -130,35 +131,38 @@ class StreamingJobRunner(JobRunner):
             except TaskSkipped: pass
 
 def MultiProcessJobRunner(Job):
-    # set to limit. 0 = unlimited
-    queue_size = 0
-
+    # TODO use results queue for IPC --  callbacks
     def run(self):
-        self.tasks = Queue(max_size=self.queuesize)
-        self.results = Queue(max_size=self.queuesize)
-        count = 0
 
-        # TODO pool instead?
+
+        self.on_start_enumerate()
+        tasks = list(self.job.enumerate_tasks())
+        count = len(tasks)
+        # TODO count time for things
+        self.on_finish_enumerate(count,-1)
+        self.tasks_q = Queue(max_size=count)
+
+        for task in tasks:
+            self.tasks_q.put(task)
+
+        # results + exceptions + IPC
+        self.results_q = Queue(max_size=10)
+
         pool = list()
-        for x in xrange(self.queue_size):
+        for x in xrange(self.job.max_workers):
             process = Process(target=self._worker)
             process.daemon = True
             process.start()
             pool.append(process)
 
-        for task in self.enumerate_tasks():
-            self.tasks.put(task)
-            count +=1
-
-        # if results are (or progress is) not required, join can be done here
-        #self.tasks.join()
-
-        for x in xrange(count):
-            result = self.results.get()
+        for x in range(count):
+            result = self.results_q.get()
             if isinstance(result,Exception):
                 raise result
 
         for process in pool:
+            # TODO join instead? workers could die if Q is empty
+            # as Q is loaded before workers
             process.terminate()
 
 
