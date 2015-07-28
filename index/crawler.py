@@ -11,8 +11,6 @@ from django.conf import settings
 from mutagen.mp3 import MP3,HeaderNotFoundError
 from mutagen.id3 import ID3,APIC,TIT2,TPE1,TPE2,TCON,TDRC,TALB
 
-
-# TODO deprecate TaskError
 from job import Job,TaskError,TaskSkipped,MultiProcessJob
 from batch.jobrunner import Job,TaskSkipped
 
@@ -121,7 +119,7 @@ class PeerCrawler(Job):
 
         if ref != item.object.ref:
             self.cas.delete(ref)
-            raise TaskError(ref)
+            raise IOError(ref)
 
         item.object.save(ref)
 
@@ -197,7 +195,7 @@ class SoundcloudCrawler(Job):
                 mp3_res = get(track['mp3_url'],params={'client_id':self.key},stream=True)
 
                 if mp3_res.status_code != 200:
-                    raise TaskError('Could not download {0}, got HTTP {1}'.format(track['mp3_url'],mp3_res.status_code))
+                    raise Exception('Could not download {0}, got HTTP {1}'.format(track['mp3_url'],mp3_res.status_code))
 
                 for chunk in mp3_res.iter_content(chunk_size=8192):
                     f.write(chunk)
@@ -243,9 +241,6 @@ class SoundcloudCrawler(Job):
             AudioFile.origin = track['origin']
             AudioFile.save()
 
-        except HeaderNotFoundError:
-            # MP3 header, not ID3 header that is.
-            raise TaskError('Invalid MP3: %s' % track['title'])
         finally:
             # GC
             unlink(filepath)

@@ -8,6 +8,7 @@ from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
 from index.crawler import FileCrawler
+from batch.jobrunner import SequentialCliJobRunner
 
 class Command(BaseCommand):
 
@@ -22,7 +23,7 @@ class Command(BaseCommand):
         # TODO ...progress indication here
         for directory in options['directories']:
             crawler = FileCrawler(directory)
-            crawler.run_with_progress()
+            SequentialCliJobRunner(crawler).run()
 
 
 
