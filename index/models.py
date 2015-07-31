@@ -78,8 +78,8 @@ class AudioFile(CratesImmutableFile):
     # first release.
     title = CharField(max_length=64,null=True)
     artist = CharField(max_length=64,null=True)
-    album_artist = CharField(max_length=64,null=True)
-    album = CharField(max_length=64,null=True)
+    album = ForeignKey(Album)
+
     composer = CharField(max_length=64,null=True)
     genre = CharField(max_length=64,null=True)
     year = PositiveSmallIntegerField(null=True,blank=True,help_text="Year song was released")
@@ -89,7 +89,6 @@ class AudioFile(CratesImmutableFile):
     length = PositiveSmallIntegerField(null=True,blank=True,help_text="Approximate length in seconds")
 
     bpm = PositiveSmallIntegerField(null=True,blank=True,help_text="Detected beats-per-minute of song")
-    cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
 
     def __unicode__(self):
         return u'{album_artist} - {album} [{artist}] {album} - {title} [{year}]{extension}'.format(**self.slugify())
@@ -155,3 +154,7 @@ class AudioFile(CratesImmutableFile):
         return super(AudioFile,cls).from_file(filepath)
 
 
+def Album(Model):
+    album = CharField(max_length=64)
+    cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
+    album_artist = CharField(max_length=64,null=True)
