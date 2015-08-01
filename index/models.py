@@ -1,4 +1,4 @@
-from django.db.models import CharField, ForeignKey, IntegerField, PositiveSmallIntegerField, DateTimeField, URLField, Model
+from django.db.models import CharField, ForeignKey, IntegerField, PositiveSmallIntegerField, DateTimeField, URLField, Model, UUIDField
 from django.contrib.auth.models import User
 from mutagen.mp3 import MP3,HeaderNotFoundError
 from mutagen.easyid3 import EasyID3
@@ -90,6 +90,13 @@ class AudioFile(CratesImmutableFile):
 
     bpm = PositiveSmallIntegerField(null=True,blank=True,help_text="Detected beats-per-minute of song")
 
+    mbid = UUIDField(
+        blank=True,
+        null=True,
+        help_text="MusicBrainz ID",
+        hyphenate=True,
+    )
+
     def __unicode__(self):
         return u'{album_artist} - {album} [{artist}] {album} - {title} [{year}]{extension}'.format(**self.slugify())
 
@@ -158,3 +165,10 @@ def Album(Model):
     album = CharField(max_length=64)
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
     album_artist = CharField(max_length=64,null=True)
+
+    mbid = UUIDField(
+        blank=True,
+        null=True,
+        help_text="MusicBrainz ID",
+        hyphenate=True,
+    )
