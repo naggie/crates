@@ -80,6 +80,9 @@ class AudioFile(CratesImmutableFile):
     artist = CharField(max_length=64,null=True)
     album = ForeignKey(Album)
 
+    # stored redundantly, yes -- some do not belong to an album
+    cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
+
     composer = CharField(max_length=64,null=True)
     genre = CharField(max_length=64,null=True)
     year = PositiveSmallIntegerField(null=True,blank=True,help_text="Year song was released")
@@ -128,12 +131,26 @@ class AudioFile(CratesImmutableFile):
 
         if audio.has_key('TIT2'): audioFile.title = audio['TIT2'][0]
 
-        # also default for album_artist
-        if audio.has_key('TPE1'): audioFile.artist = audioFile.album_artist = audio['TPE1'][0]
-        if audio.has_key('TPE2'): audioFile.album_artist = audio['TPE2'][0]
+        album_artist = 'Various Artists'
+        # Artist is default for album_artist
+        if audio.has_key('TPE1'): audioFile.artist = album_artist = audio['TPE1'][0]
+        if audio.has_key('TPE2'): album_artist = audio['TPE2'][0]
 
-        if audio.has_key('TALB'): audioFile.album = audio['TALB'][0]
         if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0]
+
+
+        if audio.has_key('APIC:Cover'):
+            data = audio['APIC:Cover'].data
+            audioFile.cover_art_ref = cas.insert_blob(data)
+            # record mimetype of cover art...?
+
+        if audio.has_key('TALB'):
+            audioFile.album = Album.objects.get_or_create(
+                name = audio['TALB'][0],
+                artist = album_artist,
+            )
+            audioFile.album.cover_art_ref = audioFile.cover_art_ref
+            audioFile.album.save()
 
         # TODO: fix this; TDRC is an ID3TimeStamp which should be converted to a datetime (field)
         #if audio.has_key('TDRC'): audioFile.year = audio['TDRC'][0]
@@ -146,10 +163,6 @@ class AudioFile(CratesImmutableFile):
         audioFile.length = int(audio.info.length)
 
         # cover art
-        if audio.has_key('APIC:Cover'):
-            data = audio['APIC:Cover'].data
-            audioFile.cover_art_ref = cas.insert_blob(data)
-            # record mimtype of cover art...?
 
         audioFile.extension = '.mp3'
 
@@ -164,7 +177,7 @@ class AudioFile(CratesImmutableFile):
 def Album(Model):
     album = CharField(max_length=64)
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
-    album_artist = CharField(max_length=64,null=True)
+    artist = CharField(max_length=64,null=True)
 
     mbid = UUIDField(
         blank=True,
