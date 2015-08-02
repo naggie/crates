@@ -119,6 +119,7 @@ class CliJobRunnerMixin():
 
     def on_task_exception(self,task,exception):
         self.eta.println('\033[31mFAILURE: %s\033[0m' % exception)
+        self.eta.skip()
 
 
 class StreamingJobRunner(JobRunner):
