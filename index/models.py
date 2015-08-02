@@ -40,6 +40,18 @@ class CratesImmutableFile(ImmutableFile):
 
         return cleaned
 
+
+class Album(Model):
+    name = CharField(max_length=64)
+    cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
+    artist = CharField(max_length=64,null=True)
+
+    mbid = UUIDField(
+        blank=True,
+        null=True,
+        help_text="MusicBrainz ID",
+    )
+
 class AudioFile(CratesImmutableFile):
     TYPE_CHOICES = (
             ('MIX','Mix/Compilation'),
@@ -78,7 +90,7 @@ class AudioFile(CratesImmutableFile):
     # first release.
     title = CharField(max_length=64,null=True)
     artist = CharField(max_length=64,null=True)
-    album = ForeignKey(Album)
+    album = ForeignKey(Album,null=True)
 
     # stored redundantly, yes -- some do not belong to an album
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
@@ -97,7 +109,6 @@ class AudioFile(CratesImmutableFile):
         blank=True,
         null=True,
         help_text="MusicBrainz ID",
-        hyphenate=True,
     )
 
     def __unicode__(self):
@@ -145,11 +156,11 @@ class AudioFile(CratesImmutableFile):
             # record mimetype of cover art...?
 
         if audio.has_key('TALB'):
-            audioFile.album = Album.objects.get_or_create(
+            audioFile.album, created = Album.objects.get_or_create(
                 name = audio['TALB'][0],
                 artist = album_artist,
+                cover_art_ref = audioFile.cover_art_ref
             )
-            audioFile.album.cover_art_ref = audioFile.cover_art_ref
             audioFile.album.save()
 
         # TODO: fix this; TDRC is an ID3TimeStamp which should be converted to a datetime (field)
@@ -173,15 +184,3 @@ class AudioFile(CratesImmutableFile):
         # aac specific tag loading goes here
         return super(AudioFile,cls).from_file(filepath)
 
-
-def Album(Model):
-    album = CharField(max_length=64)
-    cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
-    artist = CharField(max_length=64,null=True)
-
-    mbid = UUIDField(
-        blank=True,
-        null=True,
-        help_text="MusicBrainz ID",
-        hyphenate=True,
-    )
