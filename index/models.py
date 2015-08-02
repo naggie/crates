@@ -44,13 +44,16 @@ class CratesImmutableFile(ImmutableFile):
 class Album(Model):
     name = CharField(max_length=64)
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
-    artist = CharField(max_length=64,null=True)
+    artist = CharField(max_length=64,null=True) # (album artist, that is)
 
     mbid = UUIDField(
         blank=True,
         null=True,
         help_text="MusicBrainz ID",
     )
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.name,self.artist)
 
 class AudioFile(CratesImmutableFile):
     TYPE_CHOICES = (

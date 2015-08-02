@@ -50,7 +50,7 @@ class Job():
     def reduce_results(self,results):
         pass
 
-    def __str__(self):
+    def __unicode__(self):
         return '%s: %s' % (self.__class__.__name__,self.description)
 
 class JobRunner():
