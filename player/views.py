@@ -58,7 +58,7 @@ class StreamingJsonView(View):
         yield ']'
 
 # TODO upgrade with search and alphabet browsing
-class Albums(StreamingJsonView,LoginRequiredMixin):
+class Albums(LoginRequiredMixin,StreamingJsonView):
     def enumerate(self):
         for album in Album.objects.all()[:50]:
             # TODO filter out _state (etc)
