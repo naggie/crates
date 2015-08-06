@@ -56,7 +56,6 @@ class Cas(View):
         return response
 
 class EnumerateCas(View):
-
     # require login hack, allowing the login_required decorator able to be used for class based views
     @method_decorator(login_required)
     def dispatch(self, *args, **kwargs):

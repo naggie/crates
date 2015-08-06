@@ -164,7 +164,13 @@ class AudioFile(CratesImmutableFile):
                 artist = album_artist,
                 cover_art_ref = audioFile.cover_art_ref
             )
-            audioFile.album.save()
+
+            # first album art should be used if songs have individual covers
+            # such as on songs from soundcloud. This way, redundant albums are
+            # not produced.
+            if created:
+                audioFile.cover_art_ref = audioFile.cover_art_ref
+                audioFile.album.save()
 
         # TODO: fix this; TDRC is an ID3TimeStamp which should be converted to a datetime (field)
         #if audio.has_key('TDRC'): audioFile.year = audio['TDRC'][0]
