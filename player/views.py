@@ -48,10 +48,12 @@ class StreamingJsonView(View):
         # JSON list out of arbitrary objects (json dump each object)
         gen = self.enumerate()
 
-        yield '["%s"' % next(gen)
+        gen = self._json_gen_wrapper(gen)
+
+        yield '[%s' % next(gen)
 
         for ref in gen:
-            yield ',\n"%s"' % ref
+            yield ',\n%s' % ref
 
         yield ']'
 
@@ -60,4 +62,5 @@ class Albums(StreamingJsonView,LoginRequiredMixin):
     def enumerate(self):
         for album in Album.objects.all()[:50]:
             # TODO filter out _state (etc)
-            yield album.__dict__
+            #yield album.__dict__
+            yield {k:v for (k,v) in album.__dict__.iteritems() if not k.startswith('_')}
