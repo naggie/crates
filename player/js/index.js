@@ -12,17 +12,24 @@ function get(url) {
             if (xhr.readyState == 4)
 
                 switch (xhr.status) {
-                    case 403:
-                        return document.location.href = '/accounts/login/'
                     case 200:
-                        return resolve(xhr.response)
+                        // hack to detect if session has expired
+                        if (xhr.responseURL.match('/accounts/login/')) {
+                            return document.location.href = '/accounts/login/'
+                        }
+
+                        return resolve(xhr)
                     case 500:
                         alert('Internal server error')
-                        console.log(xhr.status,xhr.response)
+                        // fall...
                     default:
-                        console.log(xhr.status,xhr.response)
+                        console.log(xhr.status,xhr)
                         reject(xhr.status)
                 }
+        }
+
+        xhr.onerror = function(error) {
+            console.log(error)
         }
 
         xhr.send()
@@ -31,9 +38,9 @@ function get(url) {
 
 window.onload = function() {
     //get('/albums').then(alert)
-    setTimeout(function(){
+    setInterval(function(){
         //get('/albums')
-        get('/albums').then(function(a){console.log('s',a)},function(){})
-    },4000)
+        get('/albums').then(function(a){console.log('s',a)},function(a,b){console.log(a,b)})
+    },1000)
     //get('/albums').then(function(a){console.log('s',a)},function(){})
 }
