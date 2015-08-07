@@ -60,7 +60,7 @@ class StreamingJsonView(View):
 # TODO upgrade with search and alphabet browsing
 class Albums(LoginRequiredMixin,StreamingJsonView):
     def enumerate(self):
-        for album in Album.objects.all()[:50]:
+        for album in Album.objects.exclude(cover_art_ref__isnull=True)[:50]:
             # TODO filter out _state (etc)
             #yield album.__dict__
             yield {k:v for (k,v) in album.__dict__.iteritems() if not k.startswith('_')}

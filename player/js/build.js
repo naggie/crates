@@ -6,6 +6,9 @@
 
 
 // JS
+//
+//
+// TODO: need sourcemap for browserify
 
 var browserify = require('browserify')
 var fs = require('fs')
@@ -16,7 +19,10 @@ var sass = require('node-sass')
 var base_dir = path.join(__dirname,'/../../')
 var production = process.env.NODE_ENV == 'production'
 
-var b = browserify()
+var b = browserify({
+    debug:!production,
+})
+
 b.add(__dirname+'/index.js')
 
 if (production) {

@@ -20,7 +20,7 @@ function get(url) {
                             return document.location.href = '/accounts/login/'
                         }
 
-                        return resolve(xhr)
+                        return resolve(xhr.response)
                     case 500:
                         alert('Internal server error')
                         // fall...
@@ -59,10 +59,16 @@ class Albums extends React.Component {
     }
 
     render() {
+        var albums = []
+
+        this.state.albums.forEach((props) => {
+            albums.push(<Album {...props} />)
+        })
+
         return (
-            <div class="albums">
-                <div class="pure-g">
-                    {this.state.albums}
+            <div className="albums">
+                <div className="pure-g">
+                    {albums}
                 </div>
             </div>
         )
@@ -72,10 +78,10 @@ class Albums extends React.Component {
 class Album extends React.Component {
     render() {
         return (
-            <div class="album pure-u-1 pure-u-md-1-3 pure-u-lg-1-6 pure-u-xl-1-7">
-                <img class="pure-img-responsive" src={'/cas/'+this.props.cover_art_ref} />
-                <div class="title">{this.props.name}</div>
-                <div class="artist">{this.props.artist}</div>
+            <div className="album pure-u-1 pure-u-md-1-3 pure-u-lg-1-6 pure-u-xl-1-7" key={this.props.id}>
+                <img className="pure-img-responsive" src={'/cas/'+this.props.cover_art_ref} />
+                <div className="title">{this.props.name}</div>
+                <div className="artist">{this.props.artist}</div>
             </div>
         )
     }
@@ -85,3 +91,10 @@ React.render(
     <Albums />,
     document.getElementById('main')
 )
+
+window.onload = function() {
+    return
+    get('/albums').then(function(albums) {
+        console.log(albums)
+    })
+}
