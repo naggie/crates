@@ -39,12 +39,30 @@ function get(url) {
     })
 }
 
-class Browser extends React.Component {
+class Albums extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {
+            albums: [],
+        }
+    }
+
+    componentDidMount() {
+        // what's fat arrow?
+        // for lexical this
+        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+        get('/albums').then((albums) => {
+            this.setState({
+                albums: albums,
+            })
+        })
+    }
+
     render() {
         return (
             <div class="albums">
                 <div class="pure-g">
-                    {this.albums}
+                    {this.state.albums}
                 </div>
             </div>
         )
@@ -63,12 +81,7 @@ class Album extends React.Component {
     }
 }
 
-
-window.onload = function() {
-    //get('/albums').then(alert)
-    setInterval(function(){
-        //get('/albums')
-        get('/albums').then(function(a){console.log('s',a)},function(a,b){console.log(a,b)})
-    },1000)
-    //get('/albums').then(function(a){console.log('s',a)},function(){})
-}
+React.render(
+    <Albums />,
+    document.getElementById('main')
+)
