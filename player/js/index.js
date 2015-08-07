@@ -4,8 +4,14 @@ var Dispatcher = require('flux').Dispatcher
 // TODO: split these POC components into separate modules
 
 
-function get(url) {
+function get(url,params) {
     return new Promise(function(resolve,reject){
+        if (params) {
+            url += '?' + Object.keys(params).map((key) => {
+                return key + "="+params[key]
+            }) .join("&")
+        }
+
         var xhr =  new XMLHttpRequest()
         xhr.open("GET",url,true)
         xhr.responseType = 'json'
