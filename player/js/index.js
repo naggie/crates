@@ -1,6 +1,8 @@
 var React = require("react")
 var Dispatcher = require('flux').Dispatcher
 
+// TODO: split these POC components into separate modules
+
 
 function get(url) {
     return new Promise(function(resolve,reject){
@@ -30,11 +32,37 @@ function get(url) {
 
         xhr.onerror = function(error) {
             console.log(error)
+            reject(error)
         }
 
         xhr.send()
     })
 }
+
+class Browser extends React.Component {
+    render() {
+        return (
+            <div class="albums">
+                <div class="pure-g">
+                    {this.albums}
+                </div>
+            </div>
+        )
+    }
+}
+
+class Album extends React.Component {
+    render() {
+        return (
+            <div class="album pure-u-1 pure-u-md-1-3 pure-u-lg-1-6 pure-u-xl-1-7">
+                <img class="pure-img-responsive" src={'/cas/'+this.props.cover_art_ref} />
+                <div class="title">{this.props.name}</div>
+                <div class="artist">{this.props.artist}</div>
+            </div>
+        )
+    }
+}
+
 
 window.onload = function() {
     //get('/albums').then(alert)
