@@ -71,7 +71,7 @@ class Albums(LoginRequiredMixin,StreamingJsonView):
         qs = qs.filter(**self.request.GET.dict())
 
 
-        for album in qs[:50]:
+        for album in qs[:100]:
             # TODO filter out _state (etc)
             #yield album.__dict__
             yield {k:v for (k,v) in album.__dict__.iteritems() if not k.startswith('_')}

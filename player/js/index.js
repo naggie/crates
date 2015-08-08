@@ -106,7 +106,7 @@ class Albums extends React.Component {
                 <div className="pure-g">
                     {
                         this.state.albums.map((props) => {
-                            return <Album {...props} />
+                            return <Album {...props} key={props.id} />
                         })
                     }
                 </div>
@@ -116,14 +116,30 @@ class Albums extends React.Component {
 }
 
 class Browser extends React.Component {
+    constructor(props) {
+        this.state = {char:''}
+    }
+
+    updateChar(char) {
+        console.log(char)
+        this.setState({
+            char: char,
+        })
+    }
+
     render() {
+        return <div>
+            <AZ onClick={this.updateChar} />
+            <Albums name__startswith={this.state.char} />
+        </div>
 
     }
 }
 
 React.render(
-    <Albums name__startswith="B" />,
+    //<Albums name__startswith="B" />,
     //<AZ onClick={(char)=>{console.log(char)}}/>,
+    <Browser />,
     document.getElementById('main')
 )
 
