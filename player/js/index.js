@@ -71,7 +71,7 @@ class AZ extends React.Component {
                     return <div
                         className="char"
                         key={i}
-                        onClick={this.props.onClick.bind(this,char)} // WOW!
+                        onClick={this.props.onClick.bind(this.props.parent,char)} // WOW!
                     >{char}</div>
                 })
             }
@@ -110,7 +110,8 @@ class Browser extends React.Component {
     render() {
         return (
             <div className="albums">
-                <AZ onClick={this.updateChar} />
+                // TODO passing parent 'this' is strange. Flux time?
+                <AZ onClick={this.updateChar} parent={this} />
                 <div className="pure-g">
                     {
                         this.state.albums.map((props) => {
