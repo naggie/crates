@@ -80,20 +80,27 @@ class AZ extends React.Component {
 
 }
 
-class Albums extends React.Component {
-    // NOTE passing props directly to API. May cause problems later, maybe not. It's convenient.
+class Browser extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {
-            albums: [],
-        }
+        this.state = {albums:[]}
     }
 
     componentDidMount() {
+        this.loadFromAPI()
+    }
+
+    updateChar(char) {
+        this.loadFromAPI({
+            name__startswith : char,
+        })
+    }
+
+    loadFromAPI(query) {
         // what's that fat arrow?
         // for lexical this
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
-        get('/albums',this.props).then((albums) => {
+        get('/albums',query).then((albums) => {
             this.setState({
                 albums: albums,
             })
@@ -103,6 +110,7 @@ class Albums extends React.Component {
     render() {
         return (
             <div className="albums">
+                <AZ onClick={this.updateChar} />
                 <div className="pure-g">
                     {
                         this.state.albums.map((props) => {
@@ -112,27 +120,6 @@ class Albums extends React.Component {
                 </div>
             </div>
         )
-    }
-}
-
-class Browser extends React.Component {
-    constructor(props) {
-        this.state = {char:''}
-    }
-
-    updateChar(char) {
-        console.log(char)
-        this.setState({
-            char: char,
-        })
-    }
-
-    render() {
-        return <div>
-            <AZ onClick={this.updateChar} />
-            <Albums name__startswith={this.state.char} />
-        </div>
-
     }
 }
 
