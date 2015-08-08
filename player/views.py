@@ -50,12 +50,15 @@ class StreamingJsonView(View):
 
         gen = self._json_gen_wrapper(gen)
 
-        yield '[%s' % next(gen)
+        try:
+            yield '[%s' % next(gen)
 
-        for ref in gen:
-            yield ',\n%s' % ref
+            for ref in gen:
+                yield ',\n%s' % ref
 
-        yield ']'
+            yield ']'
+        except StopIteration:
+            yield '[]'
 
 # TODO this is quite generic already, so could merge it into above
 class Albums(LoginRequiredMixin,StreamingJsonView):
