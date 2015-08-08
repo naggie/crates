@@ -65,16 +65,14 @@ class Albums extends React.Component {
     }
 
     render() {
-        var albums = []
-
-        this.state.albums.forEach((props) => {
-            albums.push(<Album {...props} />)
-        })
-
         return (
             <div className="albums">
                 <div className="pure-g">
-                    {albums}
+                    {
+                        this.state.albums.map((props) => {
+                            return <Album {...props} />
+                        })
+                    }
                 </div>
             </div>
         )
