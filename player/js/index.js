@@ -93,8 +93,28 @@ class Album extends React.Component {
     }
 }
 
+class AZ extends React.Component {
+    constructor() {
+        this.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+    }
+
+    render() {
+        var rows = []
+
+        for (var i = 0; i < this.alphabet.length; i++) {
+            rows.push(<div className="char" key={i}>{this.alphabet.charAt(i)}</div>)
+        }
+
+        return <div className="alphabet">
+            {rows}
+        </div>
+    }
+
+}
+
 React.render(
-    <Albums />,
+    //<Albums />,
+    <AZ />,
     document.getElementById('main')
 )
 
