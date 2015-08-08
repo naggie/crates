@@ -57,10 +57,21 @@ class StreamingJsonView(View):
 
         yield ']'
 
-# TODO upgrade with search and alphabet browsing
+# TODO this is quite generic already, so could merge it into above
 class Albums(LoginRequiredMixin,StreamingJsonView):
     def enumerate(self):
-        for album in Album.objects.exclude(cover_art_ref__isnull=True)[:50]:
+        qs = Album.objects
+
+        qs = qs.exclude(cover_art_ref__isnull=True)
+
+        #if 'startswith' in self.request.GET:
+        #    qs = qs.filter(name__startswith=self.request.GET['startswith'])
+
+        # TODO evaluate this from a security/performance perspective
+        qs = qs.filter(**self.request.GET.dict())
+
+
+        for album in qs[:50]:
             # TODO filter out _state (etc)
             #yield album.__dict__
             yield {k:v for (k,v) in album.__dict__.iteritems() if not k.startswith('_')}
