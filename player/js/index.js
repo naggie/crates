@@ -54,7 +54,7 @@ class Albums extends React.Component {
     }
 
     componentDidMount() {
-        // what's fat arrow?
+        // what's that fat arrow?
         // for lexical this
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
         get('/albums').then((albums) => {
@@ -92,13 +92,8 @@ class Album extends React.Component {
 }
 
 class AZ extends React.Component {
-    constructor() {
+    constructor(props) {
         this.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-    }
-
-    handleClick(char) {
-        // TODO flux subscribing thing for child->parent communication etc
-        console.log(char)
     }
 
     render() {
@@ -108,7 +103,7 @@ class AZ extends React.Component {
                     return <div
                         className="char"
                         key={i}
-                        onClick={this.handleClick.bind(this,char)}
+                        onClick={this.props.onClick.bind(this,char)} // WOW!
                     >{char}</div>
                 })
             }
@@ -119,7 +114,7 @@ class AZ extends React.Component {
 
 React.render(
     //<Albums />,
-    <AZ />,
+    <AZ onClick={(char)=>{console.log(char)}}/>,
     document.getElementById('main')
 )
 
