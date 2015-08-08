@@ -96,11 +96,20 @@ class AZ extends React.Component {
         this.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
     }
 
+    handleClick(char) {
+        // TODO flux subscribing thing for child->parent communication etc
+        console.log(char)
+    }
+
     render() {
         return <div className="alphabet">
             {
                 this.alphabet.map((char,i) => {
-                    return <div className="char" key={i}>{char}</div>
+                    return <div
+                        className="char"
+                        key={i}
+                        onClick={this.handleClick.bind(this,char)}
+                    >{char}</div>
                 })
             }
         </div>
