@@ -58,3 +58,16 @@ table.songs td.art {
     top:45%;
     left:50%;
 }
+
+.alphabet {
+    position:fixed;
+    left:180px;
+    top:0;
+    height:100%;
+    vertical-align:middle;
+}
+
+.alphabet .char {
+    height:3.84%;
+    font-size:20px;
+}
