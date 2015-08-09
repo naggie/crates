@@ -125,6 +125,7 @@ class Browser extends React.Component {
             <div className="albums">
                 <AZ onClick={this.updateChar} parent={this} />
                 { this.state.loading? <Loading /> :''}
+                { !this.state.albums.length && !this.state.loading ? 'No results.' : ''}
                 <div className="pure-g">
                     {
                         this.state.albums.map((props) => {

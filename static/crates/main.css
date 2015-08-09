@@ -52,3 +52,9 @@ table.songs td.art {
     height:24px
 }
 
+
+.loading {
+    position:absolute;
+    top:45%;
+    left:50%;
+}
