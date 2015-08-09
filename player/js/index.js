@@ -46,6 +46,16 @@ function get(url,params) {
 }
 
 
+class Loading extends React.Component {
+    render() {
+        return (
+            <div className="loading">
+                <i className="fa fa-spin fa-2x fa-circle-o-notch" />
+            </div>
+        )
+    }
+}
+
 class Album extends React.Component {
     render() {
         return (
@@ -100,18 +110,21 @@ class Browser extends React.Component {
         // what's that fat arrow?
         // for lexical this
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
+        this.setState({loading:true})
         get('/albums',query).then((albums) => {
             this.setState({
                 albums: albums,
+                loading: false,
             })
         })
     }
 
     render() {
+        // TODO passing parent 'this' is strange. Flux time?
         return (
             <div className="albums">
-                // TODO passing parent 'this' is strange. Flux time?
                 <AZ onClick={this.updateChar} parent={this} />
+                { this.state.loading? <Loading /> :''}
                 <div className="pure-g">
                     {
                         this.state.albums.map((props) => {
