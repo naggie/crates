@@ -2,8 +2,9 @@
  * default to CSS URL import.
  */
 
-@import 'main';
 @import '../pure/side-menu';
 @import '../pure/pure-min';
 @import '../pure/grids-responsive-min';
 @import '../font-awesome-4.3.0/css/font-awesome.min';
+
+@import 'main';

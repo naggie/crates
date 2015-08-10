@@ -85,19 +85,21 @@ class AZ extends React.Component {
     // TODO use purecss.io primitives for this
     constructor(props) {
         this.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
+
+        this.state = { selected: '' }
     }
 
     render() {
         return (
-            <div className="alphabet pure-menu">
+            <div className="pure-menu alphabet">
                  <ul className="pure-menu-list">
                     {
                         this.alphabet.map((char,i) => {
                             return <li
-                                className="char pure-menu-item"
+                                className="pure-menu-link"
                                 key={i}
                                 onClick={this.props.onClick.bind(this.props.parent,char)}>
-                                <a href="#" className="pure-menu-link">{char}</a>
+                                {char}
                             </li>
                         })
                     }

@@ -17,6 +17,10 @@ a {
     padding-left:10px;
 }
 
+.albums {
+    margin-right:70px;
+}
+
 .album * {
     margin-left:7%;
     margin-right:3%;
@@ -66,17 +70,14 @@ table.songs td.art {
 }
 
 /* TODO decide if this should be horizontal or vertical */
-/* TODO user purecss vertical menu */
 /* TODO convert to SCSS */
 .alphabet {
     position:fixed;
     right:0;
-    top:0;
-    height:100%;
-    vertical-align:middle;
+    top:40px;
+    bottom:40px;
 }
 
-.alphabet .char {
-    height:3.84%;
-    font-size:20px;
+.alphabet li {
+    font-size: 1.60vh;
 }
