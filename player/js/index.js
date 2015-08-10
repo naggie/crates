@@ -50,7 +50,7 @@ class Loading extends React.Component {
     render() {
         return (
             <div className="loading">
-                <i className="fa fa-spin fa-2x fa-circle-o-notch" />
+                <i className="fa fa-spin fa-3x fa-circle-o-notch" />
             </div>
         )
     }
@@ -133,7 +133,10 @@ class Browser extends React.Component {
         // what's that fat arrow?
         // for lexical this
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
-        this.setState({loading:true})
+        this.setState({
+            loading:true,
+            albums:[]
+        })
         get('/albums',query).then((albums) => {
             this.setState({
                 albums: albums,
