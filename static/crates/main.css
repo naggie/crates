@@ -1,3 +1,9 @@
+html {
+    /* always display scroll bar so that AZ does not jump around  */
+    overflow-y: -moz-scrollbars-vertical;
+    overflow-y: scroll;
+}
+
 a {
     text-decoration:none;
 }
@@ -59,9 +65,12 @@ table.songs td.art {
     left:50%;
 }
 
+/* TODO decide if this should be horizontal or vertical */
+/* TODO user purecss vertical menu */
+/* TODO convert to SCSS */
 .alphabet {
     position:fixed;
-    left:180px;
+    right:0;
     top:0;
     height:100%;
     vertical-align:middle;
