@@ -81,4 +81,5 @@ table.songs td.art {
 .alphabet li {
     font-size: 1.60vh;
     text-align:center;
+    cursor:pointer;
 }
