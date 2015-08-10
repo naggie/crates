@@ -88,17 +88,22 @@ class AZ extends React.Component {
     }
 
     render() {
-        return <div className="alphabet">
-            {
-                this.alphabet.map((char,i) => {
-                    return <div
-                        className="char"
-                        key={i}
-                        onClick={this.props.onClick.bind(this.props.parent,char)} // WOW!
-                    >{char}</div>
-                })
-            }
-        </div>
+        return (
+            <div className="alphabet pure-menu">
+                 <ul className="pure-menu-list">
+                    {
+                        this.alphabet.map((char,i) => {
+                            return <li
+                                className="char pure-menu-item"
+                                key={i}
+                                onClick={this.props.onClick.bind(this.props.parent,char)}>
+                                <a href="#" className="pure-menu-link">{char}</a>
+                            </li>
+                        })
+                    }
+                </ul>
+            </div>
+        )
     }
 
 }
