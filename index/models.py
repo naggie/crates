@@ -4,6 +4,7 @@ from mutagen.mp3 import MP3,HeaderNotFoundError
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
 from cas.models import cas,ImmutableFile
+from util import make_thumbnail_ref
 import unicodedata
 import re
 
@@ -155,7 +156,7 @@ class AudioFile(CratesImmutableFile):
 
         if audio.has_key('APIC:Cover'):
             data = audio['APIC:Cover'].data
-            audioFile.cover_art_ref = cas.insert_blob(data)
+            audioFile.cover_art_ref = make_thumbnail_ref(data)
             # record mimetype of cover art...?
 
         if audio.has_key('TALB'):

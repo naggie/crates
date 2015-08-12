@@ -99,3 +99,6 @@ WATCH_COLLECT_TIME = 5
 # Faster serving of CAS files. Backed by nginx using Django to authenticate the
 # request.
 X_SENDFILE = False
+
+# width in pixels for cover art (albums are square)
+THUMBNAIL_WIDTH = 256
