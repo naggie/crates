@@ -41,6 +41,12 @@ class Cas(View):
         '''
         if settings.X_SENDFILE:
             response = HttpResponse()
+            # This resource is immutable by definition.
+            # To mark a response as "never expires," an origin server sends an
+            # Expires date approximately one year from the time the response is
+            # sent. HTTP/1.1 servers SHOULD NOT send Expires dates more than
+            # one year in the future.
+            response['Cache-Control'] = 'max-age=31556926'
             response['X-Accel-Redirect'] =  '/accel_cas/'+ref[:2]+'/'+ref[2:]+'.bin'
             return response
 
@@ -52,6 +58,7 @@ class Cas(View):
             content_type="application/octet-stream"
         )
 
+        response['Cache-Control'] = 'max-age=31556926'
         response['Content-Length'] = stat(filepath).st_size
         return response
 
