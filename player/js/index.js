@@ -85,6 +85,7 @@ class Album extends React.Component {
 
     render() {
         var imgstyle = {display:this.state.loaded?'block':'none'}
+        var plcstyle = {display:this.state.loaded?'none':'block'}
 
         return (
             <div className="album pure-u-1 pure-u-md-1-3 pure-u-lg-1-6 pure-u-xl-1-7" key={this.props.id}>
@@ -94,7 +95,8 @@ class Album extends React.Component {
                     style={imgstyle}
                     src={'/cas/'+this.props.cover_art_ref}
                 />
-                {this.state.loaded?'':<img className="pure-img-responsive" src="/static/crates/placeholder.png" />}
+                <img style={plcstyle} className="pure-img-responsive" src="/static/crates/placeholder.png" />
+
                 <div className="title">{this.props.name}</div>
                 <div className="artist">{this.props.artist}</div>
             </div>
