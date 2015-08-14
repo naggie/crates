@@ -25,7 +25,7 @@ function get(url,params) {
                     case 200:
                         // hack to detect if session has expired
                         if (xhr.responseURL.match('/accounts/login/')) {
-                            return document.location.href = '/accounts/login/?next=/'
+                            return document.location.href = '/accounts/login/?next='+document.location.pathname
                         }
 
                         return resolve(xhr.response)
