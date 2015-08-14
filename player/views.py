@@ -57,7 +57,7 @@ class StreamingJsonView(View):
         except StopIteration:
             yield '[]'
 
-# TODO this is quite generic already, so could merge it into above
+# TODO this is quite generic already -- should be a general model query API
 class Albums(LoginRequiredMixin,StreamingJsonView):
     def enumerate(self):
         qs = Album.objects
@@ -86,4 +86,5 @@ class Albums(LoginRequiredMixin,StreamingJsonView):
         for album in qs[page*stride:page*stride+stride]:
             # TODO filter out _state (etc)
             #yield album.__dict__
+            # could be a flatten method for API
             yield {k:v for (k,v) in album.__dict__.iteritems() if not k.startswith('_')}

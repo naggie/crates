@@ -106,12 +106,9 @@ class AZ extends React.Component {
     // TODO use purecss.io primitives for this
     constructor(props) {
         this.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-
-        this.state = { selected: '' }
     }
 
     updateChar(char) {
-        this.setState({selected:char})
         this.props.onCharChange(char)
     }
 
@@ -122,7 +119,7 @@ class AZ extends React.Component {
                     {
                         this.alphabet.map((char,i) => {
                             var classes = classNames('pure-menu-item',{
-                                'pure-menu-selected' : char == this.state.selected,
+                                'pure-menu-selected' : char == this.props.selected,
                             })
                             return <li
                                 className={classes}
@@ -153,6 +150,7 @@ class Browser extends React.Component {
 
     updateChar(char) {
         // TODO change query based on property, see comments
+        this.setState({char:char})
         this.loadFromAPI({
             name__istartswith : char,
             order_by : 'name',
@@ -181,7 +179,7 @@ class Browser extends React.Component {
         // TODO passing parent 'this' is strange. Flux time?
         return (
             <div className="albums">
-                <AZ onCharChange={this.updateChar} parent={this} />
+                <AZ onCharChange={this.updateChar} selected={this.state.char} parent={this} />
                 { this.state.loading? <Loading /> :''}
                 { !this.state.albums.length && !this.state.loading ? 'No results.' : ''}
                 <div className="pure-g">
