@@ -1,6 +1,8 @@
 var React = require("react")
 var Dispatcher = require('flux').Dispatcher
 
+var classNames = require('classnames')
+
 // TODO: split these POC components into separate modules like the flux todomvc example
 
 
@@ -83,6 +85,7 @@ class Album extends React.Component {
 
     render() {
         var imgstyle = {display:this.state.loaded?'block':'none'}
+
         return (
             <div className="album pure-u-1 pure-u-md-1-3 pure-u-lg-1-6 pure-u-xl-1-7" key={this.props.id}>
                 <img
@@ -107,17 +110,25 @@ class AZ extends React.Component {
         this.state = { selected: '' }
     }
 
+    updateChar(char) {
+        this.setState({selected:char})
+        this.props.onCharChange(char)
+    }
+
     render() {
         return (
             <div className="pure-menu alphabet">
                  <ul className="pure-menu-list">
                     {
                         this.alphabet.map((char,i) => {
+                            var classes = classNames('pure-menu-item',{
+                                'pure-menu-selected' : char == this.state.selected,
+                            })
                             return <li
-                                className="pure-menu-link"
+                                className={classes}
                                 key={i}
-                                onClick={this.props.onClick.bind(this.props.parent,char)}>
-                                {char}
+                                onClick={this.updateChar.bind(this,char)}>
+                                <a href="#" className="pure-menu-link">{char}</a>
                             </li>
                         })
                     }
@@ -132,6 +143,8 @@ class Browser extends React.Component {
     constructor(props) {
         super(props)
         this.state = {albums:[]}
+        // override 'this' when used as callback fired from child Component
+        this.updateChar = this.updateChar.bind(this)
     }
 
     componentDidMount() {
@@ -167,7 +180,7 @@ class Browser extends React.Component {
         // TODO passing parent 'this' is strange. Flux time?
         return (
             <div className="albums">
-                <AZ onClick={this.updateChar} parent={this} />
+                <AZ onCharChange={this.updateChar} parent={this} />
                 { this.state.loading? <Loading /> :''}
                 { !this.state.albums.length && !this.state.loading ? 'No results.' : ''}
                 <div className="pure-g">
