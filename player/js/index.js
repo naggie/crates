@@ -148,13 +148,14 @@ class Browser extends React.Component {
     }
 
     componentDidMount() {
-        this.loadFromAPI()
+        this.loadFromAPI({order_by:'name'})
     }
 
     updateChar(char) {
         // TODO change query based on property, see comments
         this.loadFromAPI({
             name__istartswith : char,
+            order_by : 'name',
             //artist_istartswith=A,
             //order_by=artist
         })

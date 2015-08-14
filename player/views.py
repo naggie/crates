@@ -67,13 +67,16 @@ class Albums(LoginRequiredMixin,StreamingJsonView):
 
         qs = qs.exclude(cover_art_ref__isnull=True)
 
-        #if 'startswith' in self.request.GET:
-        #    qs = qs.filter(name__startswith=self.request.GET['startswith'])
-
         # TODO evaluate this from a security/performance perspective
-        qs = qs.filter(**self.request.GET.dict())
+        query = self.request.GET.dict()
 
+        # magic key in query
+        if 'order_by' in query:
+            qs = qs.order_by( query.pop('order_by') )
 
+        qs = qs.filter(**query)
+
+        # todo pagination/infinite scroll
         for album in qs[:100]:
             # TODO filter out _state (etc)
             #yield album.__dict__
