@@ -60,14 +60,27 @@ class Loading extends React.Component {
 
 class SearchBox extends React.Component {
     componentDidMount() {
-        this.refs.search.getDOMNode.focus()
+        this.refs.search.getDOMNode().focus()
     }
-    render() {
-        return
-            <form>
-                <input ref="search" type="text" placeholder="Search..."/>
-            </form>
 
+    handleChange() {
+        //this.props.onChange(
+        console.log(
+            this.refs.search.getDOMNode().value
+        )
+    }
+
+    render() {
+        return (
+            <form>
+                <input
+                    ref="search"
+                    type="text"
+                    placeholder="Search..."
+                    onChange={this.HandleChange}
+                />
+            </form>
+        )
     }
 }
 
@@ -177,10 +190,15 @@ class Browser extends React.Component {
         })
     }
 
+    search(querystring) {
+        this.loadFromAPI({name__icontains:querystring})
+    }
+
     render() {
         // TODO passing parent 'this' is strange. Flux time?
         return (
             <div className="albums">
+                <SearchBox onChange={this.search}/>
                 <AZ onCharChange={this.updateChar} parent={this} />
                 { this.state.loading? <Loading /> :''}
                 { !this.state.albums.length && !this.state.loading ? 'No results.' : ''}
