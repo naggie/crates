@@ -19,7 +19,7 @@ def make_thumbnail_ref(data):
     if im.size[0] < 256:
         # NOTE: cropping past the image boundary produces a larger image with
         # black gaps
-        im.crop((
+        im = im.crop((
             0,
             0,
             im.size[0],
