@@ -7,9 +7,6 @@ from django.contrib.auth.decorators import login_required
 from django.views.generic import View
 from django.http import FileResponse,HttpResponse
 
-
-
-# crates hello world.
 @login_required
 def index(request):
     context = dict(
@@ -70,14 +67,23 @@ class Albums(LoginRequiredMixin,StreamingJsonView):
         # TODO evaluate this from a security/performance perspective
         query = self.request.GET.dict()
 
+        try:
+            page = query.pop('page')
+            page = int(page)
+        except KeyError,ValueError:
+            page = 0
+
         # magic key in query
         if 'order_by' in query:
             qs = qs.order_by( query.pop('order_by') )
 
         qs = qs.filter(**query)
 
+        # how many items per page?
+        stride = 100
+
         # todo pagination/infinite scroll
-        for album in qs[:100]:
+        for album in qs[page*stride:page*stride+stride]:
             # TODO filter out _state (etc)
             #yield album.__dict__
             yield {k:v for (k,v) in album.__dict__.iteritems() if not k.startswith('_')}
