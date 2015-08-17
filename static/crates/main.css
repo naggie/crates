@@ -4,6 +4,16 @@ html {
     overflow-y: scroll;
 }
 
+/*
+ * Allow easy padding by breaking IE7 (LOL)
+ * http://purecss.io/grids/#applying-padding-and-borders-to-grid-units
+ */
+.pure-g > div {
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
 a {
     text-decoration:none;
 }
@@ -64,9 +74,8 @@ table.songs td.art {
 
 
 .loading {
-    position:fixed;
-    top:45%;
-    left:50%;
+    text-align:center;
+    padding:200px 0;
 }
 
 /* TODO decide if this should be horizontal or vertical */

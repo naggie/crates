@@ -53,7 +53,7 @@ function get(url,params) {
 class Loading extends React.Component {
     render() {
         return (
-            <div className="loading">
+            <div className="loading pure-u-1">
                 <i className="fa fa-spin fa-3x fa-circle-o-notch" />
             </div>
         )
@@ -181,7 +181,6 @@ class AlbumBrowser extends React.Component {
 
     // load the next page if appropriate
     handleScroll() {
-        console.log('scroll')
         if (this.state.loading || this.state.exhausted) {
             return
         }
@@ -216,7 +215,6 @@ class AlbumBrowser extends React.Component {
         return (
             <div className="albums">
                 <AZ onCharChange={this.updateChar} selected={this.state.char} parent={this} />
-                { this.state.loading? <Loading /> :''}
                 { !this.state.albums.length && !this.state.loading ? 'No results.' : ''}
                 <div className="pure-g">
                     {
@@ -225,6 +223,7 @@ class AlbumBrowser extends React.Component {
                         })
                     }
                 </div>
+                { this.state.loading? <Loading /> :''}
             </div>
         )
     }
