@@ -185,6 +185,17 @@ class AlbumBrowser extends React.Component {
             return
         }
 
+        // how much remains to scroll, measured in viewport height percent
+        // units (vh, like css)
+        var Y = window.pageYOffset
+        var H = document.body.offsetHeight
+        var I = window.innerHeight
+        var remaining = (H-Y-I)/I
+
+        // less than one vh remaining?
+        if (remaining > 1.0)
+            return
+
         // build new query (I don't like to mutate
         // -- especially component state without setState)
         var query = utils.clone(this.state.current_query)
