@@ -192,8 +192,9 @@ class AlbumBrowser extends React.Component {
         var I = window.innerHeight
         var remaining = (H-Y-I)/I
 
-        // less than one vh remaining?
-        if (remaining > 1.0)
+        // less than 2 vh remaining? Quite eager, but looks great and doesn't
+        // waste as much as always loading on scroll
+        if (remaining > 2.0)
             return
 
         // build new query (I don't like to mutate
