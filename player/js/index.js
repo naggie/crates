@@ -138,12 +138,19 @@ class AZ extends React.Component {
 
 }
 
-class Browser extends React.Component {
+class AlbumBrowser extends React.Component {
     constructor(props) {
         super(props)
-        this.state = {albums:[]}
+        this.state = {
+            albums:[],
+            loading:true,
+            exhausted:false,
+            current_query:{},
+            current_page:0,
+        }
         // override 'this' when used as callback fired from child Component
         this.updateChar = this.updateChar.bind(this)
+        this.autoScroll = this.autoScroll.bind(this)
     }
 
     componentDidMount() {
@@ -152,7 +159,10 @@ class Browser extends React.Component {
 
     updateChar(char) {
         // TODO change query based on property, see comments
-        this.setState({char:char})
+        this.setState({
+            char:char,
+            albums:[],
+        })
         this.loadFromAPI({
             name__istartswith : char,
             order_by : 'name',
@@ -161,18 +171,26 @@ class Browser extends React.Component {
         })
     }
 
+    autoScroll() {
+        if (this.state.loading || this.state.exhausted)
+            return
+
+        this.loadFromAPI(this.state.current_query)
+    }
+
     loadFromAPI(query) {
         // what's that fat arrow?
         // for lexical this
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
         this.setState({
             loading:true,
-            albums:[]
+            current_query:query,
         })
         get('/albums',query).then((albums) => {
             this.setState({
-                albums: albums,
+                albums: this.state.albums.concat(albums),
                 loading: false,
+                exhausted: !!albums.length,
             })
         })
     }
@@ -180,7 +198,7 @@ class Browser extends React.Component {
     render() {
         // TODO passing parent 'this' is strange. Flux time?
         return (
-            <div className="albums">
+            <div className="albums" onScroll={this.autoScroll}>
                 <AZ onCharChange={this.updateChar} selected={this.state.char} parent={this} />
                 { this.state.loading? <Loading /> :''}
                 { !this.state.albums.length && !this.state.loading ? 'No results.' : ''}
@@ -199,7 +217,7 @@ class Browser extends React.Component {
 React.render(
     //<Albums name__startswith="B" />,
     //<AZ onClick={(char)=>{console.log(char)}}/>,
-    <Browser />,
+    <AlbumBrowser />,
     document.getElementById('main')
 )
 
