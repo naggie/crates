@@ -84,8 +84,11 @@ class Album extends React.Component {
     }
 
     render() {
-        var imgstyle = {display:this.state.loaded?'block':'none'}
-        var plcstyle = {display:this.state.loaded?'none':'block'}
+        var imgstyle = {
+            display:this.state.loaded?'block':'none',
+            opacity:this.state.loaded?1.00:0.00,
+        }
+        var plcstyle = {display:this.state.loaded?'none':'block',background:this.props.colour}
 
         return (
             <div className="album pure-u-1 pure-u-md-1-3 pure-u-lg-1-6 pure-u-xl-1-7" key={this.props.id}>

@@ -4,7 +4,7 @@ from mutagen.mp3 import MP3,HeaderNotFoundError
 from mutagen.easyid3 import EasyID3
 from mutagen.id3 import ID3NoHeaderError
 from cas.models import cas,ImmutableFile
-from util import make_thumbnail_ref
+from util import make_thumbnail_ref,get_dominant_colour
 import unicodedata
 import re
 
@@ -52,6 +52,7 @@ class Album(Model):
         null=True,
         help_text="MusicBrainz ID",
     )
+    colour = CharField(max_length=7,null=True)
 
     def __unicode__(self):
         return '%s (%s)' % (self.name,self.artist)
@@ -170,6 +171,11 @@ class AudioFile(CratesImmutableFile):
             # not produced.
             if created:
                 audioFile.album.cover_art_ref = audioFile.cover_art_ref
+                audioFile.album.save()
+
+            if audioFile.cover_art_ref:
+                audioFile.album.colour = get_dominant_colour(audioFile.cover_art_ref)
+                print audioFile.album.colour
                 audioFile.album.save()
 
         # TODO: fix this; TDRC is an ID3TimeStamp which should be converted to a datetime (field)

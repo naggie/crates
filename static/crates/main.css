@@ -29,6 +29,7 @@ a {
 
 .album img {
     margin-top:5%;
+    transition:opacity 0.5s ease-in;
 }
 
 .album .title {

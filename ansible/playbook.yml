@@ -34,6 +34,7 @@
         - python
         - python-dev
         - python-pip
+        - libjpeg-dev
         - nodejs
         - npm
 

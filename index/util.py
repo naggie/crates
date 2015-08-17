@@ -2,6 +2,8 @@ from PIL import Image
 from cas.models import cas
 from django.conf import settings
 from io import BytesIO
+from colorthief import ColorThief
+
 
 def make_thumbnail_ref(data):
     """
@@ -44,6 +46,10 @@ def make_thumbnail_ref(data):
 
     return cas.insert_blob(thumbnail.getvalue())
 
-
-
-
+def get_dominant_colour(ref):
+    filepath = cas.select(ref)
+    color_thief = ColorThief(filepath)
+    # get the dominant color
+    print '#%02x%02x%02x' % color_thief.get_color(quality=1)
+    print color_thief.get_color(quality=1)
+    return '#%02x%02x%02x' % color_thief.get_color(quality=1)
