@@ -3,6 +3,8 @@ var Dispatcher = require('flux').Dispatcher
 
 var classNames = require('classnames')
 
+var utils = require('./utils')
+
 // TODO: split these POC components into separate modules like the flux todomvc example
 
 
@@ -150,11 +152,17 @@ class AlbumBrowser extends React.Component {
         }
         // override 'this' when used as callback fired from child Component
         this.updateChar = this.updateChar.bind(this)
-        this.autoScroll = this.autoScroll.bind(this)
+        this.handleScroll = this.handleScroll.bind(this)
     }
 
     componentDidMount() {
         this.loadFromAPI({order_by:'name'})
+        window.addEventListener('scroll', this.handleScroll)
+    }
+
+    componentWillUnmount() {
+        // ahhh... It makes sense!
+        window.removeEventListener('scroll', this.handleScroll)
     }
 
     updateChar(char) {
@@ -171,11 +179,19 @@ class AlbumBrowser extends React.Component {
         })
     }
 
-    autoScroll() {
-        if (this.state.loading || this.state.exhausted)
+    // load the next page if appropriate
+    handleScroll() {
+        console.log('scroll')
+        if (this.state.loading || this.state.exhausted) {
             return
+        }
 
-        this.loadFromAPI(this.state.current_query)
+        // build new query (I don't like to mutate
+        // -- especially component state without setState)
+        var query = utils.clone(this.state.current_query)
+        query.page = this.state.current_page + 1
+        this.setState({current_page:query.page})
+        this.loadFromAPI(query)
     }
 
     loadFromAPI(query) {
@@ -184,13 +200,13 @@ class AlbumBrowser extends React.Component {
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
         this.setState({
             loading:true,
-            current_query:query,
+            current_query: query,
         })
         get('/albums',query).then((albums) => {
             this.setState({
                 albums: this.state.albums.concat(albums),
                 loading: false,
-                exhausted: !!albums.length,
+                exhausted: !albums.length,
             })
         })
     }
@@ -198,7 +214,7 @@ class AlbumBrowser extends React.Component {
     render() {
         // TODO passing parent 'this' is strange. Flux time?
         return (
-            <div className="albums" onScroll={this.autoScroll}>
+            <div className="albums">
                 <AZ onCharChange={this.updateChar} selected={this.state.char} parent={this} />
                 { this.state.loading? <Loading /> :''}
                 { !this.state.albums.length && !this.state.loading ? 'No results.' : ''}
