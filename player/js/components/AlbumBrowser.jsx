@@ -85,7 +85,12 @@ var AlbumBrowser = React.createClass({
     },
 
     categorise: function(album) {
-        return album.name.toUpperCase().charAt(0)
+        character = album.name.toUpperCase().charAt(0)
+
+        if (!character.match('[A-Z]'))
+            return ''
+
+        return character
     },
 
     render: function() {
@@ -97,7 +102,7 @@ var AlbumBrowser = React.createClass({
             var category = this.categorise(props)
 
             if (category != current_category)
-                items.push(<div className="category pure-u-1"><h2>{category}</h2></div>)
+                items.push(<div className="category pure-u-1"><h1>{category}</h1></div>)
 
             items.push( <Album {...props} key={props.id} /> )
             current_category = category
