@@ -2,22 +2,18 @@ var React = require("react")
 var classNames = require('classnames')
 var utils = require('../utils')
 
-class AZ extends React.Component {
-    // TODO use purecss.io primitives for this
-    constructor(props) {
-        this.alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
-    }
+var alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('')
 
-    updateChar(char) {
+var AZ = React.createClass({
+    updateChar: function(char) {
         this.props.onCharChange(char)
-    }
-
-    render() {
+    },
+    render: function() {
         return (
             <div className="pure-menu alphabet">
                  <ul className="pure-menu-list">
                     {
-                        this.alphabet.map((char,i) => {
+                        alphabet.map((char,i) => {
                             var classes = classNames('pure-menu-item',{
                                 'pure-menu-selected' : char == this.props.selected,
                             })
@@ -33,7 +29,6 @@ class AZ extends React.Component {
             </div>
         )
     }
+})
 
-}
-
-exports = AZ
+module.exports = AZ

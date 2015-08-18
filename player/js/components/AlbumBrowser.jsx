@@ -5,33 +5,30 @@ var AZ = require('./AZ.jsx')
 var SearchBox = require('./SearchBox.jsx')
 var Loading = require('./Loading.jsx')
 
-class AlbumBrowser extends React.Component {
-    constructor(props) {
-        super(props)
-        this.state = {
+var utils = require('../utils.js')
+
+var AlbumBrowser = React.createClass({
+    getInitialState: function() {
+        return {
             albums:[],
             loading:true,
             exhausted:false,
             current_query:{},
             current_page:0,
         }
-        // override 'this' when used as callback fired from child Component
-        this.updateChar = this.updateChar.bind(this)
-        this.handleScroll = this.handleScroll.bind(this)
-    }
+    },
 
-    componentDidMount() {
+    componentDidMount: function() {
         this.loadFromAPI({order_by:'name'})
         window.addEventListener('scroll', this.handleScroll)
-    }
+    },
 
-    componentWillUnmount() {
+    componentWillUnmount: function() {
         // ahhh... It makes sense!
         window.removeEventListener('scroll', this.handleScroll)
-    }
+    },
 
-    updateChar(char) {
-        // TODO change query based on property, see comments
+    updateChar: function(char) {
         this.setState({
             char:char,
             albums:[],
@@ -42,10 +39,10 @@ class AlbumBrowser extends React.Component {
             //artist_istartswith=A,
             //order_by=artist
         })
-    }
+    },
 
     // load the next page if appropriate
-    handleScroll() {
+    handleScroll: function() {
         if (this.state.loading || this.state.exhausted) {
             return
         }
@@ -68,9 +65,9 @@ class AlbumBrowser extends React.Component {
         query.page = this.state.current_page + 1
         this.setState({current_page:query.page})
         this.loadFromAPI(query)
-    }
+    },
 
-    loadFromAPI(query) {
+    loadFromAPI: function(query) {
         // what's that fat arrow?
         // for lexical this
         // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
@@ -85,9 +82,9 @@ class AlbumBrowser extends React.Component {
                 exhausted: !albums.length,
             })
         })
-    }
+    },
 
-    render() {
+    render: function() {
         // TODO passing parent 'this' is strange. Flux time?
         return (
             <div className="albums">
@@ -103,7 +100,7 @@ class AlbumBrowser extends React.Component {
                 { this.state.loading? <Loading /> :''}
             </div>
         )
-    }
-}
+    },
+})
 
-exports = AlbumBrowser
+module.exports = AlbumBrowser

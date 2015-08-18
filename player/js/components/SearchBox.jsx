@@ -1,17 +1,16 @@
 var React = require("react")
 
-
-class SearchBox extends React.Component {
-    componentDidMount() {
+var SearchBox = React.createClass({
+    componentDidMount: function() {
         this.refs.search.getDOMNode.focus()
-    }
-    render() {
+    },
+    render: function() {
         return
             <form>
                 <input ref="search" type="text" placeholder="Search..."/>
             </form>
 
-    }
-}
+    },
+})
 
-exports = SearchBox
+module.exports = SearchBox

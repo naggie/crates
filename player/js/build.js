@@ -1,14 +1,19 @@
 #!/usr/bin/env node
 
-// handles JSX, ES6, commonjs, bundling, uglifyjs2, SCSS
+// handles JSX, commonjs, bundling, uglifyjs2, SCSS
+//
+// No longer ES6 for use with react, because:
+//   * No auto 'this' binding
+//   * exporting didn't work
+//   * no mixins
+//
+// See https://facebook.github.io/react/blog/2015/01/27/react-v0.13.0-beta-1.html
+// May be viable one day. Without commonjs.
 
 // TODO Use gulp for this, mainly for watching and possibly speed
 
 
 // JS
-//
-//
-// TODO: need sourcemap for browserify
 
 var browserify = require('browserify')
 var fs = require('fs')
@@ -31,15 +36,13 @@ if (production) {
     },'uglifyify')
 }
 
-b.transform({es6:true},'reactify')
+b.transform({},'reactify')
 
 var js_dest = fs.createWriteStream(base_dir+'/static/crates/bundle.js')
 
 b.bundle().pipe(js_dest)
 
 // SCSS
-//
-// TODO link in external libs with main.scss (renamed from main.css) and link from index.html
 
 var css_file = base_dir+'/static/crates/bundle.css'
 var result = sass.renderSync({
