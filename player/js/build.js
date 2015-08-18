@@ -43,6 +43,7 @@ var js_dest = fs.createWriteStream(base_dir+'/static/crates/bundle.js')
 b.bundle().pipe(js_dest)
 
 // SCSS
+// TODO: move to player/static or something
 
 var css_file = base_dir+'/static/crates/bundle.css'
 var result = sass.renderSync({
