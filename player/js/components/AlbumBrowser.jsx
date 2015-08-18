@@ -84,19 +84,30 @@ var AlbumBrowser = React.createClass({
         })
     },
 
+    categorise: function(album) {
+        return album.name.toUpperCase().charAt(0)
+    },
+
     render: function() {
-        // TODO passing parent 'this' is strange. Flux time?
+        // I wish I could use a generator
+        var items = []
+        var current_category = ''
+
+        this.state.albums.map((props) => {
+            var category = this.categorise(props)
+
+            if (category != current_category)
+                items.push(<div className="category pure-u-1"><h2>{category}</h2></div>)
+
+            items.push( <Album {...props} key={props.id} /> )
+            current_category = category
+        })
+
         return (
             <div className="albums">
                 <AZ onCharChange={this.updateChar} selected={this.state.char} parent={this} />
                 { !this.state.albums.length && !this.state.loading ? 'No results.' : ''}
-                <div className="pure-g">
-                    {
-                        this.state.albums.map((props) => {
-                            return <Album {...props} key={props.id} />
-                        })
-                    }
-                </div>
+                <div className="pure-g">{items}</div>
                 { this.state.loading? <Loading /> :''}
             </div>
         )
