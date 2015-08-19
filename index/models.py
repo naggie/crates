@@ -144,14 +144,14 @@ class AudioFile(CratesImmutableFile):
         # MP3 class is a superset of ID3 including length and bitrate, etc.
         audio = MP3(filepath)
 
-        if audio.has_key('TIT2'): audioFile.title = audio['TIT2'][0]
+        if audio.has_key('TIT2'): audioFile.title = audio['TIT2'][0].capitalize()
 
         album_artist = 'Various Artists'
         # Artist is default for album_artist
-        if audio.has_key('TPE1'): audioFile.artist = album_artist = audio['TPE1'][0]
-        if audio.has_key('TPE2'): album_artist = audio['TPE2'][0]
+        if audio.has_key('TPE1'): audioFile.artist = album_artist = audio['TPE1'][0].capitalize()
+        if audio.has_key('TPE2'): album_artist = audio['TPE2'][0].capitalize()
 
-        if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0]
+        if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0].capitalize()
 
 
         if audio.has_key('APIC:Cover'):
@@ -161,7 +161,7 @@ class AudioFile(CratesImmutableFile):
 
         if audio.has_key('TALB'):
             audioFile.album, created = Album.objects.get_or_create(
-                name = audio['TALB'][0],
+                name = audio['TALB'][0].capitalize(),
                 artist = album_artist,
             )
 
