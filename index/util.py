@@ -3,6 +3,8 @@ from cas.models import cas
 from django.conf import settings
 from io import BytesIO
 
+from kmeans import colorz
+
 
 def make_thumbnail_ref(data):
     """
@@ -36,10 +38,15 @@ def make_thumbnail_ref(data):
     ))
 
     # find the dominant colour (k-grouping)
-    #...
+    if im.size[1] < WIDTH:
+        colour = colorz(im)[0]
+    else:
+        colour = '#ffffff'
+
+    # TODO store this separately for placeholder on web. Random if no image.
 
     # create a substrate to paste on to with the dominant colour
-    substrate = Image.new('RGB',(WIDTH,WIDTH),(255,255,255))
+    substrate = Image.new('RGB',(WIDTH,WIDTH),colour)
 
     # paste in middle if short, or truncate bottom if tall
     if im.size[1] < WIDTH:
