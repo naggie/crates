@@ -62,8 +62,6 @@ class Albums(LoginRequiredMixin,StreamingJsonView):
     def enumerate(self):
         qs = Album.objects
 
-        qs = qs.exclude(cover_art_ref__isnull=True)
-
         # TODO evaluate this from a security/performance perspective
         query = self.request.GET.dict()
 

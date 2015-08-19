@@ -3,6 +3,9 @@ from cas.models import cas
 from django.conf import settings
 from io import BytesIO
 
+# don't worry, I'm not using this for anything important
+from hashlib import md5
+
 from kmeans import colorz
 
 
@@ -61,4 +64,10 @@ def make_thumbnail_ref(data):
 
 
 
+def deterministic_colour(*args):
+    m = md5()
 
+    for arg in args:
+        m.update(arg)
+
+    return '#'+m.hexdigest()[:6]
