@@ -68,6 +68,7 @@ def deterministic_colour(*args):
     m = md5()
 
     for arg in args:
+        arg = str(arg)
         m.update(arg)
 
     return '#'+m.hexdigest()[:6]
