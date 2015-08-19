@@ -102,7 +102,11 @@ var AlbumBrowser = React.createClass({
             var category = this.categorise(props)
 
             if (category != current_category)
-                items.push(<div className="category pure-u-1"><h1>{category}</h1></div>)
+                items.push(
+                    <div className="category pure-u-1" key={category}>
+                        <h1>{category}</h1>
+                    </div>
+                )
 
             items.push( <Album {...props} key={props.id} /> )
             current_category = category
