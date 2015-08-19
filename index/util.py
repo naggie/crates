@@ -38,10 +38,7 @@ def make_thumbnail_ref(data):
     ))
 
     # find the dominant colour (k-grouping)
-    if im.size[1] < WIDTH:
-        colour = colorz(im)[0]
-    else:
-        colour = '#ffffff'
+    colour = colorz(im)[0]
 
     # TODO store this separately for placeholder on web. Random if no image.
 
@@ -60,7 +57,7 @@ def make_thumbnail_ref(data):
     outdata = BytesIO()
     substrate.save(outdata,'jpeg',encoder_name='jpeg',quality=90,optimize=True)
 
-    return cas.insert_blob(outdata.getvalue())
+    return cas.insert_blob(outdata.getvalue()), colour
 
 
 

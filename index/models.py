@@ -46,6 +46,7 @@ class Album(Model):
     name = CharField(max_length=64)
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
     artist = CharField(max_length=64,null=True) # (album artist, that is)
+    colour = CharField(max_length=7,null=True) # (album artist, that is)
 
     mbid = UUIDField(
         blank=True,
@@ -98,6 +99,8 @@ class AudioFile(CratesImmutableFile):
 
     # stored redundantly, yes -- some do not belong to an album
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
+    # dominant colour
+    colour = CharField(max_length=7,null=True) # (album artist, that is)
 
     composer = CharField(max_length=64,null=True)
     genre = CharField(max_length=64,null=True)
@@ -156,7 +159,7 @@ class AudioFile(CratesImmutableFile):
 
         if audio.has_key('APIC:Cover'):
             data = audio['APIC:Cover'].data
-            audioFile.cover_art_ref = make_thumbnail_ref(data)
+            audioFile.cover_art_ref, audioFile.colour = make_thumbnail_ref(data)
             # record mimetype of cover art...?
 
         if audio.has_key('TALB'):
@@ -170,6 +173,7 @@ class AudioFile(CratesImmutableFile):
             # not produced.
             if created:
                 audioFile.album.cover_art_ref = audioFile.cover_art_ref
+                audioFile.album.colour = audioFile.colour
                 audioFile.album.save()
 
         # TODO: fix this; TDRC is an ID3TimeStamp which should be converted to a datetime (field)

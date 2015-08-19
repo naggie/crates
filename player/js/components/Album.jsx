@@ -11,8 +11,16 @@ var Album = React.createClass({
     },
 
     render: function() {
-        var imgstyle = {display:this.state.loaded?'block':'none'}
-        var plcstyle = {display:this.state.loaded?'none':'block'}
+        var imgstyle = {
+            display:this.state.loaded?'block':'none',
+        }
+
+        // have to show/hide via CSS instead of react re-render as react likes
+        // to add spaces and mess up the document flow
+        var plcstyle = {
+            display:this.state.loaded?'none':'block',
+            background: this.props.colour,
+        }
 
         return (
             <div className="album pure-u-1 pure-u-sm-1-2 pure-u-md-1-4 pure-u-lg-1-6 pure-u-xl-1-8" key={this.props.id}>
