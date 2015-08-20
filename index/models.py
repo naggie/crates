@@ -149,7 +149,7 @@ class AudioFile(CratesImmutableFile):
 
         album_artist = 'Various Artists'
         # Artist is default for album_artist
-        if audio.has_key('TPE1'): audioFile.artist = album_artist = audio['TPE1'][0].capitalize()
+        if audio.has_key('TPE1'): audioFile.artist = audio['TPE1'][0].capitalize()
         if audio.has_key('TPE2'): album_artist = audio['TPE2'][0].capitalize()
 
         if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0].capitalize()
