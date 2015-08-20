@@ -1,4 +1,4 @@
-from models import ImmutableFile,AudioFile,HeaderNotFoundError,ID3NoHeaderError
+from models import AudioFile
 from os.path import splitext,join,islink
 from os import access,R_OK,fdopen,unlink
 from requests import get
@@ -8,7 +8,7 @@ from cas.cas import BasicCAS
 from tempfile import mkstemp
 from django.conf import settings
 
-from mutagen.mp3 import MP3,HeaderNotFoundError
+from mutagen.mp3 import MP3
 from mutagen.id3 import ID3,APIC,TIT2,TPE1,TPE2,TCON,TDRC,TALB
 
 from job import Job,TaskError,TaskSkipped,MultiProcessJob

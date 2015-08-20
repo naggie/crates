@@ -1,10 +1,8 @@
 from django.db.models import CharField, ForeignKey, IntegerField, PositiveSmallIntegerField, DateTimeField, URLField, Model, UUIDField
 from django.contrib.auth.models import User
 from mutagen.mp3 import MP3,HeaderNotFoundError
-from mutagen.easyid3 import EasyID3
-from mutagen.id3 import ID3NoHeaderError
 from cas.models import cas,ImmutableFile
-from util import make_thumbnail_ref, deterministic_colour
+from util import make_thumbnail_ref, deterministic_colour, find_APIC_frame_data
 import unicodedata
 import re
 
@@ -157,9 +155,9 @@ class AudioFile(CratesImmutableFile):
         if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0].capitalize()
 
 
-        if audio.has_key('APIC:Cover'):
-            data = audio['APIC:Cover'].data
-            audioFile.cover_art_ref, audioFile.colour = make_thumbnail_ref(data)
+        img_data = find_APIC_frame_data(audio)
+        if img_data:
+            audioFile.cover_art_ref, audioFile.colour = make_thumbnail_ref(img_data)
             # record mimetype of cover art...?
         else:
             audioFile.colour = deterministic_colour(album_artist,audioFile.title)

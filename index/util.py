@@ -72,3 +72,14 @@ def deterministic_colour(*args):
         m.update(arg)
 
     return '#'+m.hexdigest()[:6]
+
+def find_APIC_frame_data(mp3):
+    """
+    Iterate through ID3 frames in an MP3 object looking for the most likely
+    candidate for a front cover
+    """
+    for key in mp3:
+        frame = mp3[key]
+        if frame.FrameID == 'APIC':
+            return frame.data
+
