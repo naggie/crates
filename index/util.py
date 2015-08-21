@@ -1,12 +1,14 @@
+from __future__ import division
 from PIL import Image
 from cas.models import cas
 from django.conf import settings
 from io import BytesIO
 
-# don't worry, I'm not using this for anything important
-from hashlib import md5
+from zlib import adler32
+from colorsys import hsv_to_rgb
 
-from kmeans import colorz
+
+from kmeans import colorz,rtoh
 
 
 def make_thumbnail_ref(data):
@@ -65,13 +67,17 @@ def make_thumbnail_ref(data):
 
 
 def deterministic_colour(*args):
-    m = md5()
+    '''Produces a weighted deterministic colour'''
+    seed = str(args)
 
-    for arg in args:
-        arg = str(arg)
-        m.update(arg)
+    # faster than crc32
+    hue = adler32(seed) % 256
+    sat = 128
+    val = 200
 
-    return '#'+m.hexdigest()[:6]
+    # return CSS RGB hex
+    r,g,b = hsv_to_rgb(hue/255,sat/255,val/255)
+    return rtoh((r*255,b*255,g*255))
 
 def find_APIC_frame_data(mp3):
     """
