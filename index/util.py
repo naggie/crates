@@ -56,7 +56,7 @@ def make_thumbnail_ref(data):
     else:
         offset = 0
 
-    substrate.paste(im,(0,offset))
+    substrate.paste(im,(0,int(offset)))
 
     # emulate a file again as tobytes doesn't play well with anything other than raw
     outdata = BytesIO()
