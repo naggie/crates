@@ -3,6 +3,7 @@ from datetime import datetime,timedelta
 from humanize import naturaltime
 from sys import stdout
 from multiprocessing import Queue,Process
+import traceback
 
 class TaskSkipped(Exception): pass
 # TODO MultiThreadedJob
@@ -119,6 +120,8 @@ class CliJobRunnerMixin():
 
     def on_task_exception(self,task,exception):
         self.eta.println('\033[31mFAILURE: %s\033[0m' % exception)
+        self.eta.println('\033[31m%s\033[0m' % exception.message)
+        self.eta.println('\033[31m%s\033[0m' % traceback.format_exc())
         self.eta.skip()
 
 
@@ -150,7 +153,7 @@ def MultiProcessJobRunner(Job):
         self.results_q = Queue(max_size=10)
 
         pool = list()
-        for x in xrange(self.job.max_workers):
+        for x in xrange(sel12if.job.max_workers):
             process = Process(target=self._worker)
             process.daemon = True
             process.start()
