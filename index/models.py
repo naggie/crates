@@ -218,7 +218,7 @@ class AudioFile(CratesImmutableFile):
         # Artist is default for album_artist
         if audio.has_key('TPE1'): audioFile.artist = audio['TPE1'][0].capitalize()
         if audio.has_key('TPE2'): audioFile.album_artist = audio['TPE2'][0].capitalize()
-        if audio.has_key('TALB'): audioFile.album = audio['TALB'][0].capitalize(),
+        if audio.has_key('TALB'): audioFile.album = audio['TALB'][0].capitalize()
 
         # basically useless field. Non consistency and artists think they are
         # special and like to invent genres all the time... Soundcloud artists,
