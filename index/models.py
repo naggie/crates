@@ -25,7 +25,7 @@ class CratesImmutableFile(ImmutableFile):
     )
 
     def slugify(self):
-        '''Return a cleaned dict() of this instance suitable for filepaths'''
+        '''Return a cleaned dict() of this instance suitable for filepaths/API'''
         cleaned = dict()
         for key,val in self.__dict__.iteritems():
             try:
@@ -54,6 +54,66 @@ class Album(Model):
 
     def __unicode__(self):
         return '%s (%s)' % (self.name,self.artist)
+
+
+    @classmethod
+    def from_audioFile(cls,audioFile):
+        '''
+        For insert-time usage only.
+        Tries desperately to find an existing album before creating one.
+        Due to inconsistencies with MP3s out there, uses multiple matching
+        mechanisms.
+
+        To solve false-positives where a compilation album is split into
+        individual artists.  https://github.com/naggie/crates/issues/17
+        '''
+
+        # TODO try to match by mbid first....
+        # TODO upgrade cover art if possible (also not sure how much we can do this)
+
+        if not audioFile.album:
+            return None
+
+        # try to find an exact match
+        try:
+            return cls.objects.get(
+                name = audioFile.album,
+                artist = audioFile.album_artist
+            )
+        except cls.DoesNotExist:
+            pass
+
+        # If an album has the album artist set to the artist, there might be an
+        # 'album' per song (or so) detected. Here, we can mostly avoid this by
+        # assuming that songs in a compilation will have exactly the same album
+        # art.
+        try:
+            album = cls.objects.get(
+                cover_art_ref = audioFile.cover_art_ref,
+            )
+
+            # in this case, the album artist must be wrong as it wasn't matched
+            # earlier. Best change it to Various Artists, being reluctant to
+            # save unnecessarily, being reluctant to save unnecessarily.
+            if album.artist != audioFile.album_artist:
+                album.artist = 'Various Artists'
+                album.save()
+            return album
+        except cls.DoesNotExist:
+            pass
+
+        # first album art should be used if songs have individual covers
+        # such as on songs from soundcloud. This way, redundant albums are
+        # not produced.
+
+        # Time to create one as a 'last resort'
+        album = cls(
+           name = audioFile.album,
+           artist = audioFile.album_artist,
+           cover_art_ref = audioFile.cover_art_ref,
+        )
+        album.save()
+        return album
 
 class AudioFile(CratesImmutableFile):
     TYPE_CHOICES = (
@@ -93,7 +153,13 @@ class AudioFile(CratesImmutableFile):
     # first release.
     title = CharField(max_length=64,null=True)
     artist = CharField(max_length=64,null=True)
-    album = ForeignKey(Album,null=True)
+    album = CharField(max_length=64,null=True)
+    album_artist = CharField(max_length=64,null=True)
+
+    # this is associated in a derived manner -- not a 'ground truth' unlike the
+    # previous fields. Sure, it means we have some redundancy of data but we
+    # have verbatim data on the AudioFile object.
+    album_object = ForeignKey(Album,null=True)
 
     # stored redundantly, yes -- some do not belong to an album
     cover_art_ref = CharField(max_length=64,help_text='CAS ref of album/cover art',null=True)
@@ -147,11 +213,15 @@ class AudioFile(CratesImmutableFile):
 
         if audio.has_key('TIT2'): audioFile.title = audio['TIT2'][0].capitalize()
 
-        album_artist = 'Various Artists'
+        audioFile.album_artist = 'Various Artists'
         # Artist is default for album_artist
         if audio.has_key('TPE1'): audioFile.artist = audio['TPE1'][0].capitalize()
-        if audio.has_key('TPE2'): album_artist = audio['TPE2'][0].capitalize()
+        if audio.has_key('TPE2'): audioFile.album_artist = audio['TPE2'][0].capitalize()
+        if audio.has_key('TALB'): audioFile.album = audio['TALB'][0].capitalize(),
 
+        # basically useless field. Non consistency and artists think they are
+        # special and like to invent genres all the time... Soundcloud artists,
+        # I'm looking at you!
         if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0].capitalize()
 
 
@@ -160,21 +230,10 @@ class AudioFile(CratesImmutableFile):
             audioFile.cover_art_ref, audioFile.colour = make_thumbnail_ref(img_data)
             # record mimetype of cover art...?
         else:
-            audioFile.colour = deterministic_colour(album_artist,audioFile.title)
+            audioFile.colour = deterministic_colour(audioFile)
 
-        if audio.has_key('TALB'):
-            audioFile.album, created = Album.objects.get_or_create(
-                name = audio['TALB'][0].capitalize(),
-                artist = album_artist,
-            )
 
-            # first album art should be used if songs have individual covers
-            # such as on songs from soundcloud. This way, redundant albums are
-            # not produced.
-            if created:
-                audioFile.album.cover_art_ref = audioFile.cover_art_ref
-                audioFile.album.colour = audioFile.colour
-                audioFile.album.save()
+        audioFile.album_object = Album.from_audioFile(audioFile)
 
         # TODO: fix this; TDRC is an ID3TimeStamp which should be converted to a datetime (field)
         #if audio.has_key('TDRC'): audioFile.year = audio['TDRC'][0]
@@ -190,6 +249,7 @@ class AudioFile(CratesImmutableFile):
 
         audioFile.extension = '.mp3'
 
+        audioFile.save()
         return audioFile
 
     @classmethod

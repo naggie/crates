@@ -68,7 +68,7 @@ def make_thumbnail_ref(data):
 
 def deterministic_colour(*args):
     '''Produces a weighted deterministic colour'''
-    seed = str(args)
+    seed = unicode(args)
 
     # faster than crc32
     hue = adler32(seed) % 256
