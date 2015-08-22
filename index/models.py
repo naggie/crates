@@ -111,6 +111,7 @@ class Album(Model):
            name = audioFile.album,
            artist = audioFile.album_artist,
            cover_art_ref = audioFile.cover_art_ref,
+           colour = audioFile.colour,
         )
         album.save()
         return album
