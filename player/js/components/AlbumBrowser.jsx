@@ -85,7 +85,7 @@ var AlbumBrowser = React.createClass({
     },
 
     categorise: function(album) {
-        character = album.name.toUpperCase().charAt(0)
+        var character = album.name.toUpperCase().charAt(0)
 
         if (!character.match('[A-Z]'))
             return ''

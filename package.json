@@ -5,12 +5,11 @@
   "main": "js/index.js",
   "browser": "js/index.js",
   "dependencies": {
+    "babelify": "^6.2.0",
     "browserify": "^10.2.4",
     "classnames": "^2.1.3",
-    "flux": "^2.0.3",
     "node-sass": "^3.2.0",
     "react": "^0.13.3",
-    "reactify": "^1.1.1",
     "uglifyify": "^3.0.1"
   },
   "devDependencies": {},
@@ -26,21 +25,5 @@
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/naggie/crates/issues"
-  },
-  "browserify": {
-    "transform": [
-      [
-        "reactify",
-        {
-          "es6": true
-        }
-      ],
-      [
-        "uglifyify",
-        {
-          "debug": true
-        }
-      ]
-    ]
   }
 }
