@@ -71,14 +71,14 @@ class Album(Model):
         # TODO try to match by mbid first....
         # TODO upgrade cover art if possible (also not sure how much we can do this)
 
+        if not audioFile.album:
+            return None
+
         # remove CD number from album name -- there's a dedicated ID3 tag for
         # that, putting it in the album name is technically wrong; not that I
         # expect it to be set.
         # https://github.com/naggie/crates/issues/18
         name = re.sub(r' ?\(?(cd|disc) ?[0-9]\)?','',audioFile.album)
-
-        if not audioFile.album:
-            return None
 
         # try to find an exact match
         try:
