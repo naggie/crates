@@ -71,13 +71,19 @@ class Album(Model):
         # TODO try to match by mbid first....
         # TODO upgrade cover art if possible (also not sure how much we can do this)
 
+        # remove CD number from album name -- there's a dedicated ID3 tag for
+        # that, putting it in the album name is technically wrong; not that I
+        # expect it to be set.
+        # https://github.com/naggie/crates/issues/18
+        name = re.replace(r' ?\(?(cd|disc) ?[0-9]\)?','',audioFile.album)
+
         if not audioFile.album:
             return None
 
         # try to find an exact match
         try:
             return cls.objects.get(
-                name = audioFile.album,
+                name = name,
                 artist = audioFile.album_artist
             )
         except cls.DoesNotExist:
@@ -108,7 +114,7 @@ class Album(Model):
 
         # Time to create one as a 'last resort'
         album = cls(
-           name = audioFile.album,
+           name = name,
            artist = audioFile.album_artist,
            cover_art_ref = audioFile.cover_art_ref,
            colour = audioFile.colour,
