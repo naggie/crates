@@ -75,7 +75,7 @@ class Album(Model):
         # that, putting it in the album name is technically wrong; not that I
         # expect it to be set.
         # https://github.com/naggie/crates/issues/18
-        name = re.replace(r' ?\(?(cd|disc) ?[0-9]\)?','',audioFile.album)
+        name = re.sub(r' ?\(?(cd|disc) ?[0-9]\)?','',audioFile.album)
 
         if not audioFile.album:
             return None
