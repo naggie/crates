@@ -36,6 +36,7 @@ exports.get = function(url,params) {
 
         xhr.onerror = function(error) {
             console.log(error)
+            alert('Net error',error)
             reject(error)
         }
 
