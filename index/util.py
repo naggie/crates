@@ -79,6 +79,8 @@ def deterministic_colour(*args):
     r,g,b = hsv_to_rgb(hue/255,sat/255,val/255)
     return rtoh((r*255,b*255,g*255))
 
+# TODO move this, plus the AudioFile into separate module
+# TODO evaluate subclassing MP3 to add these methods!
 def find_APIC_frame_data(mp3):
     """
     Iterate through ID3 frames in an MP3 object looking for the most likely
@@ -88,4 +90,15 @@ def find_APIC_frame_data(mp3):
         frame = mp3[key]
         if frame.FrameID == 'APIC':
             return frame.data
+
+def get_text_frame(mp3,ids,default=''):
+    if isinstance(ids,str): ids = [ids]
+
+    try:
+        for id in ids:
+            if mp3.has_key(id):
+                return mp3[id][0].capitalize()
+    finally:
+        # IndexError (etc) or not found
+        return default
 

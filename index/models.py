@@ -2,7 +2,7 @@ from django.db.models import CharField, ForeignKey, IntegerField, PositiveSmallI
 from django.contrib.auth.models import User
 from mutagen.mp3 import MP3,HeaderNotFoundError
 from cas.models import cas,ImmutableFile
-from util import make_thumbnail_ref, deterministic_colour, find_APIC_frame_data
+from util import make_thumbnail_ref, deterministic_colour, find_APIC_frame_data,get_text_frame
 import unicodedata
 import re
 
@@ -218,19 +218,16 @@ class AudioFile(CratesImmutableFile):
         # MP3 class is a superset of ID3 including length and bitrate, etc.
         audio = MP3(filepath)
 
-        if audio.has_key('TIT2'): audioFile.title = audio['TIT2'][0].capitalize()
+        audioFile.title = get_text_frame(audio,'TIT2')
+        audioFile.album = get_text_frame(audio,'TALB')
+        audioFile.artist = get_text_frame(audio,'TPE1')
 
-        audioFile.album_artist = 'Various Artists'
-        # Artist is default for album_artist
-        if audio.has_key('TPE1'): audioFile.artist = audio['TPE1'][0].capitalize()
-        if audio.has_key('TPE2'): audioFile.album_artist = audio['TPE2'][0].capitalize()
-        if audio.has_key('TALB'): audioFile.album = audio['TALB'][0].capitalize()
+        audioFile.album_artist = get_text_frame(audio,('TPE2','TCOM'),default="Various Artists")
 
         # basically useless field. Non consistency and artists think they are
         # special and like to invent genres all the time... Soundcloud artists,
         # I'm looking at you!
-        if audio.has_key('TCON'): audioFile.genre = audio['TCON'][0].capitalize()
-
+        audioFile.genre = get_text_frame(audio,'TCON')
 
         img_data = find_APIC_frame_data(audio)
         if img_data:
