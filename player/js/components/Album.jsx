@@ -28,7 +28,7 @@ var Album = React.createClass({
                     className="pure-img-responsive"
                     onLoad={this.swapImg}
                     style={imgstyle}
-                    src={'/cas/'+this.props.cover_art_ref}
+                    src={'/cas/'+this.props.cover_art_ref+'.jpg'}
                 />
                 <img style={plcstyle} className="pure-img-responsive" src="/static/crates/placeholder.png" />
 

@@ -8,6 +8,8 @@ from cas import BasicCAS
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 
+from mimetypes import guess_type
+
 # TODO: authentication for Peers via middleware for API
 
 # TODO: http://stackoverflow.com/questions/6069070/how-to-use-permission-required-decorators-on-django-class-based-views
@@ -24,7 +26,7 @@ class Cas(View):
     def dispatch(self, *args, **kwargs):
         return super(Cas, self).dispatch(*args, **kwargs)
 
-    def get(self, request, ref):
+    def get(self, request, ref, ext='.bin'):
         '''
         Serve a file from the CAS. Not scalable, as it ties up an entire
         UWSGI worker. However, it's better than simply f.read()ing a file into
@@ -39,6 +41,10 @@ class Cas(View):
         For (scalable) production usage, an X-Sendfile mechanism is required.
         Beware, assumes ref is a valid cas ref from the URL pattern.
         '''
+
+        # append an extension to the URL if you know it for convenience.
+        mimetype = guess_type('foo.%s' % ext,strict=False)[0]
+
         if settings.X_SENDFILE:
             response = HttpResponse()
             # This resource is immutable by definition.
@@ -48,6 +54,7 @@ class Cas(View):
             # one year in the future.
             response['Cache-Control'] = 'max-age=31556926'
             response['X-Accel-Redirect'] =  '/accel_cas/'+ref[:2]+'/'+ref[2:]+'.bin'
+            if mimetype: response['Content-Type'] = mimetype
             return response
 
 
@@ -60,6 +67,7 @@ class Cas(View):
 
         response['Cache-Control'] = 'max-age=31556926'
         response['Content-Length'] = stat(filepath).st_size
+        if mimetype: response['Content-Type'] = mimetype
         return response
 
 class EnumerateCas(View):
