@@ -7,8 +7,9 @@ from io import BytesIO
 from zlib import adler32
 from colorsys import hsv_to_rgb
 
-
 from kmeans import colorz,rtoh
+
+from mutagen.mp3 import MP3 as _MP3,HeaderNotFoundError
 
 
 def make_thumbnail_ref(data):
@@ -79,26 +80,25 @@ def deterministic_colour(*args):
     r,g,b = hsv_to_rgb(hue/255,sat/255,val/255)
     return rtoh((r*255,b*255,g*255))
 
-# TODO move this, plus the AudioFile into separate module
-# TODO evaluate subclassing MP3 to add these methods!
-def find_APIC_frame_data(mp3):
-    """
-    Iterate through ID3 frames in an MP3 object looking for the most likely
-    candidate for a front cover
-    """
-    for key in mp3:
-        frame = mp3[key]
-        if frame.FrameID == 'APIC':
-            return frame.data
 
-def get_text_frame(mp3,ids,default=''):
-    if isinstance(ids,str): ids = [ids]
 
-    try:
+class MP3(_MP3):
+    def find_APIC_frame_data(self):
+        """
+        Iterate through ID3 frames in an MP3 object looking for the most likely
+        candidate for a front cover
+        """
+        for key in self:
+            frame = self[key]
+            if frame.FrameID == 'APIC':
+                return frame.data
+
+    def get_text_frame(self,ids,default=''):
+        if isinstance(ids,str): ids = [ids]
+
         for id in ids:
-            if mp3.has_key(id):
-                return mp3[id][0].capitalize()
-    finally:
-        # IndexError (etc) or not found
+            if self.has_key(id):
+                return self[id][0].capitalize()
+
         return default
 

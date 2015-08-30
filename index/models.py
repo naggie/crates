@@ -1,8 +1,7 @@
 from django.db.models import CharField, ForeignKey, IntegerField, PositiveSmallIntegerField, DateTimeField, URLField, Model, UUIDField
 from django.contrib.auth.models import User
-from mutagen.mp3 import MP3,HeaderNotFoundError
 from cas.models import cas,ImmutableFile
-from util import make_thumbnail_ref, deterministic_colour, find_APIC_frame_data,get_text_frame
+from util import make_thumbnail_ref, deterministic_colour,  MP3
 import unicodedata
 import re
 
@@ -218,18 +217,18 @@ class AudioFile(CratesImmutableFile):
         # MP3 class is a superset of ID3 including length and bitrate, etc.
         audio = MP3(filepath)
 
-        audioFile.title = get_text_frame(audio,'TIT2')
-        audioFile.album = get_text_frame(audio,'TALB')
-        audioFile.artist = get_text_frame(audio,'TPE1')
+        audioFile.title = audio.get_text_frame('TIT2')
+        audioFile.album = audio.get_text_frame('TALB')
+        audioFile.artist = audio.get_text_frame('TPE1')
 
-        audioFile.album_artist = get_text_frame(audio,('TPE2','TCOM'),default="Various Artists")
+        audioFile.album_artist = audio.get_text_frame(('TPE2','TCOM'),default="Various Artists")
 
         # basically useless field. Non consistency and artists think they are
         # special and like to invent genres all the time... Soundcloud artists,
         # I'm looking at you!
-        audioFile.genre = get_text_frame(audio,'TCON')
+        audioFile.genre = audio.get_text_frame('TCON')
 
-        img_data = find_APIC_frame_data(audio)
+        img_data = audio.find_APIC_frame_data()
         if img_data:
             audioFile.cover_art_ref, audioFile.colour = make_thumbnail_ref(img_data)
             # record mimetype of cover art...?
