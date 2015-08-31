@@ -51,10 +51,11 @@
 
     .cover {
         text-align:right;
+        height:58px;
         img {
-            display:inline-block;
-            height:54px;
-            width:54px;
+            position:relative;
+            margin-top:-50%;
+            box-shadow:0 0 15px black;
         }
     }
 
@@ -80,6 +81,5 @@
 }
 
 .player > * {
-    overflow:hidden;
     text-align:center;
 }
