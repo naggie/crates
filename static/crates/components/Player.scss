@@ -1,0 +1,81 @@
+.player {
+    background:#393838;
+    color:white;
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    z-index:30000;
+
+    .buttons {
+        text-align:center;
+        font-size:24px;
+
+        .fa-play {
+            padding:10px 15px;
+            font-size:38px;
+        }
+        .fa-heart-o, .fa-heart {
+            padding:16px;
+        }
+    }
+
+    .buttons * {
+        vertical-align:middle;
+    }
+
+
+
+    .progress {
+        width:100%;
+        height:15px;
+        margin:21px 0 0 0;
+        border-radius:15px;
+        background:rgba(0,0,0,0.3);
+        position:relative;
+
+        .bar {
+            position:absolute;
+            width:35%;
+            height:100%;
+            border-radius:15px;
+            background:#786587;
+        }
+        .cursor {
+            position:absolute;
+            top:50%;
+            left:35%;
+            margin-left:-14px;
+            margin-top:-14px;
+            font-size:24px;
+        }
+    }
+
+    .cover {
+        text-align:right;
+        img {
+            display:inline-block;
+            height:54px;
+            width:54px;
+        }
+    }
+
+    .info {
+        text-align:left;
+
+        .title {
+            margin:11px 0 0 11px;
+        }
+
+        .artist {
+            font-style: italic;
+            margin:0 0 0 11px;
+            color:rgba(255,255,255,0.7);
+        }
+    }
+}
+
+.player > * {
+    overflow:hidden;
+    text-align:center;
+}
