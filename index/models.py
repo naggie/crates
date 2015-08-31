@@ -242,13 +242,11 @@ class AudioFile(CratesImmutableFile):
         #if audio.has_key('TDRC'): audioFile.year = audio['TDRC'][0]
 
         try:
-            if audio.has_key('TRCK'): audioFile.track = int(audio['TRCK'][0].partition('/')[0])
+            audioFile.track = audio.get_text_frame('TRCK').partition('/')[0]
         except ValueError: pass
 
         audioFile.bitrate_kbps = int(audio.info.bitrate/1000)
         audioFile.length = int(audio.info.length)
-
-        # cover art
 
         audioFile.extension = '.mp3'
 
