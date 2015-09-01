@@ -5,7 +5,7 @@ var utils = require('./utils')
 var AlbumBrowser = require('./components/AlbumBrowser.jsx')
 var Player = require('./components/Player.jsx')
 
-React.render(
-    <Player />,
-    document.getElementById('main')
-)
+//React.render(
+//    <Player />,
+//    document.getElementById('main')
+//)
