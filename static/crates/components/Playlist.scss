@@ -1,8 +1,20 @@
-.playlist {
+
+.playlist .masthead {
+    .cover {
+        padding:10px 10px 10px 0;
+    }
+
+    .info {
+        padding:30px;
+    }
+}
+
+
+.playlist table {
     width:100%;
     .cover {
         width:64px;
-        padding:10px;
+        padding:20px;
 
         img {
             width:64px;
@@ -11,4 +23,7 @@
         }
     }
 
+    tr.selected {
+        background:rgba(0,0,0,0.1)
+    }
 }
