@@ -4,8 +4,17 @@ var utils = require('./utils')
 
 var AlbumBrowser = require('./components/AlbumBrowser.jsx')
 var Player = require('./components/Player.jsx')
+var Playlist = require('./components/Playlist.jsx')
 
-//React.render(
-//    <Player />,
-//    document.getElementById('main')
-//)
+
+var Test = React.createClass({
+    render: function() {
+        return <div><Playlist /><Player /></div>
+    }
+})
+
+
+React.render(
+    <Test />,
+    document.getElementById('main')
+)
