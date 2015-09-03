@@ -9,15 +9,17 @@
 }
 
 .album img {
+    outline:1px solid #eee;
     margin-top:5%;
 }
 
 .album .title {
+    margin-top:10px;
     font-weight:bold;
 }
 
 .album .artist {
-    margin-bottom:5%;
+    margin-bottom:30px;
 }
 
 .category {

@@ -73,7 +73,8 @@ var Playlist = React.createClass({
                 <table className="pure-table pure-table-horizontal">
                 {
                     this.state.items.map((props,i) => {
-                        return <tr key={i} className={i == this.state.selected?'selected':''}>
+                        return <tr key={i}
+                            className={i == this.state.selected?'selected':''}>
                             <td className="cover">
                                 <img src={'/cas/'+props.cover_art_ref+'.jpg'} />
                             </td>
