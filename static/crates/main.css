@@ -2,6 +2,10 @@ html {
     /* always display scroll bar so that AZ does not jump around  */
     overflow-y: -moz-scrollbars-vertical;
     overflow-y: scroll;
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
 }
 
 /*
