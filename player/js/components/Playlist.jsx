@@ -54,9 +54,22 @@ var Playlist = React.createClass({
                     bitrate:'320kbps',
                 },
             ],
-            selected : 3,
+            cursor : 3,
         }
     },
+
+    selectItem: function(i) {
+        this.setState({cursor:i})
+
+        this.props.onSelect(this.state.items[i])
+    },
+
+    getDefaultProps: function() {
+        return {
+            onSelect: function(item){console.log(item)},
+        }
+    },
+
     render: function() {
         return (
             <div className="playlist content">
@@ -73,8 +86,11 @@ var Playlist = React.createClass({
                 <table className="pure-table pure-table-horizontal">
                 {
                     this.state.items.map((props,i) => {
-                        return <tr key={i}
-                            className={i == this.state.selected?'selected':''}>
+                        return <tr
+                                key={i}
+                                className={i == this.state.cursor?'selected':''}
+                                onClick={this.selectItem.bind(this,i)}
+                            >
                             <td className="cover">
                                 <img src={'/cas/'+props.cover_art_ref+'.jpg'} />
                             </td>
