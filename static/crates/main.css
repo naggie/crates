@@ -31,3 +31,20 @@ a {
     padding-left:10px;
 }
 
+/* Obtained from Google Web fonts, under Open Font License included in OFL.txt */
+@font-face {
+    font-family: 'Raleway';
+    font-style: normal;
+    font-weight: 400;
+    src: local('Raleway'), url(raleway.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2212, U+2215, U+E0FF, U+EFFD, U+F000;
+}
+
+/* could be activated later, on select elements as it's fatiguing to read but looks elegant. */
+/* http://purecss.io/grids/#using-grids-with-custom-fonts */
+/*
+html, button, input, select, textarea,
+.pure-g [class *= "pure-u"] {
+    font-family: Raleway, Helvetica, Sans-serif;
+}
+*/

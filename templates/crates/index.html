@@ -13,7 +13,7 @@
     <a href="/accounts/logout/"><i class="fa fa-sign-out"></i> Log out</a>
 
     {% if request.user.is_superuser %}
-        <a href="/admin/" target="_new"><i class="fa fa-users"></i> Admin</a>
+    <a href="/admin/" target="_new"><i class="fa fa-users"></i> Admin</a>
     {% endif %}
 </div>
 
@@ -32,28 +32,51 @@
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">Genres</a></li>
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">Mixes</a></li>
                 <li class="pure-menu-item"><a href="#" class="pure-menu-link">Playlists</a></li>
-            <ul class="pure-menu-list">
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Podcasts</a></li>
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Audio Books</a></li>
-            </ul>
-            <ul class="pure-menu-list">
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">TV shows</a></li>
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Movies</a></li>
-            </ul>
-            <ul class="pure-menu-list">
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Dashboard</a></li>
-                <li class="pure-menu-item"><a href="#" class="pure-menu-link">Crawlers</a></li>
-            </ul>
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Podcasts</a></li>
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Audio Books</a></li>
+                </ul>
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">TV shows</a></li>
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Movies</a></li>
+                </ul>
+                <ul class="pure-menu-list">
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Dashboard</a></li>
+                    <li class="pure-menu-item"><a href="#" class="pure-menu-link">Crawlers</a></li>
+                </ul>
+            </div>
         </div>
+
+        <div id="main">
+            <div class="loading">
+                <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="job">
+                <h2 class="content-subhead">DJ analyser</h2>
+                <p>Calculate the BPM, chromakey, waveform and Chromaprint of all music</p>
+                <div class="pure-g">
+
+                    <div class="pure-u-1-5">
+                        <button class="pure-button">Start now</button>
+                    </div>
+                    <div class="pure-u-4-5 time">
+                        <p>Scheduled to run in 3 hours 7 minutes</p>
+                    </div>
+
+                    <div class="pure-u-1-5">
+                        Running
+                    </div>
+                    <div class="pure-u-4-5 progress">
+                        <div class="bar"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
-    <div id="main">
-        <div class="loading">
-            <i class="fa fa-spin fa-3x fa-circle-o-notch"></i>
-        </div>
-    </div>
-
-</div>
-
-{% endblock content %}
+    {% endblock content %}
 

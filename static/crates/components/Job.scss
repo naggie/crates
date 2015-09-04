@@ -1,11 +1,27 @@
+.job .pure-g > * {
+    padding:5px;
+}
+
 .job {
     .progress {
         background:#eee;
+        padding:0;
+        height:36px;
 
         .bar {
             background:#1f8dd6;
             width:45%;
-            height:24px
+            height:100%;
         }
     }
+
+    button {
+        // could vertical align this middle if inline-block and parent has height
+        margin-top:11px;
+    }
 }
+
+//* {outline:1px dotted red;}
+
+
+
