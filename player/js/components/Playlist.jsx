@@ -61,12 +61,20 @@ var Playlist = React.createClass({
     selectItem: function(i) {
         this.setState({cursor:i})
 
-        this.props.onSelect(this.state.items[i])
+        // for disabling prev/next buttons
+        var start = i == 0
+        var end = i == this.state.items.length-1
+
+        this.props.onSelect(
+            this.state.items[i],
+            start,
+            end
+        )
     },
 
     getDefaultProps: function() {
         return {
-            onSelect: function(item){console.log(item)},
+            onSelect: function(){console.log(...arguments)},
         }
     },
 
