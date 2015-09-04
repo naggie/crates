@@ -72,6 +72,28 @@ var Playlist = React.createClass({
         )
     },
 
+    // next/prev always loop. If you don't want that, pay attention to
+    // selectItem start/end
+    next: function() {
+        cursor = this.state.cursor+1
+
+        if (cursor == this.state.items.length) {
+            cursor == 0
+        }
+
+        this.setState({cursor:cursor})
+    },
+
+    prev: function() {
+        cursor = this.state.cursor-1
+
+        if (cursor == -1) {
+            cursor == this.state.cursor.length-1
+        }
+
+        this.setState({cursor:cursor})
+    },
+
     getDefaultProps: function() {
         return {
             onSelect: function(){console.log(...arguments)},
