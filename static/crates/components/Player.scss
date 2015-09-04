@@ -62,14 +62,15 @@
     .info {
         text-align:left;
         background:rgba(255,255,255,0.1);
+        padding: 8px 0 0 12px;
+        font-size:12px;
 
         .title {
-            margin:11px 0 0 11px;
+            font-size:14px;
         }
 
         .artist {
             font-style: italic;
-            margin:0 0 0 11px;
             color:rgba(255,255,255,0.7);
         }
     }
