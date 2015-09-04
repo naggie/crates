@@ -6,6 +6,7 @@
     margin-left:7%;
     margin-right:3%;
     width:90%;
+    text-align:center;
 }
 
 .album img {
@@ -15,11 +16,12 @@
 
 .album .title {
     margin-top:10px;
-    font-weight:bold;
 }
 
 .album .artist {
     margin-bottom:30px;
+    font-size:14px;
+    font-style:italic;
 }
 
 .category {
