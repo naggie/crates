@@ -7,7 +7,7 @@ from django.conf import settings
 from cas import BasicCAS
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-
+import re
 from mimetypes import guess_type
 
 # TODO: authentication for Peers via middleware for API
@@ -59,15 +59,45 @@ class Cas(View):
 
 
         filepath = cas.select(ref)
+        file_obj = open(filepath,'rb')
 
-        response = FileResponse(
-            open(filepath,'rb'),
-            content_type="application/octet-stream"
-        )
+        # Deal with HTTP/1.1 Range request. Note that if X_SENDFILE is used,
+        # nginx will do this automatically.
+        # For now just support a 'from.' If a 'to' is specified, give a 416.
+        # https://en.wikipedia.org/wiki/Byte_serving
+        if 'HTTP_RANGE' in request.META:
+            try:
+                r = request.META['HTTP_RANGE']
+                start, stop = re.findall(r'^bytes=([0-9]+)-([0-9]+)?$',r)[0]
 
+                if stop:
+                    raise IndexError()
+
+                file_obj.seek(int(start))
+            except IndexError:
+                # 416 Requested Range Not Satisfiable
+                return HttpResponse(status=416)
+
+        response = FileResponse(file_obj)
+
+        # CAS -- by definition does not change -- ever.
         response['Cache-Control'] = 'max-age=31556926'
-        response['Content-Length'] = stat(filepath).st_size
         if mimetype: response['Content-Type'] = mimetype
+
+        # seeked via range handler above
+        if file_obj.tell() == 0:
+            response.status_code = 200
+            response['Content-Length'] = stat(filepath).st_size
+        else:
+            # 206 Partial content
+            response.status_code = 206
+            response['Content-Length'] = stat(filepath).st_size - file_obj.tell()
+            response['Content-Range'] = 'bytes {start}-{end}/{total}'.format(
+                start = file_obj.tell(),
+                end = stat(filepath).st_size - 1,
+                total = stat(filepath).st_size
+            )
+
         return response
 
 class EnumerateCas(View):

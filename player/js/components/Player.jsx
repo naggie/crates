@@ -4,6 +4,7 @@ var utils = require('../utils')
 
 // TODO preload next track
 // TODO KB shortcuts
+// // TODO setting current time requires byte range support
 function seconds_to_clock(elapsed_seconds) {
     if (!elapsed_seconds || typeof elapsed_seconds !='number') return ''
 
