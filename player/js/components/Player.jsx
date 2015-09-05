@@ -2,7 +2,7 @@ var React = require("react")
 var classNames = require('classnames')
 var utils = require('../utils')
 
-
+// TODO preload next track
 function seconds_to_clock(elapsed_seconds) {
     if (!elapsed_seconds || typeof elapsed_seconds !='number') return ''
 
@@ -53,11 +53,22 @@ var Player = React.createClass({
         var total_time = seconds_to_clock(this.state.total_seconds)
         var elapsed_percent = 100*this.state.elapsed_seconds/this.state.total_seconds
 
+        var playicon = 'fa fa-play'
+        if (this.state.audio_state == 'PLAYING') {
+            playicon = 'fa fa-pause'
+        }
+
+        var playicon =  classNames({
+            'fa fa-circle-o-notch fa-spin': this.state.audio_state == 'LOADING',
+            'fa fa-play': this.state.audio_state != 'PLAYING' || this.state.audio_state != 'LOADING',
+            'fa fa-pause': this.state.audio_state == 'PLAYING',
+        })
+
         return (
             <div className="player pure-g">
                 <div className="pure-u-lg-3-24 buttons">
                     <i className="fa fa-backward"></i>
-                    <i className="fa fa-play" onClick={this.audio.play.bind(this.audio)}></i>
+                    <i className={playicon} onClick={this.audio.play.bind(this.audio)}></i>
                     <i className="fa fa-forward"></i>
                 </div>
                 <div className="pure-u-lg-1-24 time">{elapsed_time}</div>
