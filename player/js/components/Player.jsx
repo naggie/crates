@@ -3,6 +3,7 @@ var classNames = require('classnames')
 var utils = require('../utils')
 
 // TODO preload next track
+// TODO KB shortcuts
 function seconds_to_clock(elapsed_seconds) {
     if (!elapsed_seconds || typeof elapsed_seconds !='number') return ''
 
@@ -57,8 +58,20 @@ var Player = React.createClass({
     removeAudio: function() {
         delete this.audio
     },
+
     componentWillMount : function(){ this.initAudio()},
     componentWillUnmount : function(){ this.removeAudio()},
+
+    seek: function(event) {
+        var node = React.findDOMNode(this.refs.progress)
+        var left = node.getBoundingClientRect().left
+        var width = node.offsetWidth
+        var offset = event.clientX - left
+
+        console.log(offset*this.state.total_seconds/width)
+        this.audio.currentTime = offset*this.state.total_seconds/width
+    },
+
     render: function() {
         var elapsed_time = seconds_to_clock(this.state.elapsed_seconds)
         var total_time = seconds_to_clock(this.state.total_seconds)
@@ -82,12 +95,12 @@ var Player = React.createClass({
             <div className="player pure-g">
                 <div className="pure-u-lg-3-24 buttons">
                     <i className="fa fa-backward"></i>
-                    <i className={playicon} onClick={this.audio.play.bind(this.audio)}></i>
+                    <i className={playicon} onClick={this.audio.play.bind(this.audio)} c></i>
                     <i className="fa fa-forward"></i>
                 </div>
                 <div className="pure-u-lg-1-24 time">{elapsed_time}</div>
                 <div className="pure-u-lg-11-24">
-                    <div className="progress">
+                    <div className="progress" ref="progress" onMouseUp={this.seek}>
                         <div className="bar" style={{
                             width:elapsed_percent+'%',
                             backgroundColor:this.props.colour,
