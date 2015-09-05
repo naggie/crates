@@ -23,23 +23,24 @@ function seconds_to_clock(elapsed_seconds) {
 var Player = React.createClass({
     getInitialState: function() {
         return {
-            audio_state: 'LOADING',
-            elapsed_seconds: 0,
-            total_seconds:'9:99',
+            audio_state:'LOADING',
+            elapsed_seconds:0,
+            total_seconds:0,
         }
     },
 
-    componentWillMount: function() {
+    initAudio: function() {
 
         // TODO put this in changed props handler also by a separate method
         this.audio = document.createElement('audio')
+        this.audio.autoplay = true
 
         // TODO support M4A as well as MP3
         this.audio.src = '/cas/'+this.props._ref+'.mp3'
         this.audio.load()
 
         // TODO timeranges for buffering (extra progress bar) (buffer property, progress event)
-        this.audio.addEventListener('canplaythrough',() => this.setState({audio_state:'READY'}) )
+        this.audio.addEventListener('canplaythrough',() => this.setState({audio_state:this.audio.autoplay?'PLAYING':'READY'}) )
         this.audio.addEventListener('ended',() => this.setState({audio_state:'STOPPED'}) )
         this.audio.addEventListener('pause',() => this.setState({audio_state:'PAUSED'}) )
         this.audio.addEventListener('playing',() => this.setState({audio_state:'PLAYING'}) )
@@ -52,21 +53,30 @@ var Player = React.createClass({
             total_seconds: this.audio.duration,
         })
     },
+
+    removeAudio: function() {
+        delete this.audio
+    },
+    componentWillMount : function(){ this.initAudio()},
+    componentWillUnmount : function(){ this.removeAudio()},
     render: function() {
         var elapsed_time = seconds_to_clock(this.state.elapsed_seconds)
         var total_time = seconds_to_clock(this.state.total_seconds)
         var elapsed_percent = 100*this.state.elapsed_seconds/this.state.total_seconds
 
-        var playicon = 'fa fa-play'
-        if (this.state.audio_state == 'PLAYING') {
-            playicon = 'fa fa-pause'
+        var playicon
+        switch (this.state.audio_state) {
+            case 'LOADING':
+                playicon = 'fa fa-fw fa-circle-o-notch fa-spin'
+            break
+            case 'PLAYING':
+                playicon = 'fa fa-fw fa-pause'
+            break
+            case 'PAUSED':
+            case 'STOPPED':
+                playicon = 'fa fa-fw fa-play'
+            break
         }
-
-        var playicon =  classNames({
-            'fa fa-circle-o-notch fa-spin': this.state.audio_state == 'LOADING',
-            'fa fa-play': this.state.audio_state != 'PLAYING' || this.state.audio_state != 'LOADING',
-            'fa fa-pause': this.state.audio_state == 'PLAYING',
-        })
 
         return (
             <div className="player pure-g">
