@@ -6,6 +6,7 @@ var utils = require('../utils')
 function seconds_to_clock(elapsed_seconds) {
     if (!elapsed_seconds || typeof elapsed_seconds !='number') return ''
 
+    var hours = parseInt(elapsed_seconds/3600)
     var minutes = parseInt(elapsed_seconds/60)
     var seconds = parseInt(elapsed_seconds%60)
 
@@ -13,7 +14,10 @@ function seconds_to_clock(elapsed_seconds) {
     if (seconds < 10)
         seconds = `0${seconds}`
 
-    return `${minutes}:${seconds}`
+    if (hours)
+        return `${hours}:${minutes}:${seconds}`
+    else
+        return `${minutes}:${seconds}`
 }
 
 var Player = React.createClass({
