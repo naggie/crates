@@ -110,9 +110,9 @@ var Player = React.createClass({
         return (
             <div className="player pure-g">
                 <div className="pure-u-lg-3-24 buttons">
-                    <i className="fa fa-backward"></i>
+                    <i className="fa fa-backward disabled"></i>
                     <i className={playicon} onClick={this.playpause} c></i>
-                    <i className="fa fa-forward"></i>
+                    <i className="fa fa-forward disabled"></i>
                 </div>
                 <div className="pure-u-lg-1-24 time">{elapsed_time}</div>
                 <div className="pure-u-lg-11-24">
