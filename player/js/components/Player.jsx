@@ -130,7 +130,6 @@ var Player = React.createClass({
                                 return <div key={start} className="buffer bar" style={{
                                     left:start+'%',
                                     width:end+'%',
-                                    backgroundColor:this.props.colour,
                                 }}></div>
                             })
                         }
