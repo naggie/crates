@@ -88,7 +88,12 @@ class Cas(View):
         if mimetype: response['Content-Type'] = mimetype
 
         # seeked via range handler above
-        if start == 0:
+
+        # Intestingly, in order for seeking to work not only do you need to
+        # support Range requests, you also need to honor the first request as a
+        # range request even if the first requested byte is 0!
+        # http://stackoverflow.com/questions/8088364/html5-video-will-not-loop
+        if 'HTTP_RANGE' not in request.META:
             response.status_code = 200
             response['Content-Length'] = stat(filepath).st_size
         else:

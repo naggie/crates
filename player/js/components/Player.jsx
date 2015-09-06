@@ -35,14 +35,16 @@ var Player = React.createClass({
 
         // TODO put this in changed props handler also by a separate method
         this.audio = document.createElement('audio')
-        this.audio.autoplay = true
 
         // TODO support M4A as well as MP3
         this.audio.src = '/cas/'+this.props._ref+'.mp3'
         this.audio.load()
 
         // TODO timeranges for buffering (extra progress bar) (buffer property, progress event)
-        this.audio.addEventListener('canplaythrough',() => this.setState({audio_state:this.audio.autoplay?'PLAYING':'READY'}) )
+        this.audio.addEventListener('canplaythrough',() => {
+            this.audio.play()
+            this.setState({audio_state:'PLAYING'})
+        })
         this.audio.addEventListener('ended',() => this.setState({audio_state:'STOPPED'}) )
         this.audio.addEventListener('pause',() => this.setState({audio_state:'PAUSED'}) )
         this.audio.addEventListener('playing',() => this.setState({audio_state:'PLAYING'}) )
