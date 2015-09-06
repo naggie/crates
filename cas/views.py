@@ -60,6 +60,7 @@ class Cas(View):
 
         filepath = cas.select(ref)
         file_obj = open(filepath,'rb')
+        start = 0
 
         # Deal with HTTP/1.1 Range request. Note that if X_SENDFILE is used,
         # nginx will do this automatically.
@@ -70,14 +71,16 @@ class Cas(View):
                 r = request.META['HTTP_RANGE']
                 start, stop = re.findall(r'^bytes=([0-9]+)-([0-9]+)?$',r)[0]
 
+                start = int(start)
+
                 if stop:
                     raise IndexError()
 
-                file_obj.seek(int(start))
             except IndexError:
                 # 416 Requested Range Not Satisfiable
                 return HttpResponse(status=416)
 
+        file_obj.seek(start)
         response = FileResponse(file_obj)
 
         # CAS -- by definition does not change -- ever.
@@ -85,15 +88,15 @@ class Cas(View):
         if mimetype: response['Content-Type'] = mimetype
 
         # seeked via range handler above
-        if file_obj.tell() == 0:
+        if start == 0:
             response.status_code = 200
             response['Content-Length'] = stat(filepath).st_size
         else:
             # 206 Partial content
             response.status_code = 206
-            response['Content-Length'] = stat(filepath).st_size - file_obj.tell()
+            response['Content-Length'] = stat(filepath).st_size - start
             response['Content-Range'] = 'bytes {start}-{end}/{total}'.format(
-                start = file_obj.tell(),
+                start = start,
                 end = stat(filepath).st_size - 1,
                 total = stat(filepath).st_size
             )
