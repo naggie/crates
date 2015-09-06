@@ -70,6 +70,8 @@ var Player = React.createClass({
         var width = node.offsetWidth
         var offset = event.clientX - left
 
+        this.setState({'audio_state':'LOADING'})
+
         if (this.audio.seekable.length)
             this.audio.currentTime = offset*this.state.total_seconds/width
     },
