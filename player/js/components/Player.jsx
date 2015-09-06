@@ -61,6 +61,7 @@ var Player = React.createClass({
     },
 
     componentWillMount : function(){ this.initAudio()},
+    componentWillReceiveProps : function(){ this.initAudio()},
     componentWillUnmount : function(){ this.removeAudio()},
 
     seek: function(event) {
