@@ -74,6 +74,18 @@ var Player = React.createClass({
             this.audio.currentTime = offset*this.state.total_seconds/width
     },
 
+    playpause: function() {
+        switch (this.state.audio_state) {
+            case 'PLAYING':
+                this.audio.pause()
+            break
+            case 'STOPPED':
+                this.audio.currentTime = 0
+            case 'PAUSED':
+                this.audio.play()
+            break
+        }
+    },
     render: function() {
         var elapsed_time = seconds_to_clock(this.state.elapsed_seconds)
         var total_time = seconds_to_clock(this.state.total_seconds)
@@ -97,7 +109,7 @@ var Player = React.createClass({
             <div className="player pure-g">
                 <div className="pure-u-lg-3-24 buttons">
                     <i className="fa fa-backward"></i>
-                    <i className={playicon} onClick={this.audio.play.bind(this.audio)} c></i>
+                    <i className={playicon} onClick={this.playpause} c></i>
                     <i className="fa fa-forward"></i>
                 </div>
                 <div className="pure-u-lg-1-24 time">{elapsed_time}</div>
