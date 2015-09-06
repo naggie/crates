@@ -4,7 +4,8 @@ var utils = require('../utils')
 
 // TODO preload next track
 // TODO KB shortcuts
-// // TODO mark along the progress bar what parts the client has buffered. Wow!
+// TODO mark along the progress bar what parts the client has buffered. Wow!
+// TODO support video. Should be possible to simply swap the element.
 function seconds_to_clock(elapsed_seconds) {
     if (!elapsed_seconds || typeof elapsed_seconds !='number') return ''
 
@@ -46,6 +47,7 @@ var Player = React.createClass({
         this.audio.addEventListener('ended',() => this.setState({audio_state:'STOPPED'}) )
         this.audio.addEventListener('pause',() => this.setState({audio_state:'PAUSED'}) )
         this.audio.addEventListener('playing',() => this.setState({audio_state:'PLAYING'}) )
+        this.audio.addEventListener('seeking',() => this.setState({audio_state:'LOADING'}) )
 
         this.audio.addEventListener('timeupdate',this.update_time)
     },
@@ -69,8 +71,6 @@ var Player = React.createClass({
         var left = node.getBoundingClientRect().left
         var width = node.offsetWidth
         var offset = event.clientX - left
-
-        this.setState({'audio_state':'LOADING'})
 
         if (this.audio.seekable.length)
             this.audio.currentTime = offset*this.state.total_seconds/width
