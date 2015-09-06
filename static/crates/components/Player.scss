@@ -41,6 +41,12 @@
             height:100%;
             border-radius:15px;
             background:#aaa;
+            top:0;
+
+        }
+        .buffer {
+            opacity:0.2;
+            background:white;
         }
         .cursor {
             position:absolute;

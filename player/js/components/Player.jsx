@@ -29,6 +29,7 @@ var Player = React.createClass({
             audio_state:'LOADING',
             elapsed_seconds:0,
             total_seconds:0,
+            buffered_percent: [],
         }
     },
 
@@ -48,13 +49,21 @@ var Player = React.createClass({
         this.audio.addEventListener('pause',() => this.setState({audio_state:'PAUSED'}) )
         this.audio.addEventListener('playing',() => this.setState({audio_state:'PLAYING'}) )
         this.audio.addEventListener('seeking',() => this.setState({audio_state:'LOADING'}) )
-
         this.audio.addEventListener('timeupdate',this.update_time)
     },
     update_time: function() {
+        // convert TimeRanges object to percent ranges
+
+        var buffered_percent = []
+        for (var i = 0; i < this.audio.buffered.length; i++) {
+            var start = this.audio.buffered.start(i)*100/this.audio.duration
+            var end = this.audio.buffered.end(i)*100/this.audio.duration
+            buffered_percent.push([start,end])
+        }
         this.setState({
             elapsed_seconds: this.audio.currentTime,
             total_seconds: this.audio.duration,
+            buffered_percent: buffered_percent,
         })
     },
 
@@ -117,6 +126,15 @@ var Player = React.createClass({
                 <div className="pure-u-lg-1-24 time">{elapsed_time}</div>
                 <div className="pure-u-lg-11-24">
                     <div className="progress" ref="progress" onMouseUp={this.seek}>
+                        {
+                            this.state.buffered_percent.map(([start,end]) => {
+                                return <div key={start} className="buffer bar" style={{
+                                    left:start+'%',
+                                    width:end+'%',
+                                    backgroundColor:this.props.colour,
+                                }}></div>
+                            })
+                        }
                         <div className="bar" style={{
                             width:elapsed_percent+'%',
                             backgroundColor:this.props.colour,
