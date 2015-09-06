@@ -4,7 +4,6 @@ var utils = require('../utils')
 
 // TODO preload next track
 // TODO KB shortcuts
-// TODO mark along the progress bar what parts the client has buffered. Wow!
 // TODO support video. Should be possible to simply swap the element.
 function seconds_to_clock(elapsed_seconds) {
     if (!elapsed_seconds || typeof elapsed_seconds !='number') return ''

@@ -48,3 +48,7 @@ html, button, input, select, textarea,
     font-family: Raleway, Helvetica, Sans-serif;
 }
 */
+
+#main {
+    padding-bottom:100px;
+}
