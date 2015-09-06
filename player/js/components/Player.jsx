@@ -9,7 +9,7 @@ function seconds_to_clock(elapsed_seconds) {
     if (!elapsed_seconds || typeof elapsed_seconds !='number') return ''
 
     var hours = parseInt(elapsed_seconds/3600)
-    var minutes = parseInt(elapsed_seconds/60)
+    var minutes = parseInt((elapsed_seconds%3600)/60)
     var seconds = parseInt(elapsed_seconds%60)
 
     // hooray for dynamic typing
