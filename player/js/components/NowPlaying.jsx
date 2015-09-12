@@ -2,9 +2,9 @@ var React = require("react")
 var classNames = require('classnames')
 var utils = require('../utils')
 
-// TODO placeholders for responseive images
+// TODO placeholders for responsive images via component
 
-var Playlist = React.createClass({
+var NowPlaying = React.createClass({
     getInitialState: function() {
         return {
             items : [
@@ -117,4 +117,4 @@ var Playlist = React.createClass({
     }
 })
 
-module.exports = Playlist
+module.exports = NowPlaying

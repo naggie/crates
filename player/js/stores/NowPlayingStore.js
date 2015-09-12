@@ -8,6 +8,9 @@ class NowPlayingStore {
         this.prev_available = false
         this.next_available = false
 
+        this.album = ''
+        this.artist = ''
+
         this.bindListeners({
             newPlaylist: NowPlayingActions.LOAD_PLAYLIST,
             next: NowPlayingActions.NEXT,
@@ -15,8 +18,11 @@ class NowPlayingStore {
         })
     }
 
-    newPlaylist(items) {
+    newPlaylist(items,album,artist,cover_ref) {
         this.items = items
+        this.album = album
+        this.artist = artist
+        this.cover_ref = cover_ref
         this.cursor = 0
     }
 
