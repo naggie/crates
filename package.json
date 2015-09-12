@@ -5,6 +5,7 @@
   "main": "js/index.js",
   "browser": "js/index.js",
   "dependencies": {
+    "alt": "^0.17.3",
     "babelify": "^6.2.0",
     "browserify": "^10.2.4",
     "classnames": "^2.1.3",
