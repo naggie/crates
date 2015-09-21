@@ -4,6 +4,8 @@ be built in a GET request. I'll see what can be factorised into a class. So
 far, the JSON list streaming system has been, and the query system will be.
 What remains is a flatten (to serialise) method for classes). Time, will tell.
 
+TODO make a module from this, whatever it becomes
+
 '''
 import json
 
@@ -29,6 +31,7 @@ class LoginRequiredMixin(object):
         return login_required(view)
 
 
+# TODO share this with CAS
 class StreamingJsonView(View):
     def get(self, request):
         response = FileResponse(
@@ -64,10 +67,12 @@ class StreamingJsonView(View):
         except StopIteration:
             yield '[]'
 
-# TODO this is quite generic already -- should be a general model query API
-class Albums(LoginRequiredMixin,StreamingJsonView):
+
+class StreamingJsonObjectView(StreamingJsonView):
+    # how many items per page?
+    stride = 100
     def enumerate(self):
-        qs = Album.objects
+        qs = self.model.objects
 
         # TODO evaluate this from a security/performance perspective
         query = self.request.GET.dict()
@@ -84,38 +89,13 @@ class Albums(LoginRequiredMixin,StreamingJsonView):
 
         qs = qs.filter(**query)
 
-        # how many items per page?
-        stride = 100
-
-        # todo pagination/infinite scroll
-        for album in qs[page*stride:page*stride+stride]:
-            #yield album.__dict__
-            # TODO could be a flatten method for API
-            yield {k:v for (k,v) in album.__dict__.iteritems() if not k.startswith('_')}
-
-
-class AudioFilesView(LoginRequiredMixin,StreamingJsonView):
-    def enumerate(self):
-        qs = AudioFile.objects
-
-        # TODO evaluate this from a security/performance perspective
-        query = self.request.GET.dict()
-
-        try:
-            page = query.pop('page')
-            page = int(page)
-        except KeyError,ValueError:
-            page = 0
-
-        # magic key in query
-        if 'order_by' in query:
-            qs = qs.order_by( query.pop('order_by') )
-
-        qs = qs.filter(**query)
-
-        # how many items per page?
-        stride = 100
-
-        # todo pagination/infinite scroll
-        for obj in qs[page*stride:page*stride+stride]:
+        s = self.stride
+        for obj in qs[page*s:page*s+s]:
             yield obj.flatten()
+
+
+class AlbumsView(LoginRequiredMixin,StreamingJsonObjectView):
+    model = Album
+
+class AudioFilesView(LoginRequiredMixin,StreamingJsonObjectView):
+    model = AudioFile

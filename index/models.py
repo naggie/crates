@@ -123,6 +123,14 @@ class Album(Model):
         album.save()
         return album
 
+    def flatten(self):
+        obj = self.__dict__
+        # remote things that are not required,
+        # convert things that are not JSON serialisable
+        del obj['_state']
+
+        return obj
+
 class AudioFile(CratesImmutableFile):
     TYPE_CHOICES = (
             ('MIX','Mix/Compilation'),
