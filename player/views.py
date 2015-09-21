@@ -6,8 +6,12 @@ What remains is a flatten (to serialise) method for classes). Time, will tell.
 
 TODO make a module from this, whatever it becomes
 
+
+Could specify reduction function here, also...
+
 '''
 import json
+from copy import copy
 
 from index.models import Album,AudioFile
 
@@ -15,6 +19,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.views.generic import View
 from django.http import FileResponse,HttpResponse
+
 
 @login_required
 def index(request):
@@ -69,8 +74,22 @@ class StreamingJsonView(View):
 
 
 class StreamingJsonObjectView(StreamingJsonView):
+    '''Streams & serialises objects by a queryset produced from the GET request.
+    define reduce to decide what is serialised or to enable serialisation.
+    '''
     # how many items per page?
     stride = 100
+
+    @staticmethod
+    def reduce(obj):
+        'Basic reducer, should work on basic objects'
+        o = copy(obj.__dict__)
+        # remote things that are not required,
+        # convert things that are not JSON serialisable
+        del o['_state']
+
+        return o
+
     def enumerate(self):
         qs = self.model.objects
 
@@ -91,7 +110,7 @@ class StreamingJsonObjectView(StreamingJsonView):
 
         s = self.stride
         for obj in qs[page*s:page*s+s]:
-            yield obj.flatten()
+            yield self.reduce(obj)
 
 
 class AlbumsView(LoginRequiredMixin,StreamingJsonObjectView):
@@ -99,3 +118,14 @@ class AlbumsView(LoginRequiredMixin,StreamingJsonObjectView):
 
 class AudioFilesView(LoginRequiredMixin,StreamingJsonObjectView):
     model = AudioFile
+
+    @staticmethod
+    def reduce(obj):
+        o = copy(obj.__dict__)
+        # remote things that are not required,
+        # convert things that are not JSON serialisable
+        del o['type']
+        del o['added']
+        del o['_state']
+
+        return o

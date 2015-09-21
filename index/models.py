@@ -123,13 +123,6 @@ class Album(Model):
         album.save()
         return album
 
-    def flatten(self):
-        obj = self.__dict__
-        # remote things that are not required,
-        # convert things that are not JSON serialisable
-        del obj['_state']
-
-        return obj
 
 class AudioFile(CratesImmutableFile):
     TYPE_CHOICES = (
@@ -218,15 +211,6 @@ class AudioFile(CratesImmutableFile):
         # ... but here's an example using class attributes
         return u'{album_artist}/{album}/{title} - {album} - {artist}{extension}'.format(**self.slugify())
 
-    def flatten(self):
-        obj = self.__dict__
-        # remote things that are not required,
-        # convert things that are not JSON serialisable
-        del obj['type']
-        del obj['added']
-        del obj['_state']
-
-        return obj
 
     @classmethod
     def from_mp3(cls,filepath):
