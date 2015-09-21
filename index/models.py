@@ -13,6 +13,7 @@ class CratesImmutableFile(ImmutableFile):
         # not a model in it's own right. Subclasses will have CratesImmutableFile
         # fields rather than having 3 tables
         abstract = True
+
     user = ForeignKey(User,help_text='From whom the file came from',null=True)
 
     deprecated_by = ForeignKey( 'self',
@@ -23,6 +24,7 @@ class CratesImmutableFile(ImmutableFile):
             the file to the CAS any more.""",
     )
 
+    # TODO review/replace/remove
     def slugify(self):
         '''Return a cleaned dict() of this instance suitable for filepaths/API'''
         cleaned = dict()
@@ -207,6 +209,16 @@ class AudioFile(CratesImmutableFile):
     def map(self):
         # ... but here's an example using class attributes
         return u'{album_artist}/{album}/{title} - {album} - {artist}{extension}'.format(**self.slugify())
+
+    def flatten(self):
+        obj = self.__dict__
+        # remote things that are not required,
+        # convert things that are not JSON serialisable
+        del obj['type']
+        del obj['added']
+        del obj['_state']
+
+        return obj
 
     @classmethod
     def from_mp3(cls,filepath):

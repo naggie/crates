@@ -50,6 +50,7 @@ class ImmutableFile(Model):
 
     added = DateTimeField(auto_now=True)
 
+    # TODO review/replace/remove
     def map(self):
         'Override this. Gives a relative filepath composed from attributes'
         raise NotImplementedError()
