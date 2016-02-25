@@ -22,6 +22,7 @@ def audio_preview_html(audioFile):
 class AudioFileAdmin(admin.ModelAdmin):
     list_display = ('title','album','artist','bitrate_kbps','genre','year')
     search_fields = list_display
+    raw_id_fields = 'deprecated_by',
 
     def cover_art(self,audioFile): return cover_art_html(audioFile)
     cover_art.allow_tags = True
