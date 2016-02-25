@@ -34,7 +34,7 @@ class ImmutableFile(Model):
         self.save()
 
     # could migrate to https://github.com/leplatrem/django-sizefield
-    size = IntegerField(help_text="Size of file in bytes")
+    size = IntegerField(help_text="Size of file in bytes",editable=False)
 
     origin = CharField(
             max_length=255,

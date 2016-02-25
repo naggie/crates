@@ -1,5 +1,6 @@
 from django.contrib import admin
 from models import AudioFile
+import humanize
 
 # Monkey patch FTW!
 admin.site.site_header = 'Crates server administration'
@@ -30,11 +31,16 @@ class AudioFileAdmin(admin.ModelAdmin):
     def preview_audio(self,audioFile): return audio_preview_html(audioFile)
     preview_audio.allow_tags = True
 
-    readonly_fields = ('cover_art','preview_audio','hits','ref')
+    readonly_fields = ('cover_art','preview_audio','hits','ref','filesize')
+
+    def filesize(self,audioFile):
+        return humanize.naturalsize(audioFile.size)
+
 
     # TODO subclass readonly modeladmin
     #def get_readonly_fields(self, request, obj=None):
     #        return [f.name for f in self.model._meta.fields]
 
     # add AudioFiles programatically only, via from_file() classmethod
-    def has_add_permission(self, request): return False
+    def has_add_permission(self, request):
+        return False
