@@ -22,12 +22,15 @@ from player.urls import urlpatterns as player_urls
 from cas.urls import urlpatterns as cas_urls
 import cas
 
+import django.contrib.auth.views
+
+
 
 urlpatterns = [
     url(r'dump/AudioFiles',DumpIndex.as_view(), name='dump'),
     url(r'^admin/', include(admin.site.urls)),
     url(r'^cas', include(cas_urls)),
 
-    url(r'^accounts/login','django.contrib.auth.views.login',{'template_name':'crates/login.html'}),
-    url(r'^accounts/logout','django.contrib.auth.views.logout', {'next_page': '/'}),
+    url(r'^accounts/login',django.contrib.auth.views.login,{'template_name':'crates/login.html'}),
+    url(r'^accounts/logout',django.contrib.auth.views.logout, {'next_page': '/'}),
 ] + player_urls # player should exist at root
