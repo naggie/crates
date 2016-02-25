@@ -4,9 +4,6 @@ Crates is a database for your media allowing F2F curation and sharing of playlis
 <img src="static/crates/logo.gif" alt="Mraow" width="200">
 
 
-**BASE CLASSES WILL BE PROVIDED**. For iterative modules, a generator interface
-may be defined soon to support progress bars and time remaining indicators.
-
 Logical Modules
 
 1. **CAS**: Content addressable store for immutable data (MP3 files etc).

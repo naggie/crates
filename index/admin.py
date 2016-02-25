@@ -10,7 +10,7 @@ def cover_art_html(audioFile):
     # TODO: replace this with CAS-powered image field + admin form
     if audioFile.cover_art_ref:
         return r"""
-            <img src="/cas/{cover_art_ref}" width="512"/>
+            <img src="/cas/{cover_art_ref}" width="256" height="256" />
         """.format(**audioFile.__dict__).replace('\n','')
 
 def audio_preview_html(audioFile):
@@ -26,7 +26,7 @@ class AudioFileInline(admin.TabularInline):
     # removes 'Add another'
     max_num = 0
 
-    fields = ('title','album','artist','preview_audio','bitrate_kbps','genre','year')
+    fields = ('title','artist','preview_audio','bitrate_kbps','genre','year')
     readonly_fields = fields
     show_change_link = True
 
@@ -37,7 +37,7 @@ class AudioFileInline(admin.TabularInline):
 
 @admin.register(AudioFile)
 class AudioFileAdmin(admin.ModelAdmin):
-    list_display = ('title','album','artist','bitrate_kbps','genre','year')
+    list_display = ('title','album','artist','bitrate_kbps','genre','year',)
     search_fields = list_display
     raw_id_fields = 'deprecated_by','album_object'
 
@@ -65,7 +65,10 @@ class AudioFileAdmin(admin.ModelAdmin):
 
 @admin.register(Album)
 class AlbumAdmin(admin.ModelAdmin):
-    list_display = ('name','artist','mbid',)
+    def audio_files(self,album):
+        return album.audiofile_set.count()
+
+    list_display = ('name','artist','audio_files',)
     inlines = AudioFileInline,
 
     def cover_art(self,audioFile):
