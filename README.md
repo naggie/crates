@@ -1,7 +1,7 @@
 Crates is a database for your media allowing F2F curation and sharing of playlists.
 
 
-![Mraow](static/crates/logo.gif)
+<img src="static/crates/logo.gif" alt="Mraow" width="200">
 
 
 **BASE CLASSES WILL BE PROVIDED**. For iterative modules, a generator interface
