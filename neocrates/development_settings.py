@@ -19,3 +19,5 @@ DATABASES = {
         'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
     }
 }
+
+STATIC_ROOT='test_static_output_dir'

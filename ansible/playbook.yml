@@ -7,6 +7,7 @@
 # TODO: use sites-enabled for uwsgi and nginx for multi tenant
 # TODO: Postgres?
 # TODO: SSL
+# TODO virtualenv/setup.py 
 - hosts: media
   become: yes
   vars:
@@ -20,7 +21,7 @@
 
   environment:
     # required for DB operations
-    DJANGO_SETTINGS_MODULE : neocrates.crates_settings
+    DJANGO_SETTINGS_MODULE : neocrates.production_settings
     NODE_ENV               : production
 
   tasks:
