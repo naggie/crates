@@ -19,19 +19,6 @@ class Profile(Model):
         help_text="Key used to identify user's crates server",
     )
 
-    #ip = GenericIPAddressField(help_text="IP address of the host")
-    user_server_url = URLField(
-        null=True,
-        blank=True,
-        help_text="API url of user's own crates server, if any",
-    )
-
-    user_server_api_key = UUIDField(
-        null=True,
-        blank=True,
-        help_text="API key of user's own crates server, if user has given you API access",
-    )
-
     can_upload = BooleanField(
         default=False,
         help_text="Is the user allowed to push files to this crates server? Not implemented yet."
