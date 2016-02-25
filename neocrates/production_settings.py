@@ -1,5 +1,7 @@
 from base_settings import *
 
+# EXAMPLE ONLY: ansible based deployment uses another file
+
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'zhj_+x#q-&vqh7&)7a3it@tcsf50@fh9$3&&j0*4pmt1x=ye+1'
@@ -13,9 +15,8 @@ ALLOWED_HOSTS = ['*']
 # where will nginx look for static files for production?
 # collect all static files by running ./manage.py collectstatic
 STATIC_URL = '/static/'
+
 STATIC_ROOT = '/srv/static/'
-
-
 CAS_DIRECTORY = abspath('/srv/cas/')
 
 # Database
