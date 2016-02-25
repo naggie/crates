@@ -1,7 +1,7 @@
 # This is an example playbook. Change 'vars' to suit your setup, or any other
 # file in this directory.
 
-# crawl with DJANGO_SETTINGS_MODULE=neocrates.crates_settings sudo -E -u www-data ./manage.py crawl ~/Music
+# crawl with DJANGO_SETTINGS_MODULE=neocrates.production_settings sudo -E -u www-data /srv/crates/manage.py crawl ~/Music
 # TODO make it better
 
 # TODO: use sites-enabled for uwsgi and nginx for multi tenant
@@ -13,10 +13,10 @@
   vars:
     # not used yet
     #cas_dir    : /srv/cas/
-    cas_dir    : /storage/cas/
+    cas_dir    : /mnt/data/cas/
     code_dir   : /srv/crates/
     static_dir : /srv/static/
-    mapper_dir : /srv/crates_mapper/
+    mapper_dir : /mnt/data/crates_mapper/
     fqdn       : crates.local
 
   environment:
