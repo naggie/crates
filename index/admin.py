@@ -41,7 +41,8 @@ class AudioFileAdmin(admin.ModelAdmin):
     search_fields = list_display
     raw_id_fields = 'deprecated_by','album_object'
 
-    def cover_art(self,audioFile): return cover_art_html(audioFile)
+    def cover_art(self,audioFile):
+        return cover_art_html(audioFile)
     cover_art.allow_tags = True
 
     def preview_audio(self,audioFile):
@@ -66,3 +67,9 @@ class AudioFileAdmin(admin.ModelAdmin):
 class AlbumAdmin(admin.ModelAdmin):
     list_display = ('name','artist','mbid',)
     inlines = AudioFileInline,
+
+    def cover_art(self,audioFile):
+        return cover_art_html(audioFile)
+    cover_art.allow_tags = True
+
+    readonly_fields = 'cover_art',
