@@ -31,7 +31,7 @@ class AudioFileAdmin(admin.ModelAdmin):
     def preview_audio(self,audioFile): return audio_preview_html(audioFile)
     preview_audio.allow_tags = True
 
-    readonly_fields = ('cover_art','preview_audio','hits','ref','filesize')
+    readonly_fields = ('cover_art','preview_audio','hits','ref','filesize','length')
 
     def filesize(self,audioFile):
         return humanize.naturalsize(audioFile.size)
