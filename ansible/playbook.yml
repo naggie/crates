@@ -1,7 +1,7 @@
 # This is an example playbook. Change 'vars' to suit your setup, or any other
 # file in this directory.
 
-# crawl with DJANGO_SETTINGS_MODULE=neocrates.ansible_crates_settings sudo -E -u www-data /srv/crates/manage.py crawl ~/Music
+# crawl with PATH=$PATH:/srv/crates/bin DJANGO_SETTINGS_MODULE=neocrates.ansible_crates_settings sudo -E -u www-data /srv/crates/manage.py crawl ~/Music
 # TODO make it better
 
 # TODO: use sites-enabled for uwsgi and nginx for multi tenant
@@ -28,6 +28,7 @@
     - apt: name={{ item }} state=present update_cache=yes
       sudo: yes
       with_items:
+        - python-virtualenv
         - nginx
         - uwsgi
         - uwsgi-plugin-python
@@ -78,7 +79,7 @@
 
     - name: Install python dependencies (no virtualenv used yet TODO)
       sudo: yes
-      pip:  requirements={{code_dir}}/requirements.txt
+      pip: requirements={{code_dir}}/requirements.txt virtualenv={{code_dir}}
 
     - name: NPM for JS bundler dependencies
       become_user: www-data
