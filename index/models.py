@@ -246,8 +246,9 @@ class AudioFile(CratesImmutableFile):
         #if audio.has_key('TDRC'): audioFile.year = audio['TDRC'][0]
 
         try:
-            audioFile.track = audio.get_text_frame('TRCK').partition('/')[0]
-        except ValueError: pass
+            audioFile.track = int(audio.get_text_frame('TRCK').partition('/')[0])
+        except ValueError:
+            pass
 
         audioFile.bitrate_kbps = int(audio.info.bitrate/1000)
         audioFile.length = int(audio.info.length)
