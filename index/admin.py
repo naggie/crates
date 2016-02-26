@@ -69,6 +69,7 @@ class AlbumAdmin(admin.ModelAdmin):
         return album.audiofile_set.count()
 
     list_display = ('name','artist','audio_files',)
+    search_fields = 'name','artist'
     inlines = AudioFileInline,
 
     def cover_art(self,audioFile):
