@@ -44,7 +44,10 @@ def make_thumbnail_ref(data):
     ))
 
     # find the dominant colour (k-grouping)
-    colour = colorz(im)[0]
+    try:
+        colour = colorz(im)[0]
+    except:
+        colour = 0,0,0
 
     # TODO store this separately for placeholder on web. Random if no image.
 
