@@ -34,6 +34,8 @@ class AudioFileInline(admin.TabularInline):
         return audio_preview_html(audioFile)
     preview_audio.allow_tags = True
 
+    def has_add_permission(self, request):
+        return False
 
 @admin.register(AudioFile)
 class AudioFileAdmin(admin.ModelAdmin):
