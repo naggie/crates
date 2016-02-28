@@ -3,7 +3,7 @@ from models import AudioFile,Album
 import humanize
 
 # Monkey patch FTW!
-admin.site.site_header = 'Crates server administration'
+admin.site.site_header = 'Crates server admin'
 
 
 def cover_art_html(audioFile):
@@ -34,8 +34,6 @@ class AudioFileInline(admin.TabularInline):
         return audio_preview_html(audioFile)
     preview_audio.allow_tags = True
 
-    def has_add_permission(self, request):
-        return False
 
 @admin.register(AudioFile)
 class AudioFileAdmin(admin.ModelAdmin):
@@ -79,3 +77,6 @@ class AlbumAdmin(admin.ModelAdmin):
     cover_art.allow_tags = True
 
     readonly_fields = 'cover_art',
+
+    def has_add_permission(self, request):
+        return False
