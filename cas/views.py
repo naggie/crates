@@ -58,7 +58,11 @@ class Cas(View):
             return response
 
 
-        filepath = cas.select(ref)
+        try:
+            filepath = cas.select(ref)
+        except IOError:
+            return HttpResponse(status=404)
+
         file_obj = open(filepath,'rb')
         start = 0
 
