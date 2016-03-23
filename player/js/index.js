@@ -13,7 +13,7 @@ import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 
 import rootReducer from './reducers'
-import App from './components/app'
+import App from './containers/App'
 
 
 const loggerMiddleware = createLogger()
