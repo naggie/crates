@@ -1,11 +1,31 @@
+// index contains
+// * Root Container
+// * Store initialisation
+// Uses:
+// * Root reducer
+
+
+import { createStore, applyMiddleware } from 'redux'
+import thunkMiddleware from 'redux-thunk'
+import createLogger from 'redux-logger'
 import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
-import { createStore } from 'redux'
-import todoApp from './reducers'
+
+import rootReducer from './reducers'
 import App from './components/App'
 
-let store = createStore(todoApp)
+
+const loggerMiddleware = createLogger()
+
+const store = createStore(
+    rootReducer,
+    initialState,
+    applyMiddleware(
+        thunkMiddleware,
+        loggerMiddleware
+    )
+)
 
 render(
     <Provider store={store}>
