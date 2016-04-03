@@ -16,7 +16,7 @@ function items(state = {
                 page: 0,
                 items: [],
             }
-        case "BROWSER_ADD_ITEMS":
+        case "BROWSER_RECEIVE_ITEMS":
             return Object.assign({}, state, {
                 items:[...state.items,action.items],
                 cursor:state.cursor+1,
