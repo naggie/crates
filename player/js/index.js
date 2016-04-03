@@ -1,10 +1,3 @@
-// index contains
-// * Root Container
-// * Store initialisation
-// Uses:
-// * Root reducer
-
-
 import { createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
 import createLogger from 'redux-logger'
