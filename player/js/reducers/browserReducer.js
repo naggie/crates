@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 
 
+// loading = !complete
 function items(state = {
     complete: false,
     class: null,
@@ -8,7 +9,13 @@ function items(state = {
     items: [],
 }, action) {
     switch (action.type) {
-        case "BROWSER_CLEAR"
+        case "BROWSER_CLEAR":
+            return {
+                complete: false,
+                class: null,
+                page: 0,
+                items: [],
+            }
         case "BROWSER_ADD_ITEMS":
             return Object.assign({}, state, {
                 items:[...state.items,action.items],
