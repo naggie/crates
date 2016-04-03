@@ -10,23 +10,23 @@ export function prev() {
     }
 }
 
-export function add_next(file) {
+export function add_next(item) {
     return {
         type: 'PLAYLIST_ADD_NEXT',
-        file: file,
+        item: item,
     }
 }
 
-export function add_last(file) {
+export function add_last(item) {
     return {
         type: 'PLAYLIST_ADD_LAST',
-        file: file,
+        item: item,
     }
 }
 
-export function add_now(file) {
+export function add_now(item) {
     return {
         type: 'PLAYLIST_ADD_NOW',
-        file: file,
+        item: item,
     }
 }
