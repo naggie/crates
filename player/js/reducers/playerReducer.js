@@ -5,40 +5,52 @@ function playlist(state = {
     last: true,
     first: true,
     cursor: 0,
-    items: [],
+    playlist: [],
     current:null,
 }, action) {
     switch (action.type) {
         // can also be used to empty playlist. Good for loading albums.
         case "REPLACE_PLAYLIST":
             return Object.assign({}, state, {
-                items:action.items,
+                playlist:action.playlist,
                 cursor:0,
                 last:true,
                 first:true,
-                current:action.items[0],
+                current:action.playlist[0],
             })
-        case "ENQUEUE_ITEM":
+        case "ADD_ITEM_LAST":
             return Object.assign({}, state, {
-                items:[...state.items,action.item],
+                playlist:[...state.playlist,action.item],
                 last:false,
             })
-        case "PLAYLIST_REMOVE_ITEM":
-            var next_cursor = Math.min(state.cursor,items.length-2)
-            var next_items = state.items.filter((item,i) => action.index == i)
+        case "REMOVE_ITEM":
+            var next_cursor = Math.min(state.cursor,state.playlist.length-2)
+            var next_items = state.playlist.filter((item,i) => action.index == i)
             return Object.assign({},state,{
-                items:next_items,
+                playlist:next_items,
                 cursor: next_cursor,
                 current:next_items[next_cursor],
             })
-        case "PLAY_ITEM_NEXT":
+        case "ADD_ITEM_NEXT":
             return Object.assign({}, state, {
-                items:[
-                    ...items.slice(0,cursor),
+                playlist:[
+                    ...state.playlist.slice(0,cursor),
                     action.item,
-                    ...items.slice(cursor),
+                    ...state.playlist.slice(cursor),
                 ],
                 last:false,
+            })
+        case "PLAY_NEXT":
+            return Object.assign({}, state, {
+                cursor:Math.max(cursor,state.playlist.length-1),
+                first:state.playlist.length == 1,
+                last:state.cursor >= state.playlist.length-2,
+            })
+        case "PLAY_PREV":
+            return Object.assign({}, state, {
+                cursor:Math.min(cursor,0),
+                first:state.cursor <= 1,
+                last:state.playlist.length == 1,
             })
         default:
             return state
