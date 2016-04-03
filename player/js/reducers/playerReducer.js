@@ -9,24 +9,24 @@ function items(state = {
 }, action) {
     switch (action.type) {
         // can also be used to empty items. Good for loading albums.
-        case "REPLACE_PLAYLIST":
+        case "PLAYLIST_REPLACE":
             return Object.assign({}, state, {
                 items:action.items,
                 cursor:0,
                 last:true,
                 first:true,
             })
-        case "ADD_ITEM_LAST":
+        case "PLAYLIST_ADD_LAST:
             return Object.assign({}, state, {
                 items:[...state.items,action.item],
                 last:false,
             })
-        case "REMOVE_ITEM":
+        case "PLAYLIST_REMOVE_ITEM":
             return Object.assign({},state,{
                 items: state.items.filter((item,i) => action.index == i)
                 cursor: Math.min(state.cursor,state.items.length-2),
             })
-        case "ADD_ITEM_NEXT":
+        case "PLAYLIST_ADD_ITEM_NEXT":
             return Object.assign({}, state, {
                 items:[
                     ...state.items.slice(0,cursor),
@@ -35,13 +35,13 @@ function items(state = {
                 ],
                 last:false,
             })
-        case "PLAY_NEXT":
+        case "PLAYER_NEXT":
             return Object.assign({}, state, {
                 cursor:Math.max(cursor,state.items.length-1),
                 first:state.items.length == 1,
                 last:state.cursor >= state.items.length-2,
             })
-        case "PLAY_PREV":
+        case "PLAYER_PREV":
             return Object.assign({}, state, {
                 cursor:Math.min(cursor,0),
                 first:state.cursor <= 1,
