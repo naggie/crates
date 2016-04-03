@@ -5,7 +5,8 @@ function playlist(state = {
     last: true,
     first: true,
     cursor: 0,
-    items: []
+    items: [],
+    current:null,
 }, action) {
     switch (action.type) {
         // can also be used to empty playlist. Good for loading albums.
@@ -15,6 +16,7 @@ function playlist(state = {
                 cursor:0,
                 last:true,
                 first:true,
+                current:action.items[0],
             })
         case "ENQUEUE_ITEM":
             return Object.assign({}, state, {
@@ -22,9 +24,12 @@ function playlist(state = {
                 last:false,
             })
         case "PLAYLIST_REMOVE_ITEM":
+            var next_cursor = Math.min(state.cursor,items.length-2)
+            var next_items = state.items.filter((item,i) => action.index == i)
             return Object.assign({},state,{
-                items:state.items.filter((item,i) => action.index == i),
-                cursor: Math.max(state.cursor,items.length-2)
+                items:next_items,
+                cursor: next_cursor,
+                current:next_items[next_cursor],
             })
         case "PLAY_ITEM_NEXT":
             return Object.assign({}, state, {
