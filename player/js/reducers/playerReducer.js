@@ -1,51 +1,51 @@
 import { combineReducers } from 'redux'
 
 
-function playlist(state = {
+function items(state = {
     last: true,
     first: true,
     cursor: 0,
-    playlist: [],
+    items: [],
 }, action) {
     switch (action.type) {
-        // can also be used to empty playlist. Good for loading albums.
+        // can also be used to empty items. Good for loading albums.
         case "REPLACE_PLAYLIST":
             return Object.assign({}, state, {
-                playlist:action.playlist,
+                items:action.items,
                 cursor:0,
                 last:true,
                 first:true,
             })
         case "ADD_ITEM_LAST":
             return Object.assign({}, state, {
-                playlist:[...state.playlist,action.item],
+                items:[...state.items,action.item],
                 last:false,
             })
         case "REMOVE_ITEM":
             return Object.assign({},state,{
-                playlist: state.playlist.filter((item,i) => action.index == i)
-                cursor: Math.min(state.cursor,state.playlist.length-2),
+                items: state.items.filter((item,i) => action.index == i)
+                cursor: Math.min(state.cursor,state.items.length-2),
             })
         case "ADD_ITEM_NEXT":
             return Object.assign({}, state, {
-                playlist:[
-                    ...state.playlist.slice(0,cursor),
+                items:[
+                    ...state.items.slice(0,cursor),
                     action.item,
-                    ...state.playlist.slice(cursor),
+                    ...state.items.slice(cursor),
                 ],
                 last:false,
             })
         case "PLAY_NEXT":
             return Object.assign({}, state, {
-                cursor:Math.max(cursor,state.playlist.length-1),
-                first:state.playlist.length == 1,
-                last:state.cursor >= state.playlist.length-2,
+                cursor:Math.max(cursor,state.items.length-1),
+                first:state.items.length == 1,
+                last:state.cursor >= state.items.length-2,
             })
         case "PLAY_PREV":
             return Object.assign({}, state, {
                 cursor:Math.min(cursor,0),
                 first:state.cursor <= 1,
-                last:state.playlist.length == 1,
+                last:state.items.length == 1,
             })
         default:
             return state
@@ -55,7 +55,7 @@ function playlist(state = {
 
 // may use later
 const rootReducer = combineReducers({
-    playlist,
+    items,
 })
 
 export default rootReducer
