@@ -18,13 +18,13 @@ function playlist(state = {
             })
         case "ENQUEUE_ITEM":
             return Object.assign({}, state, {
-                items:[...items,action.item],
+                items:[...state.items,action.item],
                 last:false,
             })
         case "PLAYLIST_REMOVE_ITEM":
             return Object.assign({},state,{
-                items:items.filter((item) => action.id == item.id),
-                TODO set cursor last first
+                items:state.items.filter((item,i) => action.index == i),
+                cursor: Math.max(state.cursor,items.length-2)
             })
         case "PLAY_ITEM_NEXT":
             return Object.assign({}, state, {
