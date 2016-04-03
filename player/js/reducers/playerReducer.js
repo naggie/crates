@@ -26,24 +26,33 @@ function items(state = {
                 items: state.items.filter((item,i) => action.index == i)
                 cursor: Math.min(state.cursor,state.items.length-2),
             })
-        case "PLAYLIST_ADD_ITEM_NEXT":
+        case "PLAYLIST_ADD_NEXT":
             return Object.assign({}, state, {
                 items:[
-                    ...state.items.slice(0,cursor),
+                    ...state.items.slice(0,state.cursor),
                     action.item,
-                    ...state.items.slice(cursor),
+                    ...state.items.slice(state.cursor),
                 ],
                 last:false,
             })
+        case "PLAYLIST_ADD_NOW":
+            return Object.assign({}, state, {
+                items:[
+                    ...state.items.slice(0,state.cursor),
+                    action.item,
+                    ...state.items.slice(state.cursor),
+                ],
+                cursor:state.cursor+1,
+            })
         case "PLAYER_NEXT":
             return Object.assign({}, state, {
-                cursor:Math.max(cursor,state.items.length-1),
+                cursor:Math.max(state.cursor,state.items.length-1),
                 first:state.items.length == 1,
                 last:state.cursor >= state.items.length-2,
             })
         case "PLAYER_PREV":
             return Object.assign({}, state, {
-                cursor:Math.min(cursor,0),
+                cursor:Math.min(state.cursor,0),
                 first:state.cursor <= 1,
                 last:state.items.length == 1,
             })

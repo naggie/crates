@@ -1,17 +1,3 @@
-// human
-
-export function play() {
-    return {
-        type: 'PLAYER_PLAY',
-    }
-}
-
-export function pause() {
-    return {
-        type: 'PLAYER_PAUSE',
-    }
-}
-
 export function next() {
     return {
         type: 'PLAYER_NEXT',
@@ -24,27 +10,23 @@ export function prev() {
     }
 }
 
-export function enqueue(file) {
+export function add_next(file) {
     return {
-        type: 'PLAYER_ENQUEUE',
+        type: 'PLAYLIST_ADD_NEXT',
         file: file,
     }
 }
 
-
-// machine
-
-export function update_progress(seconds) {
+export function add_last(file) {
     return {
-        type: 'PLAYER_UPDATE_PROGRESS',
-        seconds: seconds,
+        type: 'PLAYLIST_ADD_LAST',
+        file: file,
     }
 }
 
-export function update_buffer_progress(seconds) {
+export function add_now(file) {
     return {
-        type: 'PLAYER_UPDATE_BUFFER_PROGRESS',
-        seconds: seconds,
+        type: 'PLAYLIST_ADD_NOW',
+        file: file,
     }
 }
-
