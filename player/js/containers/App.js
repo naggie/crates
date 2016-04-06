@@ -19,7 +19,7 @@ function mapDispatchToProps(dispatch) {
   return {
       onLoad: () => dispatch(browse_all()),
       onNewPageRequest: () => dispatch(load_page()),
-      filter_by_letter: () => dispatch(filter_by_letter()),
+      filter_by_letter: letter => dispatch(filter_by_letter(letter)),
   }
 }
 
