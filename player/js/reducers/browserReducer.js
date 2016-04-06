@@ -64,10 +64,9 @@ function browser(state = {
 
 
 // may use later
-//const rootReducer = combineReducers({
-//    browser,
-//})
+const rootReducer = combineReducers({
+    browser,
+})
 
-//export default rootReducer
-export default browser
+export default rootReducer
 
