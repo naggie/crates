@@ -50,7 +50,7 @@ function browser(state = {
             })
         case "BROWSER_RECEIVE_ITEMS":
             return Object.assign({}, state, {
-                items:[...state.items,action.items],
+                items:[...state.items,...action.items],
                 nextPage:state.nextPage+1,
                 // assuming homogeneous
                 class: state.items.length? state.items[0].class:null,
