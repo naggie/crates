@@ -69,7 +69,7 @@ const AlbumBrowser = React.createClass({
 
         return (
             <div className="albums">
-                <AZ onCharChange={filter_by_letter} selected={this.props.letter} parent={this} />
+                <AZ onCharChange={this.props.filter_by_letter} selected={this.props.letter} parent={this} />
                 { !this.props.albums.length && !this.props.loading ? 'No results.' : ''}
                 <div className="pure-g">{items}</div>
                 { this.props.loading? <Loading /> :''}
