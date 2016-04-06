@@ -8,12 +8,9 @@ var Loading = require('./Loading.jsx')
 var utils = require('../utils.js')
 
 // ES6, TODO change rest
-import {browse_all,filter_by_text,filter_by_letter,load_page} from '../actions/browserActions.js'
-
-
 const AlbumBrowser = React.createClass({
     componentDidMount: function() {
-        browse_all()
+        this.props.onLoad()
         window.addEventListener('scroll', this.handleScroll)
     },
 
@@ -39,7 +36,7 @@ const AlbumBrowser = React.createClass({
         if (remaining > 2.0)
             return
 
-        load_page()
+        this.props.onNewPageRequest()
     },
 
     categorise: function(album) {
