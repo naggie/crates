@@ -14,21 +14,23 @@ function browser(state = {
     switch (action.type) {
         case "BROWSER_FILTER_BY_LETTER":
             return Object.assign({},state,{
-                nextPage: -1,
+                nextPage: 0,
                 letter:action.letter,
-                loading:true,
                 items: [],
                 complete: false,
                 searchText:null,
             })
         case "BROWSER_FILTER_BY_TEXT":
             return Object.assign({},state,{
-                nextPage: -1,
+                nextPage: 0,
                 letter:null,
-                loading:true,
                 items: [],
                 complete: false,
                 searchText:action.text,
+            })
+        case "BROWSER_REQUEST_ITEMS":
+            return Object.assign({},state,{
+                loading:true,
             })
         case "BROWSER_RECEIVE_ITEMS":
             return Object.assign({}, state, {
