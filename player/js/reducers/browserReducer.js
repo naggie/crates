@@ -4,7 +4,7 @@ import { combineReducers } from 'redux'
 // loading = !complete
 function browser(state = {
     complete: false,
-    loading: true,
+    loading: false,
     class: null,
     nextPage: 0,
     items: [],
@@ -53,7 +53,7 @@ function browser(state = {
                 items:[...state.items,action.items],
                 nextPage:state.nextPage+1,
                 // assuming homogeneous
-                class: state.items? state.items[0].class:null,
+                class: state.items.length? state.items[0].class:null,
                 complete: !action.items.length,
                 loading:false,
             })
