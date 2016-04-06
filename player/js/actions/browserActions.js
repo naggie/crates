@@ -1,5 +1,14 @@
 import utils from '../utils'
 
+export function browse_all() {
+    return dispatch => {
+        dispatch({
+            type: 'BROWSER_BROWSE_ALL',
+        })
+        dispatch(load_page())
+    }
+}
+
 export function filter_by_letter(letter) {
     return dispatch => {
         dispatch({

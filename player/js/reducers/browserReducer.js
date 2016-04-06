@@ -12,6 +12,22 @@ function browser(state = {
     searchText:null,
 }, action) {
     switch (action.type) {
+        case "BROWSER_BROWSE_ALL":
+            return Object.assign({},state,{
+                nextPage: 0,
+                letter:null,
+                items: [],
+                complete: false,
+                searchText:null,
+            })
+        case "BROWSER_FILTER_BY_TEXT":
+            return Object.assign({},state,{
+                nextPage: 0,
+                letter:null,
+                items: [],
+                complete: false,
+                searchText:action.text,
+            })
         case "BROWSER_FILTER_BY_LETTER":
             return Object.assign({},state,{
                 nextPage: 0,
