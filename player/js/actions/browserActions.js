@@ -4,29 +4,42 @@ export function filter_by_letter(letter) {
     return dispatch => {
         dispatch({
             type: 'BROWSER_FILTER_BY_LETTER',
-            letter: letter,
+            letter,
         })
     }
 }
 
+
 export function filter_by_text(text) {
     return {
         type: 'BROWSER_FILTER_BY_TEXT',
-        text: text
+        text,
     }
-    utils.get('/albums',query).then((albums) => {
-        ...........
-        this.setState({
-            albums: this.state.albums.concat(albums),
-            loading: false,
-            exhausted: !albums.length,
+}
+
+// load the next (first) page
+export function load_page(letter) {
+    return (dispatch,getState) => {
+        const { browser } = getState()
+
+        const query = {
+            page: browser.nextPage,
+            name__istartswith : browser.letter,
+            order_by : 'name',
+        }
+
+        utils.get('/albums',query).then((items) => {
+            dispatch({
+                type: 'BROWSER_RECEIVE_ITEMS',
+                items,
+            })
         })
-    })
+    }
 }
 
 export function clear(text) {
     return {
         type: 'BROWSER_CLEAR',
-        text: text
+        text
     }
 }
