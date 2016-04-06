@@ -5,7 +5,10 @@ exports.clone = function(obj) {
 exports.get = function(url,params) {
     return new Promise(function(resolve,reject){
         if (params) {
-            url += '?' + Object.keys(params).map((key) => {
+            url += '?' + Object.keys(params).filter((key) => {
+                // do not want val=null in query
+                return params[key] != null
+            }).map((key) => {
                 return key + "="+params[key]
             }) .join("&")
         }

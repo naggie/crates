@@ -1,5 +1,8 @@
 #!/usr/bin/env node
 // TODO Use gulp for this, mainly for watching and possibly speed
+//
+//
+// TODO replace with webpack based on example
 
 
 // JS

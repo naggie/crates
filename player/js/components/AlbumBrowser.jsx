@@ -7,43 +7,20 @@ var Loading = require('./Loading.jsx')
 
 var utils = require('../utils.js')
 
-var AlbumBrowser = React.createClass({
-    getInitialState: function() {
-        return {
-            albums:[],
-            loading:true,
-            exhausted:false,
-            current_query:{},
-            current_page:0,
-        }
-    },
-
+// ES6, TODO change rest
+const AlbumBrowser = React.createClass({
     componentDidMount: function() {
-        this.loadFromAPI({order_by:'name'})
+        this.props.onLoad()
         window.addEventListener('scroll', this.handleScroll)
     },
 
     componentWillUnmount: function() {
-        // ahhh... It makes sense!
         window.removeEventListener('scroll', this.handleScroll)
-    },
-
-    updateChar: function(char) {
-        this.setState({
-            char:char,
-            albums:[],
-        })
-        this.loadFromAPI({
-            name__istartswith : char,
-            order_by : 'name',
-            //artist_istartswith=A,
-            //order_by=artist
-        })
     },
 
     // load the next page if appropriate
     handleScroll: function() {
-        if (this.state.loading || this.state.exhausted) {
+        if (this.props.loading || this.props.exhausted) {
             return
         }
 
@@ -59,29 +36,7 @@ var AlbumBrowser = React.createClass({
         if (remaining > 2.0)
             return
 
-        // build new query (I don't like to mutate
-        // -- especially component state without setState)
-        var query = utils.clone(this.state.current_query)
-        query.page = this.state.current_page + 1
-        this.setState({current_page:query.page})
-        this.loadFromAPI(query)
-    },
-
-    loadFromAPI: function(query) {
-        // what's that fat arrow?
-        // for lexical this
-        // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Functions/Arrow_functions
-        this.setState({
-            loading:true,
-            current_query: query,
-        })
-        utils.get('/albums',query).then((albums) => {
-            this.setState({
-                albums: this.state.albums.concat(albums),
-                loading: false,
-                exhausted: !albums.length,
-            })
-        })
+        this.props.onNewPageRequest()
     },
 
     categorise: function(album) {
@@ -98,7 +53,7 @@ var AlbumBrowser = React.createClass({
         var items = []
         var current_category = ''
 
-        this.state.albums.map((props) => {
+        this.props.albums.map((props) => {
             var category = this.categorise(props)
 
             if (category != current_category)
@@ -114,13 +69,13 @@ var AlbumBrowser = React.createClass({
 
         return (
             <div className="albums">
-                <AZ onCharChange={this.updateChar} selected={this.state.char} parent={this} />
-                { !this.state.albums.length && !this.state.loading ? 'No results.' : ''}
+                <AZ onCharChange={this.props.filter_by_letter} selected={this.props.letter} parent={this} />
+                { !this.props.albums.length && !this.props.loading ? 'No results.' : ''}
                 <div className="pure-g">{items}</div>
-                { this.state.loading? <Loading /> :''}
+                { this.props.loading? <Loading /> :''}
             </div>
         )
     },
 })
 
-module.exports = AlbumBrowser
+export default AlbumBrowser
