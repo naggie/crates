@@ -63,7 +63,7 @@ const AlbumBrowser = React.createClass({
                     </div>
                 )
 
-            items.push( <Album {...props} key={props.id} /> )
+            items.push( <Album {...props} onClick={this.props.onSelect.bind(this,props.id)} key={props.id} /> )
             current_category = category
         })
 

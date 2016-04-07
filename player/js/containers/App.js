@@ -19,6 +19,7 @@ function mapDispatchToProps(dispatch) {
   return {
       onLoad: () => dispatch(browse_all()),
       onNewPageRequest: () => dispatch(load_page()),
+      onSelect: id => console.log(id),
       filter_by_letter: letter => dispatch(filter_by_letter(letter)),
   }
 }

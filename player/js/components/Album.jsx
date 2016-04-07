@@ -23,7 +23,7 @@ var Album = React.createClass({
         }
 
         return (
-            <div className="album pure-u-1 pure-u-sm-1-2 pure-u-md-1-4 pure-u-lg-1-6 pure-u-xl-1-8" key={this.props.id}>
+            <div onClick={this.props.onClick} className="album pure-u-1 pure-u-sm-1-2 pure-u-md-1-4 pure-u-lg-1-6 pure-u-xl-1-8" key={this.props.id}>
                 <img
                     className="pure-img-responsive"
                     onLoad={this.swapImg}
