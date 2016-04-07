@@ -5,8 +5,8 @@
   "main": "js/index.js",
   "browser": "js/index.js",
   "dependencies": {
-    "babelify": "^7.2.0",
-    "browserify": "^13.0.0",
+    "babelify": "^6.2.0",
+    "browserify": "^10.2.4",
     "classnames": "^2.2.3",
     "node-sass": "^3.2.0",
     "react": "^0.14.7",
