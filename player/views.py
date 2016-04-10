@@ -21,6 +21,8 @@ from django.views.generic import View
 from django.http import FileResponse,HttpResponse
 from django.db.models import Q
 
+from datetime import datetime
+
 
 @login_required
 def index(request):
@@ -94,6 +96,13 @@ class StreamingJsonObjectView(StreamingJsonView):
         # convert things that are not JSON serialisable
         del o['_state']
 
+        o['model'] = obj.__class__.__name__
+
+
+        for key,val in o.items():
+            if type(val) == datetime:
+                o[key] = val.isoformat() # JSON serialisable
+
         return o
 
     def enumerate(self):
@@ -146,13 +155,3 @@ class AlbumsView(LoginRequiredMixin,StreamingJsonObjectView):
 class AudioFilesView(LoginRequiredMixin,StreamingJsonObjectView):
     model = AudioFile
 
-    @staticmethod
-    def filter(obj):
-        o = copy(obj.__dict__)
-        # remote things that are not required,
-        # convert things that are not JSON serialisable
-        del o['type']
-        del o['added']
-        del o['_state']
-
-        return o

@@ -42,6 +42,16 @@ export function load_page() {
             type: 'BROWSER_REQUEST_ITEMS',
         })
 
+        switch (browser.items) {
+            case 'Album':
+                const url = '/albums'
+                break;
+            case 'AudioFile':
+            default:
+                const url = '/audiofiles'
+                break;
+        }
+
         const query = {
             page: browser.nextPage,
             name__istartswith : browser.letter,
@@ -55,5 +65,16 @@ export function load_page() {
                 items,
             })
         })
+    }
+}
+
+
+
+export function view_album() {
+    return dispatch => {
+        dispatch({
+            type: 'BROWSER_REQUEST_ALBUM',
+        })
+        dispatch(load_page())
     }
 }

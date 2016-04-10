@@ -5,11 +5,12 @@ import { combineReducers } from 'redux'
 function browser(state = {
     complete: false,
     loading: false,
-    class: null,
+    model: 'Album',
     nextPage: 0,
     items: [],
     letter:null,
     searchText:null,
+    cover_ref:null,
 }, action) {
     switch (action.type) {
         case "BROWSER_BROWSE_ALL":
@@ -36,14 +37,6 @@ function browser(state = {
                 complete: false,
                 searchText:null,
             })
-        case "BROWSER_FILTER_BY_TEXT":
-            return Object.assign({},state,{
-                nextPage: 0,
-                letter:null,
-                items: [],
-                complete: false,
-                searchText:action.text,
-            })
         case "BROWSER_REQUEST_ITEMS":
             return Object.assign({},state,{
                 loading:true,
@@ -53,7 +46,7 @@ function browser(state = {
                 items:[...state.items,...action.items],
                 nextPage:state.nextPage+1,
                 // assuming homogeneous
-                class: state.items.length? state.items[0].class:null,
+                model: state.items.length? state.items[0].model:null,
                 complete: !action.items.length,
                 loading:false,
             })

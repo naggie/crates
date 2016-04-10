@@ -4,6 +4,9 @@ from . import views
 
 urlpatterns = [
     url(r'^$', views.index, name='index'),
-    url(r'^albums$', views.AlbumsView.as_view()),
-    url(r'^audiofiles$', views.AudioFilesView.as_view()),
+
+
+    # TODO move this into a index app with an automatic whitelist
+    url(r'^index/Album$', views.AlbumsView.as_view()),
+    url(r'^index/AudioFiles$', views.AudioFilesView.as_view()),
 ]
