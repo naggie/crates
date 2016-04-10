@@ -76,7 +76,7 @@ class StreamingJsonView(View):
 
 class StreamingJsonObjectView(StreamingJsonView):
     '''Streams & serialises objects by a queryset produced from the GET request.
-    define reduce to decide what is serialised or to enable serialisation.
+    define filter to decide what is serialised or to enable serialisation.
 
     The idea is general endpoints can be used instead of creating lots of
     specific endpoints.
@@ -87,7 +87,7 @@ class StreamingJsonObjectView(StreamingJsonView):
     stride = 100
 
     @staticmethod
-    def reduce(obj):
+    def filter(obj):
         'Basic reducer, should work on basic objects'
         o = copy(obj.__dict__)
         # remote things that are not required,
@@ -134,7 +134,7 @@ class StreamingJsonObjectView(StreamingJsonView):
 
         s = self.stride
         for obj in qs[page*s:page*s+s]:
-            yield self.reduce(obj)
+            yield self.filter(obj)
 
 
 class AlbumsView(LoginRequiredMixin,StreamingJsonObjectView):
@@ -147,7 +147,7 @@ class AudioFilesView(LoginRequiredMixin,StreamingJsonObjectView):
     model = AudioFile
 
     @staticmethod
-    def reduce(obj):
+    def filter(obj):
         o = copy(obj.__dict__)
         # remote things that are not required,
         # convert things that are not JSON serialisable
