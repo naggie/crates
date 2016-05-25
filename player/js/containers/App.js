@@ -1,6 +1,8 @@
 import React, { Component, PropTypes } from 'react'
 import { connect } from 'react-redux'
 
+import { Router, Route, Link, browserHistory , Redirect} from 'react-router'
+
 import AlbumBrowser from '../components/AlbumBrowser.jsx'
 import AlbumView from '../components/AlbumView.jsx'
 import Player from '../components/Player.jsx'
@@ -11,18 +13,23 @@ const Browser = ({playlist,}) => {
 
     var out = []
 
-    <AlbumBrowser
-        onLoad={this.props.onLoad}
-        onNewPageRequest={this.props.onNewPageRequest}
-        filter_by_letter={this.props.filter_by_letter}
-    />
+    <Router history={browserHistory}>
+        <Redirect from="/" to="/#albums" />
+        <Route path="/#albums/letter/:id" component={} />
+        <Route path="/#album/:id" component={} />
+    </Router>
+        <AlbumBrowser
+            onLoad={this.props.onLoad}
+            onNewPageRequest={this.props.onNewPageRequest}
+            filter_by_letter={this.props.filter_by_letter}
+        />
 
-    <AlbumView
-        cover_art_ref="7dd2fb3e4ccff0058f5459346f6fef49bee6e5fae71e979febc1198a20d8e55f"
-        name="Whatbruv, what?"
-        artist="DJ BONE (for a reason)"
-        items=[]
-    />
+        <AlbumView
+            cover_art_ref="7dd2fb3e4ccff0058f5459346f6fef49bee6e5fae71e979febc1198a20d8e55f"
+            name="Whatbruv, what?"
+            artist="DJ BONE (for a reason)"
+            items=[]
+        />
 
     if (playlist.items.length)
         out.push(
