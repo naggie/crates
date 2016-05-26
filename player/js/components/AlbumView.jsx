@@ -4,7 +4,7 @@ var utils = require('../utils')
 
 // TODO placeholders for responsive images
 
-const AlbumView = {items, cover_art_ref, name, artist, cursor} => (
+const AlbumView = ({items, cover_art_ref, name, artist, cursor}) => (
     <div className="playlist content">
         <div className="pure-g masthead">
             <div className="pure-u-1-3 cover">

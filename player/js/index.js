@@ -8,7 +8,7 @@ import { Provider } from 'react-redux'
 //import rootReducer from './reducers/rootReducer'
 import rootReducer from './reducers/browserReducer'
 
-import App from './containers/App'
+import App from './containers/App.jsx'
 
 
 const loggerMiddleware = createLogger()

@@ -34,6 +34,7 @@ export function filter_by_text(text) {
 export function load_page() {
     return (dispatch,getState) => {
         const { browser } = getState()
+        var url
 
         if (browser.complete || browser.loading)
             return
@@ -44,11 +45,11 @@ export function load_page() {
 
         switch (browser.items) {
             case 'Album':
-                const url = '/albums'
+                url = '/albums'
                 break;
             case 'AudioFile':
             default:
-                const url = '/audiofiles'
+                url = '/audiofiles'
                 break;
         }
 
