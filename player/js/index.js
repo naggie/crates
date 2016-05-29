@@ -18,7 +18,7 @@ import {browse_all,filter_by_text,filter_by_letter,load_page} from './actions/br
 //import rootReducer from './reducers/rootReducer'
 import browser from './reducers/browserReducer'
 
-const reducer = combineReducers({browser,routerReducer})
+const reducer = combineReducers({browser,routing:routerReducer})
 
 const loggerMiddleware = createLogger()
 

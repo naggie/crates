@@ -9,16 +9,16 @@ function mapStateToProps(state,ownProps) {
       albums: state.browser.items,
       loading: state.browser.loading,
       exhausted: state.browser.exhausted,
-      letter: ownProps.props.params.letter,
+      letter: ownProps.params.letter,
   }
 }
 
 function mapDispatchToProps(dispatch) {
   return {
-      onReady: () => dispatch(browse_all()),
+      //onReady: () => dispatch(browse_all()),
+      onReady: letter => dispatch(filter_by_letter(letter)),
       onNewPageRequest: () => dispatch(load_page()),
       onSelect: id => console.log(id),
-      //onSelect: () => dispatch(browse_all()),
       letter: letter => dispatch(filter_by_letter(letter)),
   }
 }
