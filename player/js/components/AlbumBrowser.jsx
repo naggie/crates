@@ -10,7 +10,7 @@ var utils = require('../utils.js')
 // ES6, TODO change rest
 const AlbumBrowser = React.createClass({
     componentDidMount: function() {
-        this.props.onLoad()
+        this.props.onReady()
         window.addEventListener('scroll', this.handleScroll)
     },
 
