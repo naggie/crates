@@ -1,6 +1,3 @@
-import { combineReducers } from 'redux'
-
-
 // loading = !complete
 function browser(state = {
     complete: false,
@@ -57,9 +54,5 @@ function browser(state = {
 
 
 // may use later
-const rootReducer = combineReducers({
-    browser,
-})
-
-export default rootReducer
+export default browser
 

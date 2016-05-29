@@ -1,4 +1,4 @@
-import { createStore, applyMiddleware } from 'redux'
+import { createStore, applyMiddleware, combineReducers } from 'redux'
 import { routerMiddleware, push } from 'react-router-redux'
 import thunkMiddleware from 'redux-thunk'
 import createLogger from 'redux-logger'
@@ -16,13 +16,14 @@ import Player from './containers/Player.jsx'
 import {browse_all,filter_by_text,filter_by_letter,load_page} from './actions/browserActions'
 
 //import rootReducer from './reducers/rootReducer'
-import rootReducer from './reducers/browserReducer'
+import browser from './reducers/browserReducer'
 
+const reducer = combineReducers({browser,routerReducer})
 
 const loggerMiddleware = createLogger()
 
 const store = createStore(
-    rootReducer,
+    reducer,
     {},
     applyMiddleware(
         thunkMiddleware,
