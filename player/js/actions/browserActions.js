@@ -1,4 +1,5 @@
 import utils from '../utils'
+import push from 'react-router-redux'
 
 export function browse_all() {
     return dispatch => {
@@ -15,6 +16,7 @@ export function filter_by_letter(letter) {
             type: 'BROWSER_FILTER_BY_LETTER',
             letter,
         })
+        dispatch(push(`/albums/letters/${letter}`))
         dispatch(load_page())
     }
 }
