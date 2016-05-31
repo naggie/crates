@@ -15,8 +15,8 @@ function mapStateToProps(state,ownProps) {
 
 function mapDispatchToProps(dispatch) {
   return {
-      //onReady: () => dispatch(browse_all()),
-      onReady: letter => dispatch(filter_by_letter(letter)),
+      onReady: () => dispatch(browse_all()),
+      //onReady: letter => dispatch(filter_by_letter(letter)),
       filter_by_letter: letter => dispatch(filter_by_letter(letter)),
       onNewPageRequest: () => dispatch(load_page()),
       onSelect: id => console.log(id),

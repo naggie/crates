@@ -39,7 +39,7 @@ render(
     <Provider store={store}>
         <Router history={history}>
             <Redirect from="/" to="/albums" />
-            <Route path="/albums/letters/:letter" component={AlbumBrowser} />
+            { /*<Route path="/albums/letters/:letter" component={AlbumBrowser} /> */ }
             <Route path="/albums/:id" component={AlbumView} />
             <Route path="/albums" component={AlbumBrowser} />
         </Router>

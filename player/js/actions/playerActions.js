@@ -30,3 +30,28 @@ export function add_now(item) {
         item: item,
     }
 }
+
+export function load_album(id) {
+    return (dispatch,getState) => {
+        const { browser } = getState()
+        var url
+
+        if (browser.complete || browser.loading)
+            return
+
+        dispatch({
+            type: 'BROWSER_LOAD_ALBUM',
+        })
+
+        const query = {
+            album__id: id,
+        }
+
+        utils.get('/audiofiles',query).then((items) => {
+            dispatch({
+                type: 'PLAYLIST_REPLACE',
+                items,
+            })
+        })
+    }
+}

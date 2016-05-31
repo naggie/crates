@@ -9,10 +9,10 @@ import {browse_all,filter_by_text,filter_by_letter,load_page} from '../actions/b
 
 function mapStateToProps(state) {
   return {
-      albums: state.browser.items,
+      items: state.browser.items,
       loading: state.browser.loading,
       exhausted: state.browser.exhausted,
-      letter: state.browser.letter,
+      id: state.browser.id,
   }
 }
 

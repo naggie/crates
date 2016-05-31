@@ -16,7 +16,7 @@ export function filter_by_letter(letter) {
             type: 'BROWSER_FILTER_BY_LETTER',
             letter,
         })
-        dispatch(push(`/albums/letters/${letter}`))
+        //dispatch(push(`/albums/letters/${letter}`))
         dispatch(load_page())
     }
 }
