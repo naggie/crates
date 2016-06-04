@@ -10,7 +10,7 @@ function albumBrowser(state = {
     cover_ref:null,
 }, action) {
     switch (action.type) {
-        case "BROWSER_BROWSE_ALL":
+        case "ALBUMBROWSER_BROWSE_ALL":
             return Object.assign({},state,{
                 nextPage: 0,
                 letter:null,
@@ -18,7 +18,7 @@ function albumBrowser(state = {
                 complete: false,
                 searchText:null,
             })
-        case "BROWSER_FILTER_BY_TEXT":
+        case "ALBUMBROWSER_FILTER_BY_TEXT":
             return Object.assign({},state,{
                 nextPage: 0,
                 letter:null,
@@ -26,7 +26,7 @@ function albumBrowser(state = {
                 complete: false,
                 searchText:action.text,
             })
-        case "BROWSER_FILTER_BY_LETTER":
+        case "ALBUMBROWSER_FILTER_BY_LETTER":
             return Object.assign({},state,{
                 nextPage: 0,
                 letter:action.letter,
@@ -34,11 +34,11 @@ function albumBrowser(state = {
                 complete: false,
                 searchText:null,
             })
-        case "BROWSER_REQUEST_ITEMS":
+        case "ALBUMBROWSER_REQUEST_ITEMS":
             return Object.assign({},state,{
                 loading:true,
             })
-        case "BROWSER_RECEIVE_ITEMS":
+        case "ALBUMBROWSER_RECEIVE_ITEMS":
             return Object.assign({}, state, {
                 items:[...state.items,...action.items],
                 nextPage:state.nextPage+1,

@@ -15,12 +15,13 @@ import AlbumBrowser from './containers/AlbumBrowser.jsx'
 import AlbumView from './containers/AlbumView.jsx'
 import Player from './containers/Player.jsx'
 
-import {browse_all,filter_by_text,filter_by_letter,load_page} from './actions/browserActions'
-
 //import rootReducer from './reducers/rootReducer'
-import albumBrowser from './reducers/albumBrowser'
+import albumBrowserReducer from './reducers/albumBrowser'
 
-const reducer = combineReducers({albumBrowser,routing:routerReducer})
+const reducer = combineReducers({
+    albumBrowser: albumBrowserReducer,
+    routing: routerReducer,
+})
 
 const loggerMiddleware = createLogger()
 

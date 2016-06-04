@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 import AlbumBrowser from '../components/AlbumBrowser.jsx'
 
-import {browse_all,filter_by_text,filter_by_letter,load_page} from '../actions/browserActions'
+import {browse_all,filter_by_text,filter_by_letter,load_page} from '../actions/albumBrowser'
 
 
 function mapStateToProps(state,ownProps) {

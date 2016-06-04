@@ -4,7 +4,7 @@ import push from 'react-router-redux'
 export function browse_all() {
     return dispatch => {
         dispatch({
-            type: 'BROWSER_BROWSE_ALL',
+            type: 'ALBUMBROWSER_BROWSE_ALL',
         })
         dispatch(load_page())
     }
@@ -13,7 +13,7 @@ export function browse_all() {
 export function filter_by_letter(letter) {
     return dispatch => {
         dispatch({
-            type: 'BROWSER_FILTER_BY_LETTER',
+            type: 'ALBUMBROWSER_FILTER_BY_LETTER',
             letter,
         })
         //dispatch(push(`/albums/letters/${letter}`))
@@ -25,7 +25,7 @@ export function filter_by_letter(letter) {
 export function filter_by_text(text) {
     return dispatch => {
         dispatch({
-            type: 'BROWSER_FILTER_BY_TEXT',
+            type: 'ALBUMBROWSER_FILTER_BY_TEXT',
             text,
         })
         dispatch(load_page())
@@ -42,7 +42,7 @@ export function load_page() {
             return
 
         dispatch({
-            type: 'BROWSER_REQUEST_ITEMS',
+            type: 'ALBUMBROWSER_REQUEST_ITEMS',
         })
 
         switch (browser.items) {
@@ -64,7 +64,7 @@ export function load_page() {
 
         utils.get('/albums',query).then((items) => {
             dispatch({
-                type: 'BROWSER_RECEIVE_ITEMS',
+                type: 'ALBUMBROWSER_RECEIVE_ITEMS',
                 items,
             })
         })
@@ -76,7 +76,7 @@ export function load_page() {
 export function view_album() {
     return dispatch => {
         dispatch({
-            type: 'BROWSER_REQUEST_ALBUM',
+            type: 'ALBUMBROWSER_REQUEST_ALBUM',
         })
         dispatch(load_page())
     }

@@ -7,7 +7,7 @@ import AlbumBrowser from '../components/AlbumBrowser.jsx'
 import AlbumView from '../components/AlbumView.jsx'
 import Player from '../components/Player.jsx'
 
-import {browse_all,filter_by_text,filter_by_letter,load_page} from '../actions/browserActions'
+import {browse_all,filter_by_text,filter_by_letter,load_page} from '../actions/albumBrowser'
 
 const Browser = ({playlist,}) => {
 
