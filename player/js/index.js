@@ -1,3 +1,5 @@
+// root everything goes here to avoid fragmentation; that is until this file
+// gets too big.
 import { createStore, applyMiddleware, combineReducers } from 'redux'
 import { routerMiddleware, push } from 'react-router-redux'
 import thunkMiddleware from 'redux-thunk'
@@ -16,9 +18,9 @@ import Player from './containers/Player.jsx'
 import {browse_all,filter_by_text,filter_by_letter,load_page} from './actions/browserActions'
 
 //import rootReducer from './reducers/rootReducer'
-import browser from './reducers/browserReducer'
+import albumBrowser from './reducers/albumBrowser'
 
-const reducer = combineReducers({browser,routing:routerReducer})
+const reducer = combineReducers({albumBrowser,routing:routerReducer})
 
 const loggerMiddleware = createLogger()
 

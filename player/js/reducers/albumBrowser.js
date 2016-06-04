@@ -1,5 +1,5 @@
 // loading = !complete
-function browser(state = {
+function albumBrowser(state = {
     complete: false,
     loading: false,
     model: 'Album',
@@ -54,5 +54,5 @@ function browser(state = {
 
 
 // may use later
-export default browser
+export default albumBrowser
 
